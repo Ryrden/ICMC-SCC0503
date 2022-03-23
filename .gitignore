@@ -1,0 +1,17 @@
+# Compiled source #
+############
+*.exe
+
+# Packages #
+############
+*.rar
+*.zip
+
+# Test files #
+############
+*.in
+*.out
+
+# Other files #
+############
+*.csv
