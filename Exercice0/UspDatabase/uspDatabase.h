@@ -2,11 +2,11 @@
 #define USPDATABASE_H
 
 #include "../Util/util.h"
-
+#define ERRO (-32000)
 
 typedef int NUSP;
-typedef char *NAME;
-typedef char *COURSE;
+typedef char NAME[50];
+typedef char COURSE[50];
 typedef float GRADE;
 typedef struct student_st STUDENT;
 
@@ -15,10 +15,12 @@ typedef enum {
     halfFromStart,
     halfFromEnd,
     fromRangeTo,
-    specificData,
-    ERRO = -1
+    specificData
 } operation;
 
-operation select_command(char *command);
+operation select_command(int command);
+STUDENT *create_student(NUSP nusp, NAME name, COURSE course, GRADE grade);
+NUSP getKey(STUDENT *student);
+boolean item_apagar(void **item);
 
 #endif // !USPDATABASE_H

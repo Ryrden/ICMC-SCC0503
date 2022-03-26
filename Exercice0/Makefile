@@ -1,4 +1,4 @@
-UTIL=
+UTIL= list/sequentialList.c uspDatabase/uspDatabase.c Util/util.c
 MAIN=main.c
 BINARY=main
 

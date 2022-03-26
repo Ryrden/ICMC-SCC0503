@@ -3,13 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct student_st{
+struct student_st {
     int nUsp;
     char name[50];
     char course[50];
     float grade;
 };
-
 
 operation select_command(int command) {
 
@@ -25,4 +24,30 @@ operation select_command(int command) {
         return specificData;
 
     return ERROR;
+}
+
+STUDENT *create_student(NUSP nusp, NAME name, COURSE course, GRADE grade) {
+    STUDENT *student = (STUDENT *)malloc(sizeof(STUDENT));
+    student->nUsp = nusp;
+    strcpy(student->name, name);
+    strcpy(student->course, course);
+    student->grade = grade;
+    return student;
+}
+
+boolean item_apagar(void **item) {
+    if (*item != NULL) {
+        //(*item)->key = ERRO; /*apaga o item simbolicamente*/
+        free(*item);
+        *item = NULL;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+NUSP getKey(STUDENT *student) {
+    if (student != NULL) {
+        return student->nUsp;
+    }
+    return ERRO;
 }
