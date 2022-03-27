@@ -108,7 +108,14 @@ void showDataFromRange(LIST *list, int start, int end) {
     dataCycle = end - start;
     dataCycle /= listSize(list);
 
-    start = (start < 1 || start > listSize(list)) ? 0 : start-1;
+    start = (start < 1 || start > listSize(list)) ? 0 : start - 1;
+
+    if (end > listSize(list)) {
+        STUDENT *student = sequentialSearch(list, listSize(list));
+        printItem(student);
+        printf("\n");
+    }
+
     end = (end > listSize(list) || end < 1) ? listSize(list) : end;
 
     if (dataCycle == 0) {
@@ -116,12 +123,9 @@ void showDataFromRange(LIST *list, int start, int end) {
     } else {
         for (int i = 0; i < dataCycle; i++) {
             printList(list, start, end);
+            if (i < dataCycle - 1)
+                printf("\n");
         }
-    }
-    dataCycle %= listSize(list);
-    if (dataCycle != 0) {
-        end = dataCycle;
-        printList(list, start, end);
     }
 }
 

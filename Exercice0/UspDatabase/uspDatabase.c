@@ -35,7 +35,7 @@ STUDENT *create_student(NUSP nusp, NAME name, COURSE course, GRADE grade) {
 }
 
 void printItem(STUDENT *student) {
-    printf("nUSP: %d \nNome: %s\nCurso: %s \nNota: %.2f\n\n", student->nUsp, student->name, student->course, student->grade);
+    printf("nUSP: %d \nNome: %s\nCurso: %s \nNota: %.2f\n", student->nUsp, student->name, student->course, student->grade);
 }
 
 boolean item_apagar(void **item) {

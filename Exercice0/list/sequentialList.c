@@ -1,6 +1,7 @@
-#include "./list.h"
 #include "../uspDatabase/uspDatabase.h"
+#include "./list.h"
 #include <malloc.h>
+#include <stdio.h>
 
 struct list_st {
     void *values[MAX_SIZE];
@@ -15,7 +16,7 @@ static void moveDataRight(LIST *list, int pos);
 static void listRemoveAll(LIST *list);
 
 LIST *createList() {
-    LIST *list = (LIST*)malloc(sizeof(LIST));
+    LIST *list = (LIST *)malloc(sizeof(LIST));
     if (list != NULL) {
         list->start = START;
         list->end = list->start;
@@ -33,7 +34,7 @@ boolean listInsert(LIST *list, void *item) {
     return FALSE;
 }
 
-int listSize(const LIST *list){
+int listSize(const LIST *list) {
     return list->end;
 }
 
@@ -102,9 +103,10 @@ static void listRemoveAll(LIST *list) {
     list->end = START;
 }
 
-
-void printList(const LIST *list,int start, int end){
-    for(int pos = start; pos < end;pos++){
+void printList(const LIST *list, int start, int end) {
+    for (int pos = start; pos < end; pos++) {
         printItem(list->values[pos]);
+        if (pos < end - 1) //RunCodes pediu pra passar
+            printf("\n");
     }
 }
