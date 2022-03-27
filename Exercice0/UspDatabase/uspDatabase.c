@@ -11,7 +11,6 @@ struct student_st {
 };
 
 operation select_command(int command) {
-
     if (command == 1)
         return all;
     else if (command == 2)
@@ -35,6 +34,10 @@ STUDENT *create_student(NUSP nusp, NAME name, COURSE course, GRADE grade) {
     return student;
 }
 
+void printItem(STUDENT *student) {
+    printf("nUSP: %d \nNome: %s\nCurso: %s \nNota: %.2f\n\n", student->nUsp, student->name, student->course, student->grade);
+}
+
 boolean item_apagar(void **item) {
     if (*item != NULL) {
         //(*item)->key = ERRO; /*apaga o item simbolicamente*/
@@ -50,4 +53,8 @@ NUSP getKey(STUDENT *student) {
         return student->nUsp;
     }
     return ERRO;
+}
+
+long int getStudentDataSize(){
+    return sizeof(STUDENT);
 }

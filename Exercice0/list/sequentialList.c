@@ -33,6 +33,10 @@ boolean listInsert(LIST *list, void *item) {
     return FALSE;
 }
 
+int listSize(const LIST *list){
+    return list->end;
+}
+
 boolean listFull(const LIST *list) {
     return list->end >= MAX_SIZE;
 }
@@ -99,6 +103,8 @@ static void listRemoveAll(LIST *list) {
 }
 
 
-void printList(const LIST *list){
-    
+void printList(const LIST *list,int start, int end){
+    for(int pos = start; pos < end;pos++){
+        printItem(list->values[pos]);
+    }
 }

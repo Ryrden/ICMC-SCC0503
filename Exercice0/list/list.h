@@ -17,6 +17,6 @@ int listSize(const LIST *list);
 boolean listEmpty(const LIST *list);
 boolean listFull(const LIST *list);
 void *sequentialSearch(const LIST *list, int key);
-void printList(const LIST *list);
+void printList(const LIST *list,int start, int end);
 
 #endif //LIST_H
