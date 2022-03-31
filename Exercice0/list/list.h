@@ -2,21 +2,20 @@
 #define LIST_H
 
 #include "../Util/util.h"
-#define MAX_SIZE 100
-#define START 0
+#include "../uspDatabase/uspDatabase.h"
 #define ERRO_LIST (-300)
 
-typedef struct list_st LIST;
+typedef struct list LIST;
 
-LIST *createList();
-int listInsert(LIST *list, void *item);
-boolean listErase(LIST **list);
-boolean listRemove(LIST *list);
-boolean listRemoverItem(LIST *list, int key);
-int listSize(const LIST *list);
-boolean listEmpty(const LIST *list);
-boolean listFull(const LIST *list);
-void *sequentialSearch(const LIST *list, int key);
-void printList(const LIST *list,int start, int end);
+LIST *create_list();
+int list_insert(LIST *, STUDENT *);
+boolean list_erase(LIST **);
+boolean list_remove(LIST *);
+boolean list_remover_item(LIST *, int);
+long list_size(const LIST *);
+boolean list_empty(const LIST *);
+boolean list_full(const LIST *);
+STUDENT *sequential_search(const LIST *, int);
+void print_list(const LIST *, int, int);
 
-#endif //LIST_H
+#endif // LIST_H
