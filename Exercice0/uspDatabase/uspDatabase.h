@@ -2,10 +2,14 @@
 #define USPDATABASE_H
 
 #include "../Util/util.h"
+#define LONG_INT_SIZE_ON_STRUCT 12
+#define NAME_SIZE 50
+#define COURSE_SIZE 50
+
 
 typedef int NUSP;
-typedef char NAME[50];
-typedef char COURSE[50];
+typedef char NAME[NAME_SIZE];
+typedef char COURSE[COURSE_SIZE];
 typedef float GRADE;
 typedef struct student_st STUDENT;
 

@@ -5,8 +5,8 @@
 
 struct student_st {
     int nUsp;
-    char name[50];
-    char course[50];
+    char name[NAME_SIZE];
+    char course[COURSE_SIZE];
     float grade;
     long key;
 };
@@ -37,12 +37,15 @@ STUDENT *create_student(long key,NUSP nusp, NAME name, COURSE course, GRADE grad
 }
 
 void print_item(STUDENT *student) {
-    printf("nUSP: %d \nNome: %s\nCurso: %s \nNota: %.2f\n", student->nUsp, student->name, student->course, student->grade);
+    printf("nUSP: %d\n", student->nUsp);
+    printf("Nome: %s\n", student->name);
+    printf("Curso: %s\n", student->course);
+    printf("Nota: %.2f\n", student->grade);
 }
 
 boolean item_apagar(void **item) {
     if (*item != NULL) {
-        //(*item)->key = ERRO; /*apaga o item simbolicamente*/
+        //(*item)->key = ERROR; /*apaga o item simbolicamente*/
         free(*item);
         *item = NULL;
         return TRUE;
@@ -58,5 +61,5 @@ NUSP get_key(STUDENT *student) {
 }
 
 int get_student_data_size(){
-    return sizeof(STUDENT) - 12; //12 because a 8 from long int and 4 for 4
+    return sizeof(STUDENT) - LONG_INT_SIZE_ON_STRUCT;
 }
