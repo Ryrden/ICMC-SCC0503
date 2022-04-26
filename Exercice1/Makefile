@@ -1,4 +1,4 @@
-UTIL=
+UTIL= Util/util.c fileHandler/fileHandler.c uspDatabase/uspDatabase.c
 MAIN=main.c
 BINARY=main
 

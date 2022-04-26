@@ -1,5 +1,11 @@
 #include "fileHandler.h"
 
+struct fileHeader_st {
+    unsigned int nRegister;
+    unsigned char regSize;
+    int stackHead;
+};
+
 static char readCurrentInput(FILE *file, char *currentInput){
     char currentChar;
     int currentInputIndex;
@@ -14,23 +20,23 @@ static char readCurrentInput(FILE *file, char *currentInput){
     return currentChar;
 }
 
-void writeDelimitedStudentDataInFile(STUDENT student, FILE *file){
-    fprintf(file, "%s", student.name);
-    fputc(DELIMITER_CHAR, file);
-    fprintf(file, "%d", student.age);
-    fputc(DELIMITER_CHAR, file);
-    fprintf(file, "%d", student.grade);
-    fputc(DELIMITER_CHAR, file);
+void writeDelimitedStudentDataInFile(STUDENT *student, FILE *file){
+    NUSP nusp = get_nUsp(student);
+    char *name = get_name(student);
+    char *course = get_course(student);
+    GRADE grade = get_grade(student);
+    
+    //Escrever dado, delimitador, dado, delimitador, ... 
+    fwrite(&nusp, sizeof(NUSP), 1, file);
+    //fwrite(DELIMITER_CHAR, sizeof(char), 1, file);
+    fwrite(&name, sizeof(char), 1, file);
+    //fwrite(DELIMITER_CHAR, sizeof(char), 1, file);
+    fwrite(&course, sizeof(char), 1, file);
+    //fwrite(DELIMITER_CHAR, sizeof(char), 1, file);
+    fwrite(&grade, sizeof(NUSP), 1, file);
 }
 
-STUDENT readDelimitedStudentDataInFile(FILE *file){
-    STUDENT student;
-    char currentInput[50];
-    readCurrentInput(file, currentInput);
-    strcpy(student.name, currentInput);
-    readCurrentInput(file, currentInput);
-    student.age = atoi(currentInput);
-    readCurrentInput(file, currentInput);
-    student.grade = atoi(currentInput);
+STUDENT *readDelimitedStudentDataInFile(FILE *file){
+    STUDENT *student = create_student(1,"a","b",5);
     return student;
 }

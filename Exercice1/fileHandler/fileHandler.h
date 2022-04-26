@@ -9,7 +9,9 @@
 
 #define DELIMITER_CHAR '|'
 
-void writeDelimitedStudentDataInFile(STUDENT, FILE*);
-STUDENT readDelimitedStudentDataInFile(FILE*);
+typedef struct fileHeader_st FILEHEADER;
+
+void writeDelimitedStudentDataInFile(STUDENT*, FILE*);
+STUDENT *readDelimitedStudentDataInFile(FILE*);
 
 #endif //FILEHANDLER_H

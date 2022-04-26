@@ -51,12 +51,34 @@ boolean item_apagar(void **item) {
     return FALSE;
 }
 
-NUSP get_key(STUDENT *student) {
+NUSP get_nUsp(STUDENT *student) {
     if (student != NULL) {
-        return student->key;
+        return student->nUsp;
     }
     return ERRO;
 }
+
+char *get_name(STUDENT *student){
+    if (student != NULL) {
+        return student->name;
+    }
+    return NULL;
+}
+
+char *get_course(STUDENT *student){
+    if (student != NULL) {
+        return student->course;
+    }
+    return NULL;
+}
+
+GRADE get_grade(STUDENT *student){
+    if (student != NULL) {
+        return student->grade;
+    }
+    return ERRO;
+}
+
 
 int get_student_data_size(){
     return sizeof(STUDENT);

@@ -25,5 +25,9 @@ operation select_command(int);
 int get_student_data_size();
 STUDENT *create_student(NUSP, NAME, COURSE, GRADE);
 void print_item(STUDENT *);
+NUSP get_nUsp(STUDENT *student);
+char *get_name(STUDENT *student);
+char *get_course(STUDENT *student);
+GRADE get_grade(STUDENT *student);
 
 #endif // !USPDATABASE_H
