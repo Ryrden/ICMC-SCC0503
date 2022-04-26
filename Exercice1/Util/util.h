@@ -9,7 +9,7 @@ typedef int boolean;
 
 void boolean_print(boolean bool);
 
-char *readStringUntilReach(char caractere);
+char *readStringUntilReach(char *string, char caractere);
 
 char *readLine();
 

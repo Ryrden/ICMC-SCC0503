@@ -29,17 +29,17 @@ char *readLine() {
     return string;
 }
 
-char *readStringUntilReach(char caractere) {
+char *readStringUntilReach(char *str1, char caractere) {
     char c;
-    char *string = (char *)malloc(sizeof(char) * 256);
+    char *str2 = (char *)malloc(sizeof(char) * 256);
     int index = 0;
-    while (scanf("%c", &c) != EOF) {
+    while ((c = str1[index]) != EOF) {
         if (c == caractere) {
-            string[index] = '\0';
+            str2[index] = '\0';
             break;
         }
-        string[index] = c;
+        str2[index] = c;
         index++;
     }
-    return string;
+    return str2;
 }
