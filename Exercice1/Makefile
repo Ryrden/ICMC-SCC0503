@@ -1,6 +1,6 @@
 UTIL= Util/util.c fileHandler/fileHandler.c uspDatabase/uspDatabase.c
 MAIN=main.c
-BINARY=main
+BINARY=main.out
 
 all:
 	gcc -Wall -g $(UTIL) $(MAIN) -o $(BINARY)

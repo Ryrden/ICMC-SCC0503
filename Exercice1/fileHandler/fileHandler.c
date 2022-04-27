@@ -37,9 +37,22 @@ void writeDelimitedStudentDataInFile(STUDENT *student, FILE *file){
 }
 
 STUDENT *readDelimitedStudentDataInFile(FILE *file){
+    NUSP nusp;
+    char *name;
+    char *course;
+    GRADE grade; 
+
     char input[256];
+    fread(input,1,sizeof(NUSP),file);
+    nusp = atoi(input);
+    fread(input,1,sizeof(char),file);
+    strcpy(name,input);
+    fread(input,1,sizeof(char),file);
+    strcpy(course,input);
+    fread(input,1,sizeof(GRADE),file);
+    grade = atof(input);
     
-    //leitura
-}
+    STUDENT *student = create_student(nusp,name,course,grade);
+
     return student;
 }

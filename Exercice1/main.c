@@ -1,5 +1,5 @@
-#include "./uspDatabase/uspDatabase.h"
 #include "./fileHandler/fileHandler.h"
+#include "./uspDatabase/uspDatabase.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,31 +18,36 @@
 */
 
 int main() {
-    NUSP nUSP;
+    NUSP nusp;
     NAME name;
     COURSE course;
     GRADE grade;
 
-    //Leitura na ordem
+    // Leitura na ordem
     //[Numero USP][Nome][Curso][Nota]]
-    char *line = (char*)malloc(sizeof(char)*256);
-    while(fgets(line, sizeof(char)*256, stdin)){
-								char *token = strtok(line, ",");
-								nUSP = atoi(token);
-								token = strtok(NULL, ",");
-								strcpy(name, token);
-								token = strtok(NULL, ",");
-								strcpy(course, token);
-								token = strtok(NULL, ",");
-								grade = atof(token);
-				}
+
+    FILE *file = fopen("binaryfile.bin", "wb+");
+    if (file == NULL) {
+        perror("Error to open Archive");
+        exit(EXIT_FAILURE);
+    }
+
+    char *line = (char *)malloc(sizeof(char) * 256);
+    while (fgets(line, sizeof(char) * 256, stdin)) {
+        char *token = strtok(line, ",");
+        nusp = atoi(token);
+        token = strtok(NULL, ",");
+        strcpy(name, token);
+        token = strtok(NULL, ",");
+        strcpy(course, token);
+        token = strtok(NULL, ",");
+        grade = atof(token);
+
+        STUDENT *student = create_student(nusp, name, course, grade);
+        writeDelimitedStudentDataInFile(student, file);
+    }
     free(line);
-				
-				printf("%i %s %s %f\n", nUSP, name, course, grade);
-    //Salvar os dados lidos em dois arquivos binários
-    //um para o índice e outro de dados
 
 
-    
     return EXIT_SUCCESS;
 }
