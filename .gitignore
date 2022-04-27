@@ -1,6 +1,7 @@
 # Compiled source #
 ############
 *.exe
+main.out
 
 # Packages #
 ############
@@ -11,7 +12,9 @@
 ############
 *.in
 *.out
+Casos de Teste/
 
 # Other files #
 ############
 *.csv
+*.bin
