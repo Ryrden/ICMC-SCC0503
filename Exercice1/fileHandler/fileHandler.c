@@ -6,17 +6,17 @@ struct fileHeader_st {
     int stackHead;
 };
 
-static char readCurrentInput(FILE *file, char *currentInput){
+static char readCurrentInput(FILE *file, char *input){
     char currentChar;
-    int currentInputIndex;
-    currentInputIndex = 0;
+    int inputIndex;
+    inputIndex = 0;
     currentChar = fgetc(file);
     while((currentChar != EOF) && (currentChar != DELIMITER_CHAR))
     {
-        currentInput[currentInputIndex++] = currentChar;
+        input[inputIndex++] = currentChar;
         currentChar = fgetc(file);
     }
-    currentInput[currentInputIndex] = '\0';
+    input[inputIndex] = '\0';
     return currentChar;
 }
 
@@ -26,17 +26,20 @@ void writeDelimitedStudentDataInFile(STUDENT *student, FILE *file){
     char *course = get_course(student);
     GRADE grade = get_grade(student);
     
-    //Escrever dado, delimitador, dado, delimitador, ... 
     fwrite(&nusp, sizeof(NUSP), 1, file);
-    //fwrite(DELIMITER_CHAR, sizeof(char), 1, file);
+    fputc(DELIMITER_CHAR, file);
     fwrite(&name, sizeof(char), 1, file);
-    //fwrite(DELIMITER_CHAR, sizeof(char), 1, file);
+    fputc(DELIMITER_CHAR, file);
     fwrite(&course, sizeof(char), 1, file);
-    //fwrite(DELIMITER_CHAR, sizeof(char), 1, file);
+    fputc(DELIMITER_CHAR, file);
     fwrite(&grade, sizeof(NUSP), 1, file);
+    fputc(DELIMITER_CHAR, file);
 }
 
 STUDENT *readDelimitedStudentDataInFile(FILE *file){
-    STUDENT *student = create_student(1,"a","b",5);
+    char input[256];
+    
+    //leitura
+}
     return student;
 }
