@@ -26,17 +26,19 @@ int main() {
     //Leitura na ordem
     //[Numero USP][Nome][Curso][Nota]]
     char *line = (char*)malloc(sizeof(char)*256);
-    while(line = readLine()){
-        nUSP = readStringUntilReach(line,DELIMITER_CHAR)
-        line++ = line.strstr(line,',');
-        name = readStringUntilReach(line,DELIMITER_CHAR)
-        line++ = line.strstr(line,',');
-        course = readStringUntilReach(line,DELIMITER_CHAR)
-        line++ = line.strstr(line,',');
-        grade = line;
-    }
+    while(fgets(line, sizeof(char)*256, stdin)){
+								char *token = strtok(line, ",");
+								nUSP = atoi(token);
+								token = strtok(NULL, ",");
+								strcpy(name, token);
+								token = strtok(NULL, ",");
+								strcpy(course, token);
+								token = strtok(NULL, ",");
+								grade = atof(token);
+				}
     free(line);
-
+				
+				printf("%i %s %s %f\n", nUSP, name, course, grade);
     //Salvar os dados lidos em dois arquivos binários
     //um para o índice e outro de dados
 
