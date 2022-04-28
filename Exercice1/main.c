@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define FILE_NAME_SIZE 10
+#define TAM 10
 
 /*INFORMAÇÕES:
     NOME: Ryan Souza Sá Teles
@@ -17,6 +17,8 @@
     Professor: Leonardo Tórtoro Pereira
 */
 
+long int getDataSize(FILE *);
+
 int main() {
     NUSP nusp;
     NAME name;
@@ -26,8 +28,8 @@ int main() {
     // Leitura na ordem
     //[Numero USP][Nome][Curso][Nota]]
 
-    FILE *file = fopen("binaryfile.bin", "wb+");
-    if (file == NULL) {
+    FILE *dataFile = fopen("datafile.bin", "wb+");
+    if (dataFile == NULL) {
         perror("Error to open Archive");
         exit(EXIT_FAILURE);
     }
@@ -37,6 +39,8 @@ int main() {
         char *token = strtok(line, ",");
         nusp = atoi(token);
         token = strtok(NULL, ",");
+        if (!token)
+            break;
         strcpy(name, token);
         token = strtok(NULL, ",");
         strcpy(course, token);
@@ -44,10 +48,28 @@ int main() {
         grade = atof(token);
 
         STUDENT *student = create_student(nusp, name, course, grade);
-        writeDelimitedStudentDataInFile(student, file);
+        writeStudentDataInFile(student, dataFile);
     }
     free(line);
 
+    long dataSize = getDataSize(dataFile);
+    long studentSize = get_student_data_size();
+    for (int i = dataSize - TAM; i < dataSize; i += studentSize) {
+        STUDENT *student = readStudentDataInFile(dataFile);
+        print_student(student);
+    }
 
     return EXIT_SUCCESS;
+}
+
+long int getDataSize(FILE *file) {
+    long int fileSize, structSize, dataSize;
+
+    fseek(file, 0, SEEK_END);
+    fileSize = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    structSize = get_student_data_size();
+    dataSize = (fileSize / structSize); // key on the struct
+
+    return dataSize;
 }

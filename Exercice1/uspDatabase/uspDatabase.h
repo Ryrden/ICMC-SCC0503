@@ -24,7 +24,7 @@ typedef enum {
 operation select_command(int);
 int get_student_data_size();
 STUDENT *create_student(NUSP, NAME, COURSE, GRADE);
-void print_item(STUDENT *);
+void print_student(STUDENT *);
 NUSP get_nUsp(STUDENT *student);
 char *get_name(STUDENT *student);
 char *get_course(STUDENT *student);

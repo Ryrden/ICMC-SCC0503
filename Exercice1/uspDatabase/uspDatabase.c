@@ -34,21 +34,11 @@ STUDENT *create_student(NUSP nusp, NAME name, COURSE course, GRADE grade) {
     return student;
 }
 
-void print_item(STUDENT *student) {
+void print_student(STUDENT *student) {
     printf("nUSP: %d\n", student->nUsp);
     printf("Nome: %s\n", student->name);
     printf("Curso: %s\n", student->course);
     printf("Nota: %.2f\n", student->grade);
-}
-
-boolean item_apagar(void **item) {
-    if (*item != NULL) {
-        //(*item)->key = ERROR; /*apaga o item simbolicamente*/
-        free(*item);
-        *item = NULL;
-        return TRUE;
-    }
-    return FALSE;
 }
 
 NUSP get_nUsp(STUDENT *student) {
@@ -78,7 +68,6 @@ GRADE get_grade(STUDENT *student){
     }
     return ERRO;
 }
-
 
 int get_student_data_size(){
     return sizeof(STUDENT);

@@ -7,11 +7,7 @@
 #include "../Util/util.h"
 #include "../uspDatabase/uspDatabase.h"
 
-#define DELIMITER_CHAR '|'
-
-typedef struct fileHeader_st FILEHEADER;
-
-void writeDelimitedStudentDataInFile(STUDENT*, FILE*);
-STUDENT *readDelimitedStudentDataInFile(FILE*);
+void writeStudentDataInFile(STUDENT*, FILE*);
+STUDENT *readStudentDataInFile(FILE*);
 
 #endif //FILEHANDLER_H
