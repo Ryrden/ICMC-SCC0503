@@ -46,6 +46,7 @@ int main() {
 
         STUDENT *student = create_student(nusp, name, course, grade);
         writeStudentDataInFile(student, dataFile);
+        free(student);
     }
     free(line);
 
@@ -58,8 +59,10 @@ int main() {
         print_student(student);
         if (i < dataSize - 1)
             printf("\n");
+        
+        free(student);
     }
-
+    fclose(dataFile);
     return EXIT_SUCCESS;
 }
 
