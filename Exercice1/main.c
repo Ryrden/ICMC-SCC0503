@@ -24,9 +24,6 @@ int main() {
     COURSE course;
     GRADE grade;
 
-    // Leitura na ordem
-    //[Numero USP][Nome][Curso][Nota]]
-
     FILE *dataFile = fopen("datafile.bin", "wb+");
     if (dataFile == NULL) {
         perror("Error to open Archive");
@@ -51,16 +48,23 @@ int main() {
 
         STUDENT *student = create_student(nusp, name, course, grade);
         writeStudentDataInFile(student, dataFile);
+        free(student);
     }
     free(line);
 
     long dataSize = getDataSize(dataFile);
     long studentSize = get_student_data_size();
-    for (int i = dataSize - TAM; i < dataSize; i += studentSize) {
+    for (int i = dataSize - TAM; i < dataSize; i++) {
+        long studentOffset = i * studentSize;
+        fseek(dataFile, studentOffset, SEEK_SET);
         STUDENT *student = readStudentDataInFile(dataFile);
         print_student(student);
+        if (i < dataSize - 1)
+            printf("\n");
+        
+        free(student);
     }
-
+    fclose(dataFile);
     return EXIT_SUCCESS;
 }
 
