@@ -1,6 +1,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include <stdio.h>
+
 #define TRUE 1
 #define FALSE 0
 #define ERROR -32000
@@ -13,4 +15,5 @@ char *readStringUntilReach(char *string, char caractere);
 
 char *readLine();
 
+long int getDataSize(FILE *);
 #endif // UTIL_H

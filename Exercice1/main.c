@@ -17,7 +17,6 @@
     Professor: Leonardo Tórtoro Pereira
 */
 
-long int getDataSize(FILE *);
 
 int main() {
     NUSP nusp;
@@ -38,13 +37,16 @@ int main() {
     while (fgets(line, sizeof(char) * 256, stdin)) {
         char *token = strtok(line, ",");
         nusp = atoi(token);
-        token = strtok(NULL, ",");
-        if (!token)
-            break;
-        strcpy(name, token);
-        token = strtok(NULL, ",");
+
+								token = strtok(NULL, ",");
+								if (!token)
+            break;        
+								strcpy(name, token);
+        
+								token = strtok(NULL, ",");
         strcpy(course, token);
-        token = strtok(NULL, ",");
+        
+								token = strtok(NULL, ",");
         grade = atof(token);
 
         STUDENT *student = create_student(nusp, name, course, grade);
@@ -62,14 +64,4 @@ int main() {
     return EXIT_SUCCESS;
 }
 
-long int getDataSize(FILE *file) {
-    long int fileSize, structSize, dataSize;
 
-    fseek(file, 0, SEEK_END);
-    fileSize = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    structSize = get_student_data_size();
-    dataSize = (fileSize / structSize); // key on the struct
-
-    return dataSize;
-}
