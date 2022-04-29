@@ -1,6 +1,7 @@
 UTIL=Util/util.c fileHandler/fileHandler.c uspDatabase/uspDatabase.c
 MAIN=main.c
 BINARY=main
+NAME=Exercicio1
 
 all:
 	gcc -Wall -g $(UTIL) $(MAIN) -o $(BINARY)
@@ -16,9 +17,6 @@ valgrind:
 
 zip:
 	@zip -r $(NAME).zip $(MAIN) fileHandler/ uspDatabase/ Util Makefile
-
-testCase 1:
-	./$(BINARY) < ./Casos\ de\ Teste/1.in
 
 clean:
 	@rm *.o
