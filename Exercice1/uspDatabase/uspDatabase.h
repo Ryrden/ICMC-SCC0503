@@ -12,18 +12,9 @@ typedef char COURSE[COURSE_SIZE];
 typedef float GRADE;
 typedef struct student_st STUDENT;
 
-typedef enum {
-    all = 1,
-    halfFromStart,
-    halfFromEnd,
-    fromRangeTo,
-    specificData,
-    ERRO = -1
-} operation;
-
-operation select_command(int);
 int get_student_data_size();
 STUDENT *create_student(NUSP, NAME, COURSE, GRADE);
+void erase_student(STUDENT **);
 void print_student(STUDENT *);
 NUSP get_nUsp(STUDENT *student);
 char *get_name(STUDENT *student);

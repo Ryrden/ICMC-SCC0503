@@ -2,16 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void boolean_print(boolean bool) {
-    if (bool == TRUE) {
-        printf("TRUE\n");
-    } else if (bool == FALSE) {
-        printf("FALSE\n");
-    } else {
-        printf("ERRO\n");
-    }
-}
-
 char *readLine() {
     char *string = NULL;
     char currentInput;
@@ -29,29 +19,17 @@ char *readLine() {
     return string;
 }
 
-char *readStringUntilReach(char *str1, char caractere) {
+char *readStringUntilReach(char caractere) {
     char c;
-    char *str2 = (char *)malloc(sizeof(char) * 256);
+    char *string = (char *)malloc(sizeof(char) * 256);
     int index = 0;
-    while ((c = str1[index]) != EOF) {
+    while (scanf("%c", &c) != EOF) {
         if (c == caractere) {
-            str2[index] = '\0';
+            string[index] = '\0';
             break;
         }
-        str2[index] = c;
+        string[index] = c;
         index++;
     }
-    return str2;
-}
-
-long int getDataSize(FILE *file) {
-    long int fileSize, structSize, dataSize;
-
-    fseek(file, 0, SEEK_END);
-    fileSize = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    structSize = get_student_data_size();
-    dataSize = (fileSize / structSize); // key on the struct
-
-    return dataSize;
+    return string;
 }

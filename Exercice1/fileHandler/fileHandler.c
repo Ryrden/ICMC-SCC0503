@@ -27,3 +27,15 @@ STUDENT *readStudentDataInFile(FILE *file) {
 
     return student;
 }
+
+long int getDataSize(FILE *file) {
+    long int fileSize, structSize, dataSize;
+
+    fseek(file, 0, SEEK_END);
+    fileSize = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    structSize = get_student_data_size();
+    dataSize = (fileSize / structSize); // key on the struct
+
+    return dataSize;
+}

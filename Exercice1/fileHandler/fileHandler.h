@@ -9,5 +9,6 @@
 
 void writeStudentDataInFile(STUDENT*, FILE*);
 STUDENT *readStudentDataInFile(FILE*);
+long int getDataSize(FILE *);
 
 #endif //FILEHANDLER_H

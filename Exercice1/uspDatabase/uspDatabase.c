@@ -10,21 +10,6 @@ struct student_st {
     float grade;
 };
 
-operation select_command(int command) {
-    if (command == 1)
-        return all;
-    else if (command == 2)
-        return halfFromStart;
-    else if (command == 3)
-        return halfFromEnd;
-    else if (command == 4)
-        return fromRangeTo;
-    else if (command == 5)
-        return specificData;
-
-    return ERRO;
-}
-
 STUDENT *create_student(NUSP nusp, NAME name, COURSE course, GRADE grade) {
     STUDENT *student = (STUDENT *)malloc(sizeof(STUDENT));
     student->nUsp = nusp;
@@ -32,6 +17,15 @@ STUDENT *create_student(NUSP nusp, NAME name, COURSE course, GRADE grade) {
     strcpy(student->course, course);
     student->grade = grade;
     return student;
+}
+
+void erase_student(STUDENT **student){
+    free(*student);
+    (*student) = NULL;
+}
+
+int get_student_data_size(){
+    return sizeof(STUDENT);
 }
 
 void print_student(STUDENT *student) {
@@ -67,8 +61,4 @@ GRADE get_grade(STUDENT *student){
         return student->grade;
     }
     return ERRO;
-}
-
-int get_student_data_size(){
-    return sizeof(STUDENT);
 }

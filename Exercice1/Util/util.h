@@ -5,15 +5,12 @@
 
 #define TRUE 1
 #define FALSE 0
-#define ERROR -32000
+#define ERRO -32000
 
 typedef int boolean;
 
-void boolean_print(boolean bool);
-
-char *readStringUntilReach(char *string, char caractere);
+char *readStringUntilReach(char);
 
 char *readLine();
 
-long int getDataSize(FILE *);
 #endif // UTIL_H
