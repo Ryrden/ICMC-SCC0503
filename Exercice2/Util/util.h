@@ -1,15 +1,15 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include <stdio.h>
+
 #define TRUE 1
 #define FALSE 0
-#define ERROR -32000
+#define ERRO -32000
 
 typedef int boolean;
 
-void boolean_print(boolean bool);
-
-char *readStringUntilReach(char caractere);
+char *readStringUntilReach(char);
 
 char *readLine();
 
