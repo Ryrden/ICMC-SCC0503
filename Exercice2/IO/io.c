@@ -8,25 +8,45 @@ void readAndWriteStudentFile(FILE *dataFile) {
 
     char *line = (char *)malloc(sizeof(char) * STRING_SIZE);
     while (fgets(line, sizeof(char) * STRING_SIZE, stdin)) {
-        char *token = strtok(line, ",");
-        nusp = atoi(token);
+        char *token = strtok(line, " ");
+        char *command = token;
 
-        token = strtok(NULL, ",");
-        if (!token)
-            break;
-        strcpy(name, token);
-
-        token = strtok(NULL, ",");
-        strcpy(course, token);
-
-        token = strtok(NULL, ",");
-        grade = atof(token);
-
-        STUDENT *student = create_student(nusp, name, course, grade);
-        writeStudentDataInFile(student, dataFile);
-        erase_student(&student);
+        processOperation(line, command);
     }
     free(line);
+}
+
+void processOperation(char *line, char *command) {
+    if (select_command(command) == insert) {
+        insert(line);
+    } else if (select_command(command) == search) {
+        // search
+    } else if (select_command(command) == delete_) {
+        // delete
+    } else if (select_command(command) == exit_) {
+        // exit
+    } else {
+        perror("\n\nCommand not found");
+    }
+}
+
+void insert(char *line) {
+    char *token = strtok(line, " ");
+
+    token = strtok(NULL, ",");
+
+    nusp = atoi(token);
+    strcpy(name, token);
+
+    token = strtok(NULL, ",");
+    strcpy(course, token);
+
+    token = strtok(NULL, ",");
+    grade = atof(token);
+
+    STUDENT *student = create_student(nusp, name, course, grade);
+    writeStudentDataInFile(student, dataFile);
+    erase_student(&student);
 }
 
 void readStudentFile(FILE *dataFile) {

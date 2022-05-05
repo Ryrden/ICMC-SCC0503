@@ -1,4 +1,4 @@
-UTIL=Util/util.c fileHandler/fileHandler.c uspDatabase/uspDatabase.c
+UTIL=Util/util.c fileHandler/fileHandler.c dataHandler/dataHandler uspDatabase/uspDatabase.c
 MAIN=main.c
 BINARY=main
 NAME=Exercicio1

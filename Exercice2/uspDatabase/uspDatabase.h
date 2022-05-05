@@ -3,21 +3,32 @@
 
 #include "../Util/util.h"
 #define NAME_SIZE 50
+#define LASTNAME_SIZE 50
 #define COURSE_SIZE 50
-
 
 typedef int NUSP;
 typedef char NAME[NAME_SIZE];
+typedef char LASTNAME[LASTNAME_SIZE];
 typedef char COURSE[COURSE_SIZE];
 typedef float GRADE;
+
 typedef struct student_st STUDENT;
 
+typedef enum {
+    insert = 1,
+    search,
+    delete_,
+    exit_,
+    ERRO = -1
+} operation;
+
 int get_student_data_size();
-STUDENT *create_student(NUSP, NAME, COURSE, GRADE);
+STUDENT *create_student(NUSP, NAME, LASTNAME, COURSE, GRADE);
 void erase_student(STUDENT **);
 void print_student(STUDENT *);
-NUSP get_nUsp(STUDENT *student);
+NUSP get_key(STUDENT *student);
 char *get_name(STUDENT *student);
+char *get_lastName(STUDENT *student);
 char *get_course(STUDENT *student);
 GRADE get_grade(STUDENT *student);
 
