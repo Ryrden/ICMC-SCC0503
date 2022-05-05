@@ -17,10 +17,65 @@ int main() {
         perror("Error to open Archive");
         exit(EXIT_FAILURE);
     }
+    FILE *indexFile = fopen("indexfile.bin", "wb+");
+    if (indexFile == NULL) {
+        perror("Error to open Archive");
+        exit(EXIT_FAILURE);
+    }
 
-    readAndWriteStudentFile(dataFile);
-    readStudentFile(dataFile);
+    LIST indexFile = create_list();
+
+    int RRN = 0;
+    long studentSize = get_student_data_size();
+    char *line = (char *)malloc(sizeof(char) * STRING_SIZE);
+    while (fgets(line, sizeof(char) * STRING_SIZE, stdin)) {
+        char *token = strtok(line, " ");
+        char *command = token;
+
+        if (select_command(command) == insert_) {
+            NUSP nusp;
+            NAME name;
+            LASTNAME lastName;
+            COURSE course;
+            GRADE grade;
+
+            token = strtok(NULL, ",");
+
+            nusp = atoi(token);
+            strcpy(name, token);
+
+            token = strtok(NULL, ",");
+            strcpy(lastName, token);
+
+            token = strtok(NULL, ",");
+            strcpy(course, token);
+
+            token = strtok(NULL, ",");
+            grade = atof(token);
+
+            STUDENT *student = create_student(nusp, name, lastName, course, grade);
+            writeStudentDataInFile(student, dataFile);
+
+            unsigned int studentOffset = RRN * studentSize;
+            INDEXFILE indexData = createIndexData(get_key(student),studentOffset);
+            list_insert(indexFile, indexData);
+
+            erase_student(&student);
+        } else if (select_command(command) == search_) {
+            unsigned int key;
+            scanf("%ud", &key);
+            sequential_search(indexFile, key);
+
+        } else if (select_command(command) == delete_) {
+            // delete
+        } else if (select_command(command) == exit_) {
+            // exit
+        } else {
+            perror("\n\nCommand not found");
+        }
+    }
+    free(line);
+
     fclose(dataFile);
     return EXIT_SUCCESS;
 }
-

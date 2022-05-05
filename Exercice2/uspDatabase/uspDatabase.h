@@ -15,12 +15,14 @@ typedef float GRADE;
 typedef struct student_st STUDENT;
 
 typedef enum {
-    insert = 1,
-    search,
+    insert_ = 1,
+    search_,
     delete_,
     exit_,
-    ERRO = -1
+    ERROR = -1
 } operation;
+
+operation select_command(char *command);
 
 int get_student_data_size();
 STUDENT *create_student(NUSP, NAME, LASTNAME, COURSE, GRADE);

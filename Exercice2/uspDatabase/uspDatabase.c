@@ -7,22 +7,21 @@ struct student_st {
     int nUsp;
     char name[NAME_SIZE];
     char lastName[LASTNAME_SIZE];
-    char course[COURSE_SIZE]
+    char course[COURSE_SIZE];
     float grade;
 };
 
 operation select_command(char *command){
     if (!strcmp(command, "insert"))
-        return insert;
+        return insert_;
     else if (!strcmp(command, "search"))
-        return search;
+        return search_;
     else if (!strcmp(command, "delete"))
         return delete_;
     else if (!strcmp(command, "exit"))
         return exit_;
 
-    return encerrar;
-}
+    return ERROR;
 }
 
 STUDENT *create_student(NUSP nusp, NAME name, LASTNAME lastName, COURSE course, GRADE grade) {

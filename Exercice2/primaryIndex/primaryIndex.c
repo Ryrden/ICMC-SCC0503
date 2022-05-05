@@ -2,17 +2,28 @@
 
 struct indexFile_st {
     unsigned int primaryKey;
-    unsigned int RRN;
+    unsigned int offSet;
 };
 
-INDEXFILE **getIndex(FILE*, FILEHEADER*){
-
+INDEXDATA *getIndex() {
 }
 
-int writeIndex(FILE *, INDEXFILE**, FILEHEADER*){
-
+INDEXFILE *createIndexData(unsigned int key, unsigned int offSet) {
+    INDEXFILE *index = (INDEXFILE *)malloc(sizeof(INDEXFILE));
+    index->primaryKey = key;
+    index->offSet = offSet;
+    return index;
 }
 
-void sortIndex(INDEXFILE**, FILEHEADER*){
-    
+unsigned int get_key(INDEXFILE *index) {
+    return index->primaryKey;
+}
+
+boolean writeIndex(FILE *dataFile, INDEXFILE *index) {
+}
+
+unsigned int search(INDEXFILE *index, unsigned int key) {
+}
+
+void sortIndex(INDEXFILE *) {
 }

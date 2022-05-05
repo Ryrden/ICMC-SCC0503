@@ -3,11 +3,11 @@
 struct regFields_st {
     unsigned char deleted;
     unsigned int stackRRN;
-    STUDENT student;
+    STUDENT *student;
 };
 
 void writeStudentDataInFile(STUDENT *student, FILE *file) {
-    NUSP nusp = get_nUsp(student);
+    NUSP nusp = get_key(student);
     char *name = get_name(student);
     char *course = get_course(student);
     GRADE grade = get_grade(student);
@@ -32,7 +32,7 @@ STUDENT *readStudentDataInFile(FILE *file) {
     fread(course, sizeof(COURSE), 1, file);
     fread(&grade, sizeof(GRADE), 1, file);
 
-    STUDENT *student = create_student(nusp, name, course, grade);
+    STUDENT *student = create_student(nusp, name, lastName, course, grade);
 
     return student;
 }

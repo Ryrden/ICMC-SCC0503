@@ -1,7 +1,7 @@
-UTIL=Util/util.c fileHandler/fileHandler.c dataHandler/dataHandler uspDatabase/uspDatabase.c
+UTIL= Util/util.c list/list.c primaryIndex/primaryIndex.c dataHandler/dataHandler.c uspDatabase/uspDatabase.c
 MAIN=main.c
 BINARY=main
-NAME=Exercicio1
+NAME=Exercicio2
 
 all:
 	gcc -Wall -g $(UTIL) $(MAIN) -o $(BINARY)
@@ -16,7 +16,7 @@ valgrind:
 	valgrind --tool=memcheck --leak-check=full  --track-origins=yes --show-leak-kinds=all --show-reachable=yes ./$(BINARY)
 
 zip:
-	@zip -r $(NAME).zip $(MAIN) fileHandler/ uspDatabase/ Util Makefile
+	@zip -r $(NAME).zip $(MAIN) Util/ list/ primaryIndex/ dataHandler/ uspDatabase/
 
 clean:
 	@rm *.o
