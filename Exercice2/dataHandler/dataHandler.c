@@ -22,6 +22,7 @@ STUDENT *readStudentDataInFile(FILE *file) {
     COURSE course;
     GRADE grade;
 
+    //Ler com delimitador
     fread(&nusp, sizeof(NUSP), 1, file);
     fread(name, sizeof(NAME), 1, file);
     fread(lastName, sizeof(LASTNAME), 1, file);

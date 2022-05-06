@@ -66,14 +66,15 @@ int main() {
             token = strtok(NULL, ",");
             grade = atof(token);
 
+            unsigned int studentOffset = RRN * studentSize;
+            fseek(dataFile,studentOffset,SEEK_SET);
             STUDENT *student = create_student(nusp, name, lastName, course, grade);
             writeStudentDataInFile(student, dataFile);
 
-            unsigned int studentOffset = RRN * studentSize;
             INDEXFILE *indexData = createIndexData(nusp, studentOffset);
             writeIndexInFile(indexFile, indexData);
             list_insert(indexList, indexData);
-
+            RRN++;
             erase_student(&student);
         } else if (select_command(command) == search_) {
             token = strtok(NULL, ",");
