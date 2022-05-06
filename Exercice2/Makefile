@@ -1,6 +1,6 @@
 UTIL= Util/util.c list/list.c primaryIndex/primaryIndex.c dataHandler/dataHandler.c uspDatabase/uspDatabase.c
 MAIN=main.c
-BINARY=main
+BINARY=main.out
 NAME=Exercicio2
 
 all:
