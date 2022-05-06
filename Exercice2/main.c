@@ -1,4 +1,14 @@
-#include "IO/io.h"
+#include "uspDatabase/uspDatabase.h"
+#include "dataHandler/dataHandler.h"
+#include "primaryIndex/primaryIndex.h"
+#include "list/list.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TAM 10
+#define RUN_CODES_PROBLEM 1
+#define STRING_SIZE 256
 
 /*INFORMAÇÕES:
     NOME: Ryan Souza Sá Teles
@@ -23,7 +33,7 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    LIST indexFile = create_list();
+    LIST *indexList = create_list();
 
     int RRN = 0;
     long studentSize = get_student_data_size();
@@ -54,17 +64,20 @@ int main() {
             grade = atof(token);
 
             STUDENT *student = create_student(nusp, name, lastName, course, grade);
+            //Escrevendo Arquivo de Dados
             writeStudentDataInFile(student, dataFile);
 
             unsigned int studentOffset = RRN * studentSize;
-            INDEXFILE indexData = createIndexData(get_key(student),studentOffset);
-            list_insert(indexFile, indexData);
-
+            INDEXFILE *indexData = createIndexData(nusp,studentOffset);
+            list_insert(indexList, indexData);
+            //Escrever Arquivo de Indice ??? 
+            
             erase_student(&student);
         } else if (select_command(command) == search_) {
             unsigned int key;
             scanf("%ud", &key);
-            sequential_search(indexFile, key);
+            INDEXFILE *registerIndex = sequential_search(indexList, key);
+
 
         } else if (select_command(command) == delete_) {
             // delete
@@ -78,4 +91,14 @@ int main() {
 
     fclose(dataFile);
     return EXIT_SUCCESS;
+}
+
+void readStudentFile(FILE *dataFile, unsigned int studentOffset) {
+
+    fseek(dataFile, studentOffset, SEEK_SET);
+    STUDENT *student = readStudentDataInFile(dataFile);
+
+    print_item(student);
+
+    erase_student(&student);
 }

@@ -16,7 +16,7 @@ struct list {
     long size;
 };
 
-static NODE *get_node(const LIST *, int);
+/* static NODE *get_node(const LIST *, int); */
 
 LIST *create_list() {
     LIST *list = (LIST *)malloc(sizeof(LIST));
@@ -101,7 +101,7 @@ INDEXFILE *sequential_search(const LIST *list, unsigned int key) {
     return NULL;
 }
 
-static NODE *get_node(const LIST *list, int key) {
+/* static NODE *get_node(const LIST *list, int key) {
     if (list != NULL) {
         NODE *actual_node;
         actual_node = list->start;
@@ -112,7 +112,7 @@ static NODE *get_node(const LIST *list, int key) {
         }
     }
     return NULL;
-}
+} */
 
 boolean list_erase(LIST **list) {
     if ((*list != NULL) && (!list_empty(*list))) {
@@ -133,14 +133,15 @@ boolean list_erase(LIST **list) {
     return FALSE;
 }
 
-void print_list(const LIST *list, int start, int end) {
+/* void print_list(const LIST *list, int start, int end) {
     int dataNum = end - start;
-    NODE *item = get_node(list, start);
+    NODE *actualItem = get_node(list, start);
     while (dataNum >= 0) {
-        print_item(item->item);
+        print_item(actualItem->item);
         if (dataNum != 0)
             printf("\n");
-        item = item->next;
+        actualItem = actualItem->next;
         dataNum--;
     }
 }
+ */

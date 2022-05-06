@@ -5,9 +5,6 @@ struct indexFile_st {
     unsigned int offSet;
 };
 
-INDEXDATA *getIndex() {
-}
-
 INDEXFILE *createIndexData(unsigned int key, unsigned int offSet) {
     INDEXFILE *index = (INDEXFILE *)malloc(sizeof(INDEXFILE));
     index->primaryKey = key;
@@ -23,7 +20,4 @@ boolean writeIndex(FILE *dataFile, INDEXFILE *index) {
 }
 
 unsigned int search(INDEXFILE *index, unsigned int key) {
-}
-
-void sortIndex(INDEXFILE *) {
 }

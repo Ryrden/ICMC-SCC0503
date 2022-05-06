@@ -1,13 +1,7 @@
 #include "dataHandler.h"
 
-struct regFields_st {
-    unsigned char deleted;
-    unsigned int stackRRN;
-    STUDENT *student;
-};
-
 void writeStudentDataInFile(STUDENT *student, FILE *file) {
-    NUSP nusp = get_key(student);
+    NUSP nusp = get_nusp(student);
     char *name = get_name(student);
     char *course = get_course(student);
     GRADE grade = get_grade(student);

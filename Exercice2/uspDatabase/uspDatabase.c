@@ -43,14 +43,14 @@ int get_student_data_size() {
     return sizeof(STUDENT);
 }
 
-void print_student(STUDENT *student) {
+void print_item(STUDENT *student) {
     printf("nUSP: %d\n", student->nUsp);
     printf("Nome: %s\n", student->name);
     printf("Curso: %s\n", student->course);
     printf("Nota: %.2f\n", student->grade);
 }
 
-NUSP get_key(STUDENT *student) {
+NUSP get_nusp(STUDENT *student) {
     if (student != NULL) {
         return student->nUsp;
     }

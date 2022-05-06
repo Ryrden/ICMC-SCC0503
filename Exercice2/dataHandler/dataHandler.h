@@ -8,13 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct regFields_st REGFIELDS;
-
-int writeRegister(FILE*);
-void freeRegister(REGFIELDS*);
-void printByRRN(unsigned int, FILE *, char);
-void showAllRecords(FILE*, INDEXFILE);
-
 void writeStudentDataInFile(STUDENT *, FILE *);
 STUDENT *readStudentDataInFile(FILE *);
 long int getDataSize(FILE *);
