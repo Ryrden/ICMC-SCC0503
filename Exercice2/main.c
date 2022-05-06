@@ -1,7 +1,7 @@
-#include "uspDatabase/uspDatabase.h"
 #include "dataHandler/dataHandler.h"
-#include "primaryIndex/primaryIndex.h"
 #include "list/list.h"
+#include "primaryIndex/primaryIndex.h"
+#include "uspDatabase/uspDatabase.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,6 +20,8 @@
     Disciplina: Estrutura de Dados II
     Professor: Leonardo Tórtoro Pereira
 */
+
+void readStudentFile(FILE *dataFile, unsigned int studentOffset);
 
 int main() {
     FILE *dataFile = fopen("datafile.bin", "wb+");
@@ -50,8 +52,9 @@ int main() {
             GRADE grade;
 
             token = strtok(NULL, ",");
-
             nusp = atoi(token);
+
+            token = strtok(NULL, ",");
             strcpy(name, token);
 
             token = strtok(NULL, ",");
@@ -64,24 +67,27 @@ int main() {
             grade = atof(token);
 
             STUDENT *student = create_student(nusp, name, lastName, course, grade);
-            //Escrevendo Arquivo de Dados
             writeStudentDataInFile(student, dataFile);
 
             unsigned int studentOffset = RRN * studentSize;
-            INDEXFILE *indexData = createIndexData(nusp,studentOffset);
+            INDEXFILE *indexData = createIndexData(nusp, studentOffset);
+            writeIndexInFile(indexFile, indexData);
             list_insert(indexList, indexData);
-            //Escrever Arquivo de Indice ??? 
-            
+
             erase_student(&student);
         } else if (select_command(command) == search_) {
-            unsigned int key;
-            scanf("%ud", &key);
+            token = strtok(NULL, ",");
+            unsigned int key = atoi(token);
             INDEXFILE *registerIndex = sequential_search(indexList, key);
-
+            if (registerIndex != NULL) {
+                unsigned int studentOffset = get_offset(registerIndex);
+                readStudentFile(dataFile, studentOffset);
+            }
 
         } else if (select_command(command) == delete_) {
             // delete
         } else if (select_command(command) == exit_) {
+            break;
             // exit
         } else {
             perror("\n\nCommand not found");

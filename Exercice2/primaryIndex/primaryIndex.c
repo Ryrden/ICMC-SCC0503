@@ -16,7 +16,14 @@ unsigned int get_key(INDEXFILE *index) {
     return index->primaryKey;
 }
 
-boolean writeIndex(FILE *dataFile, INDEXFILE *index) {
+unsigned int get_offset(INDEXFILE *index){
+    return index->offSet;
+}
+
+boolean writeIndexInFile(FILE *indexFile, INDEXFILE *index) {
+    fseek(indexFile,0,SEEK_END);
+    fwrite(index, sizeof(INDEXFILE), 1, indexFile);
+    return TRUE;
 }
 
 unsigned int search(INDEXFILE *index, unsigned int key) {
