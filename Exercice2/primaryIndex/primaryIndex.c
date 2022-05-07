@@ -26,5 +26,43 @@ boolean writeIndexInFile(FILE *indexFile, INDEXFILE *index) {
     return TRUE;
 }
 
-unsigned int search(INDEXFILE *index, unsigned int key) {
+unsigned int search(FILE *indexFile, unsigned int key) {
+    INDEXFILE *registerIndex;
+    while(!feof(indexFile)){
+        fread(registerIndex,sizeof(INDEXFILE),1,indexFile);
+        if (get_key(registerIndex) == key)
+            return registerIndex;
+    }
+    return NULL;
+}
+
+unsigned int delete(FILE *indexFile, unsigned int key){
+    fseek(indexFile, 0, SEEK_END);
+    fileSize = ftell(indexFile);
+    fseek(indexFile, 0, SEEK_SET);
+    structSize = sizeof(INDEXFILE);
+    dataSize = (fileSize / structSize); // key on the struct
+
+    INDEXFILE *indexData = (INDEXFILE*) malloc(sizeof(INDEXFILE)*dataSize-1);
+
+    INDEXFILE *registerIndex;
+    int i = 0;
+    unsigned int offSet = 0;
+    while(!feof(indexFile)){
+        fread(registerIndex,sizeof(INDEXFILE),1,indexFile);
+        if (get_key(registerIndex) != key){
+            indexData[i] = registerIndex;
+            i++;    
+        }
+        else {
+            offSet = get_offset(registerIndex);
+        }
+    }
+    indexFile = fopen("indexfile.bin", "wb+");
+    
+    for(int i = 0; i < dataSize-1; i++){
+        writeIndexInFile(indexFile,indexData[i]);
+    }
+    
+    return offSet;
 }

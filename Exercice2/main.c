@@ -35,8 +35,6 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    LIST *indexList = create_list();
-
     int RRN = 0;
     long studentSize = get_student_data_size();
     char *line = (char *)malloc(sizeof(char) * STRING_SIZE);
@@ -66,27 +64,28 @@ int main() {
             token = strtok(NULL, ",");
             grade = atof(token);
 
-            unsigned int studentOffset = RRN * studentSize;
-            fseek(dataFile,studentOffset,SEEK_SET);
             STUDENT *student = create_student(nusp, name, lastName, course, grade);
             writeStudentDataInFile(student, dataFile);
 
+            unsigned int studentOffset = RRN * studentSize;
             INDEXFILE *indexData = createIndexData(nusp, studentOffset);
-            writeIndexInFile(indexFile, indexData);
-            list_insert(indexList, indexData);
+            writeIndexInFile(indexData);
+            
             RRN++;
             erase_student(&student);
         } else if (select_command(command) == search_) {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
-            INDEXFILE *registerIndex = sequential_search(indexList, key);
+            registerIndex = search(indexFile, key);
             if (registerIndex != NULL) {
                 unsigned int studentOffset = get_offset(registerIndex);
                 readStudentFile(dataFile, studentOffset);
             }
-
         } else if (select_command(command) == delete_) {
-            // delete
+            token = strtok(NULL, ",");
+            unsigned int key = atoi(token);
+            unsigned int studentOffset = delete(indexFile, key);
+            logicalDeletion(dataFile,studentOffset);
         } else if (select_command(command) == exit_) {
             break;
             // exit
@@ -101,7 +100,6 @@ int main() {
 }
 
 void readStudentFile(FILE *dataFile, unsigned int studentOffset) {
-
     fseek(dataFile, studentOffset, SEEK_SET);
     STUDENT *student = readStudentDataInFile(dataFile);
 
