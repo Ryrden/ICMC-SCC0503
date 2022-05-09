@@ -15,9 +15,9 @@ void writeStudentDataInFile(STUDENT *student, FILE *file) {
     fwrite(&grade, sizeof(NUSP), 1, file);
 }
 
-void logicalDeletion(FILE *file, unsigned int studentOffset){
+void logicalDeletion(FILE *dataFile, unsigned int studentOffset){
     fseek(dataFile, studentOffset, SEEK_SET);
-    fwrite("*|",2,1,file);
+    fwrite("*|",2,1,dataFile);
 }
 
 STUDENT *readStudentDataInFile(FILE *file) {

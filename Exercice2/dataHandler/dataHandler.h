@@ -9,7 +9,7 @@
 #include <string.h>
 
 void writeStudentDataInFile(STUDENT *, FILE *);
-void logicalDeletion(FILE *file, unsigned int studentOffset);
+void logicalDeletion(FILE *dataFile, unsigned int studentOffset);
 STUDENT *readStudentDataInFile(FILE *);
 long int getDataSize(FILE *);
 

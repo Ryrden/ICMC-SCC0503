@@ -1,4 +1,4 @@
-UTIL= Util/util.c list/list.c primaryIndex/primaryIndex.c dataHandler/dataHandler.c uspDatabase/uspDatabase.c
+UTIL= Util/util.c primaryIndex/primaryIndex.c dataHandler/dataHandler.c uspDatabase/uspDatabase.c
 MAIN=main.c
 BINARY=main.out
 NAME=Exercicio2
@@ -16,7 +16,7 @@ valgrind:
 	valgrind --tool=memcheck --leak-check=full  --track-origins=yes --show-leak-kinds=all --show-reachable=yes ./$(BINARY)
 
 zip:
-	@zip -r $(NAME).zip $(MAIN) Util/ list/ primaryIndex/ dataHandler/ uspDatabase/
+	@zip -r $(NAME).zip $(MAIN) Util/ primaryIndex/ dataHandler/ uspDatabase/
 
 clean:
 	@rm *.o

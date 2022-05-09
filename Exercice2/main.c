@@ -1,5 +1,4 @@
 #include "dataHandler/dataHandler.h"
-#include "list/list.h"
 #include "primaryIndex/primaryIndex.h"
 #include "uspDatabase/uspDatabase.h"
 #include <stdio.h>
@@ -69,23 +68,22 @@ int main() {
 
             unsigned int studentOffset = RRN * studentSize;
             INDEXFILE *indexData = createIndexData(nusp, studentOffset);
-            writeIndexInFile(indexData);
+            writeIndexInFile(indexFile, indexData);
             
             RRN++;
             erase_student(&student);
         } else if (select_command(command) == search_) {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
-            registerIndex = search(indexFile, key);
+            INDEXFILE *registerIndex = search(indexFile, key);
             if (registerIndex != NULL) {
-                unsigned int studentOffset = get_offset(registerIndex);
-                readStudentFile(dataFile, studentOffset);
+                readStudentFile(dataFile, get_offset(registerIndex));
             }
         } else if (select_command(command) == delete_) {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
-            unsigned int studentOffset = delete(indexFile, key);
-            logicalDeletion(dataFile,studentOffset);
+            INDEXFILE *registerIndex = search(indexFile, key);
+            logicalDeletion(dataFile,get_offset(registerIndex));
         } else if (select_command(command) == exit_) {
             break;
             // exit
