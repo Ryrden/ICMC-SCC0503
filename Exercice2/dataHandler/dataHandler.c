@@ -2,7 +2,7 @@
 
 void writeStudentDataInFile(STUDENT *student, FILE *file) {
     NUSP nusp = get_nusp(student);
-    char *name = get_name(student);
+				char *name = get_name(student);
     char *lastName = get_lastName(student);
     char *course = get_course(student);
     GRADE grade = get_grade(student);
@@ -31,11 +31,11 @@ STUDENT *readStudentDataInFile(FILE *file) {
     fread(&nusp, sizeof(NUSP), 1, file);
     fread(name, sizeof(NAME), 1, file);
     fread(lastName, sizeof(LASTNAME), 1, file);
-    fread(course, sizeof(COURSE), 1, file);
+				fread(course, sizeof(COURSE), 1, file);
     fread(&grade, sizeof(GRADE), 1, file);
 
     STUDENT *student = create_student(nusp, name, lastName, course, grade);
-
+				
     return student;
 }
 

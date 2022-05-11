@@ -28,14 +28,15 @@ boolean writeIndexInFile(FILE *indexFile, INDEXFILE *index) {
 
 INDEXFILE *search(FILE *indexFile, unsigned int key) {
     INDEXFILE *registerIndex = malloc(sizeof(INDEXFILE));
-    while(!feof(indexFile)){
+				rewind(indexFile);
+				while(!feof(indexFile)){
         fread(registerIndex,sizeof(INDEXFILE),1,indexFile);
         if (get_key(registerIndex) == key)
             return registerIndex;
     }
     return NULL;
 }
-
+// fazer deleção 
 /* unsigned int delete(FILE *indexFile, unsigned int key){
     long fileSize, structSize, dataSize;
     fseek(indexFile, 0, SEEK_END);

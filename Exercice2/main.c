@@ -37,7 +37,7 @@ int main() {
     int RRN = 0;
     long studentSize = get_student_data_size();
     char *line = (char *)malloc(sizeof(char) * STRING_SIZE);
-    while (fgets(line, sizeof(char) * STRING_SIZE, stdin)) {
+				while (fgets(line, sizeof(char) * STRING_SIZE, stdin)) {
         char *token = strtok(line, " ");
         char *command = token;
 

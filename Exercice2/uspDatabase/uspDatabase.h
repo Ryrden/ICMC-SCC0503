@@ -2,7 +2,7 @@
 #define USPDATABASE_H
 
 #include "../Util/util.h"
-#define NAME_SIZE 50
+#define NAME_SIZE 48
 #define LASTNAME_SIZE 50
 #define COURSE_SIZE 50
 
