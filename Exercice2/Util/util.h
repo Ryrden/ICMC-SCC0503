@@ -13,4 +13,6 @@ char *readStringUntilReach(char);
 
 char *readLine();
 
+long int getDataSize(FILE *, long);
+
 #endif // UTIL_H

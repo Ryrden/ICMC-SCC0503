@@ -2,12 +2,12 @@
 
 void writeStudentDataInFile(STUDENT *student, FILE *file) {
     NUSP nusp = get_nusp(student);
-				char *name = get_name(student);
+    char *name = get_name(student);
     char *lastName = get_lastName(student);
     char *course = get_course(student);
     GRADE grade = get_grade(student);
 
-    //Adicionar Delimit
+    // Adicionar Delimit
     fwrite(&nusp, sizeof(NUSP), 1, file);
     fwrite(name, sizeof(NAME), 1, file);
     fwrite(lastName, sizeof(LASTNAME), 1, file);
@@ -15,9 +15,9 @@ void writeStudentDataInFile(STUDENT *student, FILE *file) {
     fwrite(&grade, sizeof(NUSP), 1, file);
 }
 
-void logicalDeletion(FILE *dataFile, unsigned int studentOffset){
+void logicalDeletion(FILE *dataFile, unsigned int studentOffset) {
     fseek(dataFile, studentOffset, SEEK_SET);
-    fwrite("*|",2,1,dataFile);
+    fwrite("*|", 2, 1, dataFile);
 }
 
 STUDENT *readStudentDataInFile(FILE *file) {
@@ -27,26 +27,14 @@ STUDENT *readStudentDataInFile(FILE *file) {
     COURSE course;
     GRADE grade;
 
-    //Ler com delimitador
+    // Ler com delimitador
     fread(&nusp, sizeof(NUSP), 1, file);
     fread(name, sizeof(NAME), 1, file);
     fread(lastName, sizeof(LASTNAME), 1, file);
-				fread(course, sizeof(COURSE), 1, file);
+    fread(course, sizeof(COURSE), 1, file);
     fread(&grade, sizeof(GRADE), 1, file);
 
     STUDENT *student = create_student(nusp, name, lastName, course, grade);
-				
+
     return student;
-}
-
-long int getDataSize(FILE *file) {
-    long int fileSize, structSize, dataSize;
-
-    fseek(file, 0, SEEK_END);
-    fileSize = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    structSize = get_student_data_size();
-    dataSize = (fileSize / structSize); // key on the struct
-
-    return dataSize;
 }

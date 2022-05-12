@@ -11,6 +11,5 @@
 void writeStudentDataInFile(STUDENT *, FILE *);
 void logicalDeletion(FILE *dataFile, unsigned int studentOffset);
 STUDENT *readStudentDataInFile(FILE *);
-long int getDataSize(FILE *);
 
 #endif // FILEHANDLER_H

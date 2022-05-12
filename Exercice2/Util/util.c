@@ -33,3 +33,15 @@ char *readStringUntilReach(char caractere) {
     }
     return string;
 }
+
+
+long int getDataSize(FILE *file, long structSize) {
+    long int fileSize, dataSize;
+
+    fseek(file, 0, SEEK_END);
+    fileSize = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    dataSize = (fileSize / structSize); // key on the struct
+
+    return dataSize;
+}
