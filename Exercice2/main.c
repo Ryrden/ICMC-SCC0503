@@ -84,7 +84,7 @@ int main() {
             unsigned int key = atoi(token);
             INDEXFILE *registerIndex = search(indexFile, key);
             logicalDeletion(dataFile,get_offset(registerIndex));
-            deleteIndexInFile(indexFile,key);
+            indexFile = deleteIndexInFile(indexFile,key);
         } else if (select_command(command) == exit_) {
             break;
             // exit

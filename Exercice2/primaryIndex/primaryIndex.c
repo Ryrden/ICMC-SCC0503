@@ -34,17 +34,19 @@ INDEXFILE *search(FILE *indexFile, unsigned int key) {
         if (get_key(registerIndex) == key)
             return registerIndex;
     }
+
     return NULL;
 }
 
-void deleteIndexInFile (FILE *indexFile, unsigned int key) {
-
+FILE* deleteIndexInFile (FILE *indexFile, unsigned int key) {
+    rewind(indexFile);
     long dataSize = getDataSize(indexFile, sizeof(INDEXFILE));
 
     INDEXFILE **indexData = (INDEXFILE **)malloc(sizeof(INDEXFILE) * dataSize - 1);
 
     INDEXFILE *registerIndex = (INDEXFILE*) malloc(sizeof(INDEXFILE));
     int i = 0;
+
     rewind(indexFile);
     while (!feof(indexFile)) {
         fread(registerIndex, sizeof(INDEXFILE), 1, indexFile);
@@ -53,11 +55,21 @@ void deleteIndexInFile (FILE *indexFile, unsigned int key) {
             i++;
         }
     }
-    indexFile = fopen("indexfile.bin", "wb+");
+    
+				fclose(indexFile);
+			 FILE* index = fopen("indexfile2.bin", "wb+");
+
+    if (index == NULL) {
+        perror("Error to open Archive");
+        exit(EXIT_FAILURE);
+    }
+
 
     for (int i = 0; i < dataSize - 1; i++) {
-        writeIndexInFile(indexFile, indexData[i]);
+        writeIndexInFile(index, indexData[i]);
     }
     free(registerIndex);
     free(indexData);
+
+				return index;
 }
