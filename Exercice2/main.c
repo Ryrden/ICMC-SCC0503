@@ -62,23 +62,28 @@ int main() {
 
             token = strtok(NULL, ",");
             grade = atof(token);
+            INDEXFILE *registerIndex = search(indexFile, nusp);
+            if (registerIndex == NULL) {
+                STUDENT *student = create_student(nusp, name, lastName, course, grade);
+                writeStudentDataInFile(student, dataFile);
 
-            STUDENT *student = create_student(nusp, name, lastName, course, grade);
-            writeStudentDataInFile(student, dataFile);
+                unsigned int studentOffset = RRN * studentSize;
+                INDEXFILE *indexData = createIndexData(nusp, studentOffset);
+                writeIndexInFile(indexFile, indexData);
 
-            unsigned int studentOffset = RRN * studentSize;
-            INDEXFILE *indexData = createIndexData(nusp, studentOffset);
-            writeIndexInFile(indexFile, indexData);
-
-            RRN++;
-            erase_student(&student);
+                RRN++;
+                erase_student(&student);
+            } else {
+                printf("O Registro ja existe!\n");
+            }
         } else if (select_command(command) == search_) {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
             INDEXFILE *registerIndex = search(indexFile, key);
-            if (registerIndex != NULL) {
+            if (registerIndex)
                 readStudentFile(dataFile, get_offset(registerIndex));
-            }
+            else
+                printf("Registro nao encontrado!\n");
         } else if (select_command(command) == delete_) {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
@@ -86,18 +91,13 @@ int main() {
             if (registerIndex) {
                 logicalDeletion(dataFile, get_offset(registerIndex));
                 deleteIndexInFile(indexFile, key);
-            } else
-                printf("Registro nao encontrado!");
+            }
         } else if (select_command(command) == exit_) {
+            free(line);
+            fclose(dataFile);
             break;
-            // exit
-        } else {
-            perror("\n\nCommand not found");
         }
     }
-    free(line);
-
-    fclose(dataFile);
     return EXIT_SUCCESS;
 }
 

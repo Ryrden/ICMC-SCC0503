@@ -18,7 +18,7 @@ operation select_command(char *command){
         return search_;
     else if (!strcmp(command, "delete"))
         return delete_;
-    else if (!strcmp(command, "exit"))
+    else if (!strcmp(command, "exit\n"))
         return exit_;
 
     return ERROR;
@@ -45,11 +45,11 @@ int get_student_data_size() {
 
 void print_item(STUDENT *student) {
     printf("-------------------------------\n");
-    printf("nUSP: %d\n", student->nUsp);
-    printf("Nome: %s\n", student->name);
-    printf("Sobrenome: %s\n", student->lastName);
-    printf("Curso: %s\n", student->course);
-    printf("Nota: %.2f\n", student->grade);
+    printf("USP number: %d\n", student->nUsp);
+    printf("Name: %s\n", student->name);
+    printf("Surname: %s\n", student->lastName);
+    printf("Course: %s\n", student->course);
+    printf("Test grade: %.2f\n", student->grade);
     printf("-------------------------------\n");
 }
 

@@ -6,7 +6,7 @@
 #define LASTNAME_SIZE 50
 #define COURSE_SIZE 50
 
-typedef int NUSP;
+typedef unsigned int NUSP;
 typedef char NAME[NAME_SIZE];
 typedef char LASTNAME[LASTNAME_SIZE];
 typedef char COURSE[COURSE_SIZE];
