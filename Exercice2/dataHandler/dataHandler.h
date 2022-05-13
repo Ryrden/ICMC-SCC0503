@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define DELIMITER "|"
+
 void writeStudentDataInFile(STUDENT *, FILE *);
 void logicalDeletion(FILE *dataFile, unsigned int studentOffset);
 STUDENT *readStudentDataInFile(FILE *);

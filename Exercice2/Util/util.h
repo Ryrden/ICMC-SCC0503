@@ -8,11 +8,15 @@
 #define ERRO -32000
 
 typedef int boolean;
+typedef unsigned int KEY;
+
 
 char *readStringUntilReach(char);
 
 char *readLine();
 
 long int getDataSize(FILE *, long);
+
+void verifyNullPointerExceptionToFile(FILE *);
 
 #endif // UTIL_H

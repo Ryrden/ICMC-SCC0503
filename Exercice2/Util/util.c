@@ -34,7 +34,6 @@ char *readStringUntilReach(char caractere) {
     return string;
 }
 
-
 long int getDataSize(FILE *file, long structSize) {
     long int fileSize, dataSize;
 
@@ -44,4 +43,11 @@ long int getDataSize(FILE *file, long structSize) {
     dataSize = (fileSize / structSize); // key on the struct
 
     return dataSize;
+}
+
+void verifyNullPointerExceptionToFile(FILE *file){
+    if (indexFile == NULL) {
+            perror("Error to open Archive");
+            exit(EXIT_FAILURE);
+        }
 }

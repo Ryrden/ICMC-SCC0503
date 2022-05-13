@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define DATA_TO_DELETE 1
+
 typedef struct indexFile_st INDEXFILE;
 
 unsigned int get_key(INDEXFILE *);
