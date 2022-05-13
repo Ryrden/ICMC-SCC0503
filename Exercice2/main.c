@@ -74,8 +74,8 @@ int main() {
                 RRN++;
                 erase_student(&student);
                 eraseIndexData(&indexData);
-                eraseIndexData(&registerIndex);
             } else {
+                eraseIndexData(&registerIndex);
                 printf("O Registro ja existe!\n");
             }
         } else if (select_command(command) == search_) {
@@ -98,12 +98,12 @@ int main() {
                 eraseIndexData(&registerIndex);
             }
         } else if (select_command(command) == exit_) {
-            free(line);
-            fclose(dataFile);
-            fclose(indexFile);
             break;
         }
     }
+    free(line);
+    fclose(dataFile);
+    fclose(indexFile);
     return EXIT_SUCCESS;
 }
 
