@@ -73,6 +73,8 @@ int main() {
 
                 RRN++;
                 erase_student(&student);
+                eraseIndexData(&indexData);
+                eraseIndexData(&registerIndex);
             } else {
                 printf("O Registro ja existe!\n");
             }
@@ -80,10 +82,12 @@ int main() {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
             INDEXFILE *registerIndex = search(indexFile, key);
-            if (registerIndex)
+            if (registerIndex) {
                 readStudentFile(dataFile, get_offset(registerIndex));
-            else
+                eraseIndexData(&registerIndex);
+            } else {
                 printf("Registro nao encontrado!\n");
+            }
         } else if (select_command(command) == delete_) {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
@@ -91,10 +95,12 @@ int main() {
             if (registerIndex) {
                 logicalDeletion(dataFile, get_offset(registerIndex));
                 deleteIndexInFile(indexFile, key);
+                eraseIndexData(&registerIndex);
             }
         } else if (select_command(command) == exit_) {
             free(line);
             fclose(dataFile);
+            fclose(indexFile);
             break;
         }
     }
