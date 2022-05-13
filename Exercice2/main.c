@@ -37,7 +37,7 @@ int main() {
     int RRN = 0;
     long studentSize = get_student_data_size();
     char *line = (char *)malloc(sizeof(char) * STRING_SIZE);
-				while (fgets(line, sizeof(char) * STRING_SIZE, stdin)) {
+    while (fgets(line, sizeof(char) * STRING_SIZE, stdin)) {
         char *token = strtok(line, " ");
         char *command = token;
 
@@ -69,7 +69,7 @@ int main() {
             unsigned int studentOffset = RRN * studentSize;
             INDEXFILE *indexData = createIndexData(nusp, studentOffset);
             writeIndexInFile(indexFile, indexData);
-            
+
             RRN++;
             erase_student(&student);
         } else if (select_command(command) == search_) {
@@ -83,8 +83,11 @@ int main() {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
             INDEXFILE *registerIndex = search(indexFile, key);
-            logicalDeletion(dataFile,get_offset(registerIndex));
-            deleteIndexInFile(indexFile,key);
+            if (registerIndex) {
+                logicalDeletion(dataFile, get_offset(registerIndex));
+                deleteIndexInFile(indexFile, key);
+            } else
+                printf("Registro nao encontrado!");
         } else if (select_command(command) == exit_) {
             break;
             // exit

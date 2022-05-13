@@ -48,6 +48,14 @@ INDEXFILE *search(FILE *indexFile, unsigned int key) {
 
 void deleteIndexInFile(FILE *indexFile, unsigned int key) {
     long dataSize = getDataSize(indexFile, sizeof(INDEXFILE));
+    if (dataSize <= 1) {
+        indexFile = freopen("indexfile.bin", "wb+", indexFile);
+        if (indexFile == NULL) {
+            perror("Error to open Archive");
+            exit(EXIT_FAILURE);
+        }
+        return;
+    }
 
     INDEXFILE **indexData = (INDEXFILE **)malloc(sizeof(INDEXFILE) * dataSize - 1);
 
@@ -55,11 +63,11 @@ void deleteIndexInFile(FILE *indexFile, unsigned int key) {
     int i = 0;
 
     rewind(indexFile);
-    while (i < dataSize) {
+    while (i < dataSize - 1) {
         fread(registerIndex, sizeof(INDEXFILE), 1, indexFile);
         if (registerIndex) {
             if (get_key(registerIndex) != key) {
-                INDEXFILE *newRegisterIndex = (INDEXFILE *) malloc(sizeof(INDEXFILE));
+                INDEXFILE *newRegisterIndex = (INDEXFILE *)malloc(sizeof(INDEXFILE));
                 set_key(newRegisterIndex, get_key(registerIndex));
                 set_offset(newRegisterIndex, get_offset(registerIndex));
                 indexData[i] = newRegisterIndex;
