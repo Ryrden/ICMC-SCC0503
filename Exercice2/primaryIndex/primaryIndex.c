@@ -20,6 +20,14 @@ unsigned int get_offset(INDEXFILE *index) {
     return index->offSet;
 }
 
+unsigned int set_key(INDEXFILE *index, unsigned int key) {
+    return index->primaryKey = key;
+}
+
+unsigned int set_offset(INDEXFILE *index, unsigned int offset) {
+    return index->offSet = offset;
+}
+
 boolean writeIndexInFile(FILE *indexFile, INDEXFILE *index) {
     fseek(indexFile, 0, SEEK_END);
     fwrite(index, sizeof(INDEXFILE), 1, indexFile);
@@ -38,38 +46,41 @@ INDEXFILE *search(FILE *indexFile, unsigned int key) {
     return NULL;
 }
 
-FILE* deleteIndexInFile (FILE *indexFile, unsigned int key) {
-    rewind(indexFile);
+void deleteIndexInFile(FILE *indexFile, unsigned int key) {
     long dataSize = getDataSize(indexFile, sizeof(INDEXFILE));
 
     INDEXFILE **indexData = (INDEXFILE **)malloc(sizeof(INDEXFILE) * dataSize - 1);
 
-    INDEXFILE *registerIndex = (INDEXFILE*) malloc(sizeof(INDEXFILE));
+    INDEXFILE *registerIndex = (INDEXFILE *)malloc(sizeof(INDEXFILE));
     int i = 0;
 
     rewind(indexFile);
-    while (!feof(indexFile)) {
+    while (i < dataSize) {
         fread(registerIndex, sizeof(INDEXFILE), 1, indexFile);
-        if (get_key(registerIndex) != key) {
-            indexData[i] = registerIndex;
-            i++;
-        }
+        if (registerIndex) {
+            if (get_key(registerIndex) != key) {
+                INDEXFILE *newRegisterIndex = (INDEXFILE *) malloc(sizeof(INDEXFILE));
+                set_key(newRegisterIndex, get_key(registerIndex));
+                set_offset(newRegisterIndex, get_offset(registerIndex));
+                indexData[i] = newRegisterIndex;
+                i++;
+            }
+        } else
+            break;
     }
-    
-				fclose(indexFile);
-			 FILE* index = fopen("indexfile2.bin", "wb+");
 
-    if (index == NULL) {
+    fclose(indexFile);
+    indexFile = fopen("indexfile.bin", "wb+");
+
+    if (indexFile == NULL) {
         perror("Error to open Archive");
         exit(EXIT_FAILURE);
     }
 
-
     for (int i = 0; i < dataSize - 1; i++) {
-        writeIndexInFile(index, indexData[i]);
+        writeIndexInFile(indexFile, indexData[i]);
     }
+
     free(registerIndex);
     free(indexData);
-
-				return index;
 }
