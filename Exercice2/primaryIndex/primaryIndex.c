@@ -53,27 +53,31 @@ INDEXFILE *search(FILE *indexFile, unsigned int key) {
 
 void deleteIndexInFile(FILE *indexFile, unsigned int key) {
     long dataSize = getDataSize(indexFile, sizeof(INDEXFILE));
-    if (dataSize <= DATA_TO_DELETE) {
+    if (dataSize <= 1) {
         indexFile = freopen("indexfile.bin", "wb+", indexFile);
-        verifyNullPointerExceptionToFile(indexFile);
+        if (indexFile == NULL) {
+            perror("Error to open Archive");
+            exit(EXIT_FAILURE);
+        }
+
         return;
     }
 
     INDEXFILE **indexData = (INDEXFILE **)malloc(sizeof(INDEXFILE) * dataSize - 1);
 
     INDEXFILE *registerIndex = (INDEXFILE *)malloc(sizeof(INDEXFILE));
+    int i = 0;
 
     rewind(indexFile);
-    int index = 0;
-    while (index < dataSize - DATA_TO_DELETE) {
+    while (i < dataSize - 1) {
         fread(registerIndex, sizeof(INDEXFILE), 1, indexFile);
         if (registerIndex) {
             if (get_key(registerIndex) != key) {
                 INDEXFILE *newRegisterIndex = (INDEXFILE *)malloc(sizeof(INDEXFILE));
                 set_key(newRegisterIndex, get_key(registerIndex));
                 set_offset(newRegisterIndex, get_offset(registerIndex));
-                indexData[index] = newRegisterIndex;
-                index++;
+                indexData[i] = newRegisterIndex;
+                i++;
             }
         } else
             break;
@@ -86,7 +90,7 @@ void deleteIndexInFile(FILE *indexFile, unsigned int key) {
         exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; i < dataSize - DATA_TO_DELETE; i++) {
+    for (int i = 0; i < dataSize - 1; i++) {
         writeIndexInFile(indexFile, indexData[i]);
         eraseIndexData(&indexData[i]);
     }

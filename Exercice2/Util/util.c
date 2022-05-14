@@ -46,7 +46,7 @@ long int getDataSize(FILE *file, long structSize) {
 }
 
 void verifyNullPointerExceptionToFile(FILE *file){
-    if (indexFile == NULL) {
+    if (file == NULL) {
             perror("Error to open Archive");
             exit(EXIT_FAILURE);
         }

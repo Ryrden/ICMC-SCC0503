@@ -9,13 +9,9 @@ void writeStudentDataInFile(STUDENT *student, FILE *file) {
 
     // Adicionar Delimit
     fwrite(&nusp, sizeof(NUSP), 1, file);
-    fwrite(DELIMITER,sizeof(char),1,file);
     fwrite(name, sizeof(NAME), 1, file);
-    fwrite(DELIMITER,sizeof(char),1,file);
     fwrite(lastName, sizeof(LASTNAME), 1, file);
-    fwrite(DELIMITER,sizeof(char),1,file);
     fwrite(course, sizeof(COURSE), 1, file);
-    fwrite(DELIMITER,sizeof(char),1,file);
     fwrite(&grade, sizeof(NUSP), 1, file);
 }
 
@@ -32,19 +28,12 @@ STUDENT *readStudentDataInFile(FILE *file) {
     GRADE grade;
 
     // Ler com delimitador
-    char *inputToDelimiter = (char*) malloc(sizeof(char)*2);
     fread(&nusp, sizeof(NUSP), 1, file);
-    fread(inputToDelimiter,2,1,file);
     fread(name, sizeof(NAME), 1, file);
-    fread(inputToDelimiter,2,1,file);
     fread(lastName, sizeof(LASTNAME), 1, file);
-    fread(inputToDelimiter,2,1,file);
     fread(course, sizeof(COURSE), 1, file);
-    fread(inputToDelimiter,2,1,file);
     fread(&grade, sizeof(GRADE), 1, file);
 
-    free(inputToDelimiter);
-    
     STUDENT *student = create_student(nusp, name, lastName, course, grade);
 
     return student;

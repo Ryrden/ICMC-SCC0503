@@ -8,8 +8,6 @@
 #define ERRO -32000
 
 typedef int boolean;
-typedef unsigned int KEY;
-
 
 char *readStringUntilReach(char);
 
