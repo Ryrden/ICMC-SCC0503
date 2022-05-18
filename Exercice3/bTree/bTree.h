@@ -7,25 +7,32 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define PAGESIZE 4096
+#define TREE_HEADER PAGESIZE
+#define MAXKEYS 204
+#define AUX_FIELDS_SIZE_ON_PAGE (2 + 1) //∗ number o f k e y s and ” i s l e a f ” b o o l ∗/
+#define FREE_SPACE_ON_PAGE (PAGESIZE - ((MAXKEYS * 4) + (MAXKEYS * 8) + ((MAXKEYS + 1) * 8) + 3))
+
 typedef struct record_st RECORD;
 typedef struct page_st BTPAGE;
 typedef struct promotedKey_st PROMOTEDKEY;
 
-btPage *readPageFromFile(FILE *fp);
-Errors writePageIntoFile(long rrn, btPage *page, FILE *fp);
-btPage *getPage(long RRN, FILE *fp);
-long getTreeHeader(FILE *fp);
-void writeTreeHeader(FILE *fp, long rootRRN);
-btPage *createTree(FILE *fp);
-btPage *getOrCreateRoot(FILE *fp);
-promotedKey *insertIntoNode(btPage *page, promotedKey *newKey, FILE *fp);
-btPage *searchPositionOnPageAndInsert(btPage *page, promotedKey *newKey);
-btPage *splitAndCreateNewNode(btPage **page);
-promotedKey *extractpromotedKey(btPage *page);
-promotedKey *_split(btPage *page, FILE *fp, promotedKey *newKey);
-btPage *createNodeWithPromotedKey(promotedKey *promoKey);
-Errors setNodeAsRoot(btPage *page, FILE *fp);
-promotedKey *_bTreeInsert(btPage *node, promotedKey *key, FILE *fp);
-Errors bTreeInsert(PrimaryIndex *newRecord, btPage *root, FILE *fp);
-long bTreeSelect(btPage *node, int key, FILE *fp);
+BTPAGE *readPageFromFile(FILE *);
+boolean writePageIntoFile(long, BTPAGE *, FILE *);
+BTPAGE *getPage(long, FILE *);
+long getTreeHeader(FILE *);
+void writeTreeHeader(FILE *, long);
+BTPAGE *createTree(FILE *);
+BTPAGE *getOrCreateRoot(FILE *);
+PROMOTEDKEY *insertIntoNode(BTPAGE *, PROMOTEDKEY *, FILE *);
+BTPAGE *searchPositionOnPageAndInsert(BTPAGE *, PROMOTEDKEY *);
+BTPAGE *splitAndCreateNewNode(BTPAGE **);
+PROMOTEDKEY *extractpromotedKey(BTPAGE *);
+PROMOTEDKEY *_split(BTPAGE *, FILE *, PROMOTEDKEY *);
+BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *);
+boolean setNodeAsRoot(BTPAGE *, FILE *);
+PROMOTEDKEY *_bTreeInsert(BTPAGE *, PROMOTEDKEY *, FILE *);
+boolean bTreeInsert(PrimaryIndex *, BTPAGE *, FILE *);
+long bTreeSelect(BTPAGE *, int, FILE *);
+
 #endif // BTREE_H
