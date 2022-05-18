@@ -3,12 +3,6 @@ Adaptado do código de:
 Henrique Gomes Zanin NUSP: 10441321
 Gabriel Guimaraes Vilas Boas Marin NUSP: 11218521
 */
-#include <btree.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <utils.h>
-
 /*Retrives page from file pointer*/
 btPage *readPageFromFile(FILE *fp) {
     // Aloca espaço para carregar página
