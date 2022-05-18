@@ -24,13 +24,13 @@ struct promotedKey_st {
 };
 
 /*Retrives page from file pointer*/
-BTPAGE *readPageFromFile(FILE *fp) {
+BTPAGE *readPageFromFile(FILE *file) {
     // Aloca espaço para carregar página
     // Lê dados da página do arquivo
 }
 
 /*Writes page into file in certain rrn position*/
-boolean writePageIntoFile(long rrn, BTPAGE *page, FILE *fp) {
+boolean writePageIntoFile(long rrn, BTPAGE *page, FILE *file) {
     // Verifica se está tudo ok com os dados
     // Encontra local para escrita baseado no RRN
     // Escreve dados
@@ -39,35 +39,35 @@ boolean writePageIntoFile(long rrn, BTPAGE *page, FILE *fp) {
 }
 
 /*Get page by rrn*/
-BTPAGE *getPage(long RRN, FILE *fp) {
+BTPAGE *getPage(long RRN, FILE *file) {
     // Recupera uma página baseado no RRN
     // Procura e carrega seus dados
 }
 
 /*Get root RRN from header*/
-long getTreeHeader(FILE *fp) {
+long getTreeHeader(FILE *file) {
     // Carrega o cabeçalho da árvore, que está no início do arquivo
 }
 
 /*Writes root RRN in header*/
-void writeTreeHeader(FILE *fp, long rootRRN) {
+void writeTreeHeader(FILE *file, long rootRRN) {
     // Calcula espaço livre e escreve no cabeçalho da árvore, junto com o RRN do nó raíz
 }
 
-BTPAGE *createTree(FILE *fp) {
+BTPAGE *createTree(FILE *file) {
     // Aloca espaço pra raiz
     // Inicializa os valores
     // Escreve a raiz no cabeçalho
 }
 
-BTPAGE *getOrCreateRoot(FILE *fp) {
+BTPAGE *getOrCreateRoot(FILE *file) {
     // Verifica se a árvore já existe ou precisa criar uma nova
     // Se a árvore não existir, cria ela
     // Se existir, só pega o RRN da raiz no cabeçalho e carrega sua página
     // Pode ser adaptada pra inserção e busca sem precisar de 2 funções
 }
 
-PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, FILE *fp) {
+PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, FILE *file) {
     // Procura local pra inserir nova chave na página
     // Se não couber, splitta ele
     // Escreve dados na página
@@ -99,7 +99,7 @@ PROMOTEDKEY *extractpromotedKey(BTPAGE *page) {
 }
 
 /*Split node and writes into file*/
-PROMOTEDKEY *_split(BTPAGE *page, FILE *fp, PROMOTEDKEY *newKey) {
+PROMOTEDKEY *_split(BTPAGE *page, FILE *file, PROMOTEDKEY *newKey) {
     // Divide a página, cria o novo nó (faça numa função auxiliar pois é complexo)
     // Extrai a chave promovida e atualiza os filhos da chave
     // Escreve a página nova e a que foi dividida (com suas atualizações) no arquivo
@@ -114,13 +114,13 @@ BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *promoKey) {
     // Pode reusar função que cria página nova e adicionar somente especificidades
 }
 
-boolean setNodeAsRoot(BTPAGE *page, FILE *fp) {
+boolean setNodeAsRoot(BTPAGE *page, FILE *file) {
     // Escreve página nova e atualiza o cabeçalho para conter ela como raiz
     // Deveria ser chamada junto com criação de novo nó quando promoção cria uma nova raiz
 }
 
 /*Recursive insertion*/
-PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *fp) {
+PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *file) {
     // Se nó a ser inserido a chave é folha, tenta inserir
     // Caso a inserção crie uma promoção, precisa retornar a chave promovida para a recursão
     // Se não for nó folha, procura qual sub-árvore seguir para inserir numa folha
@@ -131,7 +131,7 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *fp) {
     // Retornar chave promovida ou um valor NULL se não houve promoção
 }
 
-boolean bTreeInsert(PrimaryIndex *newRecord, BTPAGE *root, FILE *fp) {
+boolean bTreeInsert(PrimaryIndex *newRecord, BTPAGE *root, FILE *file) {
     // Função mais abstrata de inserção
     // Prepara os dados da nova chave
     // Tenta inserir recursivamente
@@ -140,7 +140,7 @@ boolean bTreeInsert(PrimaryIndex *newRecord, BTPAGE *root, FILE *fp) {
 }
 
 /*Returns rrn if key exist else return -1*/
-long bTreeSelect(BTPAGE *node, int key, FILE *fp) {
+long bTreeSelect(BTPAGE *node, int key, FILE *file) {
     // Procura no nó atual se a chave existe
     // Se não existir, tenta procurar no filho adequado, recursivamente
     // Se encontrar a chave, retorna RRN dela
