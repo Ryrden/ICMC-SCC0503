@@ -1,10 +1,31 @@
+#include "bTree.h"
 /*
 Adaptado do código de:
 Henrique Gomes Zanin NUSP: 10441321
 Gabriel Guimaraes Vilas Boas Marin NUSP: 11218521
 */
+
+struct record_st {
+    int key;
+    long recordRRN;
+};
+
+struct page_st {
+    RECORD *records;
+    long *childs;
+    short numberOfKeys;
+    boolean isLeaf;
+};
+
+struct promotedKey_st {
+    int key;
+    long recordRRN;
+    long childs[2];
+};
+
 /*Retrives page from file pointer*/
-btPage *readPageFromFile(FILE *fp) {
+btPage *
+readPageFromFile(FILE *fp) {
     // Aloca espaço para carregar página
     // Lê dados da página do arquivo
 }
