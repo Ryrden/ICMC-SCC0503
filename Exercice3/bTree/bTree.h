@@ -17,12 +17,15 @@ typedef struct record_st RECORD;
 typedef struct page_st BTPAGE;
 typedef struct promotedKey_st PROMOTEDKEY;
 
+BTPAGE *createTree(FILE *);
+BTPAGE *createPage(RECORD *, long *, boolean, int);
+PROMOTEDKEY *createPromotedKey(int, long, long *);
+RECORD *createRecord(int, long);
 BTPAGE *readPageFromFile(FILE *);
 boolean writePageIntoFile(long, BTPAGE *, FILE *);
 BTPAGE *getPage(long, FILE *);
 long getTreeHeader(FILE *);
 void writeTreeHeader(FILE *, long);
-BTPAGE *createTree(FILE *);
 BTPAGE *getOrCreateRoot(FILE *);
 PROMOTEDKEY *insertIntoNode(BTPAGE *, PROMOTEDKEY *, FILE *);
 BTPAGE *searchPositionOnPageAndInsert(BTPAGE *, PROMOTEDKEY *);

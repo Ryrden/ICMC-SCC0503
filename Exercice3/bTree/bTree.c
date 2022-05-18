@@ -23,6 +23,63 @@ struct promotedKey_st {
     long childs[2];
 };
 
+BTPAGE *createTree(FILE *file) {
+    // Aloca espaço pra raiz
+    BTPAGE *bTree = (BTPAGE)malloc(sizeof(BTPAGE) * TREE_HEADER);
+    // Inicializa os valores
+    bTree->isLeaf = TRUE;
+    bTree->numberOfKeys = -1;
+    bTree->childs = NULL;
+    bTree->records = NULL;
+    // Escreve a raiz no cabeçalho
+    fwrite(bTree, sizeof(BTPAGE), 1, file);
+
+    return bTree;
+}
+
+RECORD *createRecord(int key, long recordRRN) {
+    RECORD *record = (RECORD *)malloc(1, sizeof(RECORD));
+    record->key = key;
+    record->recordRRN = recordRRN;
+    return record;
+}
+
+BTPAGE *createPage(RECORD *records, long *childs, boolean isLeaf, int numberOfKeys) {
+    BTPAGE *page = (BTPAGE *)malloc(1, sizeof(BTPAGE));
+    page->records = records;
+    page->childs = childs;
+    page->isLeaf = isLeaf;
+    page->numberOfKeys = numberOfKeys;
+    return page;
+}
+
+PROMOTEDKEY *createPromotedKey(int key, long recordRRN, long *childs) {
+    PROMOTEDKEY *promo = (PROMOTEDKEY *)malloc(1, sizeof(PROMOTEDKEY));
+    promo->key = key;
+    promo->recordRRN = recordRRN;
+    promo->childs[0] = childs[0];
+    promo->childs[1] = childs[1];
+    return promo;
+}
+
+
+BTPAGE *getOrCreateRoot(FILE *file) {
+    // Verifica se a árvore já existe ou precisa criar uma nova
+    BTPAGE *bTree = (BTPAGE)malloc(sizeof(BTPAGE) * TREE_HEADER);
+    fread(bTree,sizeof(BTPAGE),1,file);
+    // Se a árvore não existir, cria ela
+    if (bTree == NULL){
+        perror("bTree doesn't exists");
+        bTree = createTree(file);
+    }
+
+    // Se existir, só pega o RRN da raiz no cabeçalho e carrega sua página
+    long rrnHeaderRoot = bTree->records->recordRRN;
+
+    return getPage(rrnHeaderRoot, file);
+    // Pode ser adaptada pra inserção e busca sem precisar de 2 funções
+}
+
 /*Retrives page from file pointer*/
 BTPAGE *readPageFromFile(FILE *file) {
     // Aloca espaço para carregar página
@@ -52,19 +109,6 @@ long getTreeHeader(FILE *file) {
 /*Writes root RRN in header*/
 void writeTreeHeader(FILE *file, long rootRRN) {
     // Calcula espaço livre e escreve no cabeçalho da árvore, junto com o RRN do nó raíz
-}
-
-BTPAGE *createTree(FILE *file) {
-    // Aloca espaço pra raiz
-    // Inicializa os valores
-    // Escreve a raiz no cabeçalho
-}
-
-BTPAGE *getOrCreateRoot(FILE *file) {
-    // Verifica se a árvore já existe ou precisa criar uma nova
-    // Se a árvore não existir, cria ela
-    // Se existir, só pega o RRN da raiz no cabeçalho e carrega sua página
-    // Pode ser adaptada pra inserção e busca sem precisar de 2 funções
 }
 
 PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, FILE *file) {
@@ -145,29 +189,4 @@ long bTreeSelect(BTPAGE *node, int key, FILE *file) {
     // Se não existir, tenta procurar no filho adequado, recursivamente
     // Se encontrar a chave, retorna RRN dela
     // Se não encontrar (chegar num nó folha e não estiver lá), retorna -1
-}
-
-RECORD *createRecord(int key, long recordRRN){
-				RECORD* record = (RECORD *) calloc(1, sizeof(RECORD));
-				record->key = key;
-				record->recordRRN = recordRRN;
-				return record;
-}
-
-BTPAGE *createPage(RECORD* records, long* childs, boolean isLeaf, int numberOfKeys){
-				BTPAGE *page = (BTPAGE *) calloc(1, sizeof(BTPAGE));
-				page->records = records;
-				page->childs = childs;
-				page->isLeaf = isLeaf;
-				page->numberOfKeys = numberOfKeys;
-				return page;
-}
-
-PROMOTEDKEY *createPromoKey(int key, long recordRRN, long* childs){
-				PROMOTEDKEY *promo = (PROMOTEDKEY *) calloc(1, sizeof(PROMOTEDKEY));
-				promo->key = key;
-				promo->recordRRN = recordRRN;
-				promo->childs[0] = childs[0];
-				promo->childs[1] = childs[1];
-				return promo;
 }

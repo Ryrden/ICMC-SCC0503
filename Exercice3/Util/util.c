@@ -2,16 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void boolean_print(boolean bool) {
-    if (bool == TRUE) {
-        printf("TRUE\n");
-    } else if (bool == FALSE) {
-        printf("FALSE\n");
-    } else {
-        printf("ERRO\n");
-    }
-}
-
 char *readLine() {
     char *string = NULL;
     char currentInput;
@@ -42,4 +32,22 @@ char *readStringUntilReach(char caractere) {
         index++;
     }
     return string;
+}
+
+long int getDataSize(FILE *file, long structSize) {
+    long int fileSize, dataSize;
+
+    fseek(file, 0, SEEK_END);
+    fileSize = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    dataSize = (fileSize / structSize); // key on the struct
+
+    return dataSize;
+}
+
+void verifyNullPointerExceptionToFile(FILE *file){
+    if (file == NULL) {
+            perror("Error to open Archive");
+            exit(EXIT_FAILURE);
+        }
 }

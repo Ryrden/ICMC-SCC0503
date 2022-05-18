@@ -1,6 +1,6 @@
 #include "./bTree/bTree.h"
-#include "./uspDatabase/uspDatabase.h"
 #include "./pageHandler/pageHandler.h"
+#include "./uspDatabase/uspDatabase.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,6 +19,8 @@
 int main() {
     FILE *dataFile = fopen("datafile.bin", "wb+");
     verifyNullPointerExceptionToFile(dataFile);
+
+    BTPAGE *bTree = createTree(dataFile);
 
     int RRN = 0;
     long studentSize = get_student_data_size();
@@ -49,8 +51,8 @@ int main() {
             token = strtok(NULL, ",");
             grade = atof(token);
 
-            STUDENT *student = create_student(nusp,name,lastName,course,grade);
-            
+            STUDENT *student = create_student(nusp, name, lastName, course, grade);
+
         } else if (select_command(command) == search_) {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
