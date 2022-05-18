@@ -30,7 +30,7 @@ BTPAGE *readPageFromFile(FILE *fp) {
 }
 
 /*Writes page into file in certain rrn position*/
-Errors writePageIntoFile(long rrn, BTPAGE *page, FILE *fp) {
+boolean writePageIntoFile(long rrn, BTPAGE *page, FILE *fp) {
     // Verifica se está tudo ok com os dados
     // Encontra local para escrita baseado no RRN
     // Escreve dados
@@ -114,7 +114,7 @@ BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *promoKey) {
     // Pode reusar função que cria página nova e adicionar somente especificidades
 }
 
-Errors setNodeAsRoot(BTPAGE *page, FILE *fp) {
+boolean setNodeAsRoot(BTPAGE *page, FILE *fp) {
     // Escreve página nova e atualiza o cabeçalho para conter ela como raiz
     // Deveria ser chamada junto com criação de novo nó quando promoção cria uma nova raiz
 }
@@ -131,7 +131,7 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *fp) {
     // Retornar chave promovida ou um valor NULL se não houve promoção
 }
 
-Errors bTreeInsert(PrimaryIndex *newRecord, BTPAGE *root, FILE *fp) {
+boolean bTreeInsert(PrimaryIndex *newRecord, BTPAGE *root, FILE *fp) {
     // Função mais abstrata de inserção
     // Prepara os dados da nova chave
     // Tenta inserir recursivamente

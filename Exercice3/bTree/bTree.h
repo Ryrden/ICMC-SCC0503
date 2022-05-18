@@ -7,25 +7,32 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define PAGESIZE 4096
+#define TREE_HEADER PAGESIZE
+#define MAXKEYS 204
+#define AUX_FIELDS_SIZE_ON_PAGE (2 + 1) //∗ number o f k e y s and ” i s l e a f ” b o o l ∗/
+#define FREE_SPACE_ON_PAGE (PAGESIZE - ((MAXKEYS * 4) + (MAXKEYS * 8) + ((MAXKEYS + 1) * 8) + 3))
+
 typedef struct record_st RECORD;
 typedef struct page_st BTPAGE;
 typedef struct promotedKey_st PROMOTEDKEY;
 
-BTPAGE *readPageFromFile(FILE *fp);
-Errors writePageIntoFile(long rrn, BTPAGE *page, FILE *fp);
-BTPAGE *getPage(long RRN, FILE *fp);
-long getTreeHeader(FILE *fp);
-void writeTreeHeader(FILE *fp, long rootRRN);
-BTPAGE *createTree(FILE *fp);
-BTPAGE *getOrCreateRoot(FILE *fp);
-PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, FILE *fp);
+BTPAGE *readPageFromFile(FILE *file);
+boolean writePageIntoFile(long rrn, BTPAGE *page, FILE *file);
+BTPAGE *getPage(long RRN, FILE *file);
+long getTreeHeader(FILE *file);
+void writeTreeHeader(FILE *file, long rootRRN);
+BTPAGE *createTree(FILE *file);
+BTPAGE *getOrCreateRoot(FILE *file);
+PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, FILE *file);
 BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *newKey);
 BTPAGE *splitAndCreateNewNode(BTPAGE **page);
 PROMOTEDKEY *extractpromotedKey(BTPAGE *page);
-PROMOTEDKEY *_split(BTPAGE *page, FILE *fp, PROMOTEDKEY *newKey);
+PROMOTEDKEY *_split(BTPAGE *page, FILE *file, PROMOTEDKEY *newKey);
 BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *promoKey);
-Errors setNodeAsRoot(BTPAGE *page, FILE *fp);
-PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *fp);
-Errors bTreeInsert(PrimaryIndex *newRecord, BTPAGE *root, FILE *fp);
-long bTreeSelect(BTPAGE *node, int key, FILE *fp);
+boolean setNodeAsRoot(BTPAGE *page, FILE *file);
+PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *file);
+boolean bTreeInsert(PrimaryIndex *newRecord, BTPAGE *root, FILE *file);
+long bTreeSelect(BTPAGE *node, int key, FILE *file);
+
 #endif // BTREE_H
