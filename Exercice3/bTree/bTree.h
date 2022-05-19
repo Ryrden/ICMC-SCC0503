@@ -18,16 +18,22 @@ typedef struct record_st RECORD;
 typedef struct page_st BTPAGE;
 typedef struct promotedKey_st PROMOTEDKEY;
 
+static long getKey(BTPAGE *page);
+
 BTPAGE *createTree(FILE *);
 BTPAGE *createPage(RECORD *, long *, boolean, int);
 PROMOTEDKEY *createPromotedKey(int, long, long *);
 RECORD *createRecord(int, long);
+
+BTPAGE *getPage(long, FILE *);
 BTPAGE *readPageFromFile(FILE *);
 boolean writePageIntoFile(long, BTPAGE *, FILE *);
-BTPAGE *getPage(long, FILE *);
+
 long getTreeHeader(FILE *);
 void writeTreeHeader(FILE *, long);
+
 BTPAGE *getOrCreateRoot(FILE *);
+
 PROMOTEDKEY *insertIntoNode(BTPAGE *, PROMOTEDKEY *, FILE *);
 BTPAGE *searchPositionOnPageAndInsert(BTPAGE *, PROMOTEDKEY *);
 BTPAGE *splitAndCreateNewNode(BTPAGE **);
@@ -35,8 +41,10 @@ PROMOTEDKEY *extractpromotedKey(BTPAGE *);
 PROMOTEDKEY *_split(BTPAGE *, FILE *, PROMOTEDKEY *);
 BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *);
 boolean setNodeAsRoot(BTPAGE *, FILE *);
+
 PROMOTEDKEY *_bTreeInsert(BTPAGE *, PROMOTEDKEY *, FILE *);
 boolean bTreeInsert(PrimaryIndex *, BTPAGE *, FILE *);
+
 long bTreeSelect(BTPAGE *, int, FILE *);
 
 #endif // BTREE_H
