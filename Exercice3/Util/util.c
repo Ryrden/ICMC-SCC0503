@@ -51,3 +51,15 @@ void verifyNullPointerExceptionToFile(FILE *file){
             exit(EXIT_FAILURE);
         }
 }
+
+static boolean isBigger(void *item, void *page) {
+    return getKey(item) > getKey(page->item);
+}
+
+static boolean isSmaller(void *item, NODE *page) {
+    return getKey(item) < getKey(page->item);
+}
+
+static boolean isEqual(void *item, NODE *page) {
+    return getKey(item) == getKey(page->item);
+}

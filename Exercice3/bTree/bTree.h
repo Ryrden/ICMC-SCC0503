@@ -2,6 +2,7 @@
 #define BTREE_H
 
 #include "../Util/util.h"
+#include "../uspDatabase/uspDatabase.h"
 #include <btree.h>
 #include <stdio.h>
 #include <stdlib.h>

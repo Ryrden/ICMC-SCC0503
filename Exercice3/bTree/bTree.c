@@ -11,7 +11,7 @@ struct record_st {
 };
 
 struct page_st {
-    RECORD *records;
+    RECORD *item;
     long *childs;
     short numberOfKeys;
     boolean isLeaf;
@@ -23,6 +23,10 @@ struct promotedKey_st {
     long childs[2];
 };
 
+static long getKey(BTPAGE *page) {
+    return page->item->key;
+}
+
 BTPAGE *createTree(FILE *file) {
     // Aloca espaço pra raiz
     BTPAGE *bTree = (BTPAGE)malloc(sizeof(BTPAGE) * TREE_HEADER);
@@ -30,7 +34,7 @@ BTPAGE *createTree(FILE *file) {
     bTree->isLeaf = TRUE;
     bTree->numberOfKeys = -1;
     bTree->childs = NULL;
-    bTree->records = NULL;
+    bTree->item = NULL;
     // Escreve a raiz no cabeçalho
     fwrite(bTree, sizeof(BTPAGE), 1, file);
 
@@ -38,15 +42,15 @@ BTPAGE *createTree(FILE *file) {
 }
 
 RECORD *createRecord(int key, long recordRRN) {
-    RECORD *record = (RECORD *)malloc(1, sizeof(RECORD));
-    record->key = key;
-    record->recordRRN = recordRRN;
-    return record;
+    RECORD *item = (RECORD *)malloc(1, sizeof(RECORD));
+    item->key = key;
+    item->recordRRN = recordRRN;
+    return item;
 }
 
-BTPAGE *createPage(RECORD *records, long *childs, boolean isLeaf, int numberOfKeys) {
+BTPAGE *createPage(RECORD *record, long *childs, boolean isLeaf, int numberOfKeys) {
     BTPAGE *page = (BTPAGE *)malloc(1, sizeof(BTPAGE));
-    page->records = records;
+    page->item = record;
     page->childs = childs;
     page->isLeaf = isLeaf;
     page->numberOfKeys = numberOfKeys;
@@ -62,19 +66,18 @@ PROMOTEDKEY *createPromotedKey(int key, long recordRRN, long *childs) {
     return promo;
 }
 
-
 BTPAGE *getOrCreateRoot(FILE *file) {
     // Verifica se a árvore já existe ou precisa criar uma nova
-    BTPAGE *bTree = (BTPAGE)malloc(sizeof(BTPAGE) * TREE_HEADER);
-    fread(bTree,sizeof(BTPAGE),1,file);
+    BTPAGE *bTree = (BTPAGE)malloc(sizeof(BTPAGE));
+    fread(bTree, sizeof(BTPAGE), 1, file);
     // Se a árvore não existir, cria ela
-    if (bTree == NULL){
+    if (bTree == NULL) {
         perror("bTree doesn't exists");
         bTree = createTree(file);
     }
 
     // Se existir, só pega o RRN da raiz no cabeçalho e carrega sua página
-    long rrnHeaderRoot = bTree->records->recordRRN;
+    long rrnHeaderRoot = bTree->item->recordRRN;
 
     return getPage(rrnHeaderRoot, file);
     // Pode ser adaptada pra inserção e busca sem precisar de 2 funções
@@ -89,7 +92,14 @@ BTPAGE *readPageFromFile(FILE *file) {
 /*Writes page into file in certain rrn position*/
 boolean writePageIntoFile(long rrn, BTPAGE *page, FILE *file) {
     // Verifica se está tudo ok com os dados
+    if (!page && !file) {
+        perror("Data error")
+            exit(EXIT_FAILURE);
+    }
+
     // Encontra local para escrita baseado no RRN
+    BTPAGE *bTree = getOrCreateRoot(file);
+
     // Escreve dados
     // Atualiza valor de espaço livre na página
     // Dica: você pode criar uma função que só lida com a escrita dos dados e chamar aqui
@@ -97,8 +107,23 @@ boolean writePageIntoFile(long rrn, BTPAGE *page, FILE *file) {
 
 /*Get page by rrn*/
 BTPAGE *getPage(long RRN, FILE *file) {
+    BTPAGE *currentPage = (BTPAGE)malloc(sizeof(BTPAGE));
+    fread(currentPage, sizeof(BTPAGE), 1, file);
+
+    if (currentPage == NULL)
+        return NULL;
+
+    if (currentPage->item->recordRRN == RNN)
+        return currentPage;
+        
     // Recupera uma página baseado no RRN
+    long studentSize = get_student_data_size;
+    long studentOffset = currentPage->item->recordRRN * studentSize;
+    fseek(file, studentOffset, SEEK_SET);
+    fread(currentPage, sizeof(BTPAGE), 1, file);
+
     // Procura e carrega seus dados
+    return getPage(RNN, file);
 }
 
 /*Get root RRN from header*/
