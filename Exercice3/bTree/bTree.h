@@ -29,8 +29,8 @@ BTPAGE *getPage(long, FILE *);
 BTPAGE *readPageFromFile(FILE *);
 boolean writePageIntoFile(long, BTPAGE *, FILE *);
 
-long getTreeHeader(FILE *);
-void writeTreeHeader(FILE *, long);
+static long getTreeHeader(FILE *);
+static void writeTreeHeader(FILE *, long);
 
 BTPAGE *getOrCreateRoot(FILE *);
 
