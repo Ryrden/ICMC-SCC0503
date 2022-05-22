@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define STRING_SIZE 300
+
 /*INFORMAÇÕES:
     NOME: Ryan Souza Sá Teles
     nUSP: 12822062
@@ -53,6 +55,9 @@ int main() {
 
             STUDENT *student = create_student(nusp, name, lastName, course, grade);
 
+												// add registry to bTree
+												// add registry to registryFile
+
         } else if (select_command(command) == search_) {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
@@ -67,6 +72,6 @@ int main() {
     }
     free(line);
     fclose(dataFile);
-    fclose(indexFile);
+    // fclose(indexFile); has to be created yet
     return EXIT_SUCCESS;
 }

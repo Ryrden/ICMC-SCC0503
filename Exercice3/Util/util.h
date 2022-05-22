@@ -17,10 +17,10 @@ long int getDataSize(FILE *, long);
 
 void verifyNullPointerExceptionToFile(FILE *);
 
-boolean isBigger(void*, void*);
+static boolean isBigger(void*, void*);
 
-boolean isSmaller(void*, void*);
+static boolean isSmaller(void*, void*);
 
-boolean isEqual(void*, void*);
+static boolean isEqual(void*, void*);
 
 #endif // UTIL_H

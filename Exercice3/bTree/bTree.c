@@ -24,6 +24,12 @@ struct promotedKey_st {
     long childs[2];
 };
 
+struct primaryIndex {
+				unsigned int key; // probably nUSP of the student
+				unsigned int offSet; // adress of the registry on the datafile 
+
+};
+
 static long getKey(BTPAGE *page){
     return page->item->key;
 }
@@ -32,9 +38,9 @@ static long getKey(BTPAGE *page){
 static long getTreeHeader(FILE *file) {
     // Carrega o cabeçalho da árvore, que está no início do arquivo
     rewind(file);
-    long rnnHeader;
-    fread(rrnHeader, sizeof(long), 1, file);
-    return rnnHeader;
+    long rrnHeader;
+    fread(&rrnHeader, sizeof(long), 1, file);
+    return rrnHeader;
 }
 
 /*Writes root RRN in header*/
@@ -48,28 +54,28 @@ BTPAGE *createTree(FILE *file) {
 
     // Inicializa os valores
     RECORD *record = createRecord(0,0);
-    long *childs = NULL
+    long *childs = NULL;
     boolean isLeaf = TRUE;
     short numberOfKeys = -1;
 
     BTPAGE *bTree = createPage(record,childs,isLeaf,numberOfKeys);
     
     // Escreve a raiz no cabeçalho
-    writeTreeHeader(file,0)
+    writeTreeHeader(file,0);
     fwrite(bTree, PAGESIZE, 1, file);
 
     return bTree;
 }
 
 RECORD *createRecord(int key, long recordRRN) {
-    RECORD *item = (RECORD *)malloc(1, sizeof(RECORD));
+    RECORD *item = (RECORD *)malloc(1*sizeof(RECORD));
     item->key = key;
     item->recordRRN = recordRRN;
     return item;
 }
 
 BTPAGE *createPage(RECORD *record, long *childs, boolean isLeaf, int numberOfKeys) {
-    BTPAGE *page = (BTPAGE *) malloc(1, PAGESIZE);
+    BTPAGE *page = (BTPAGE *) malloc(1*PAGESIZE);
     page->item = record;
     page->childs = childs;
     page->isLeaf = isLeaf;
@@ -81,7 +87,7 @@ BTPAGE *createPage(RECORD *record, long *childs, boolean isLeaf, int numberOfKey
 }
 
 PROMOTEDKEY *createPromotedKey(int key, long recordRRN, long *childs) {
-    PROMOTEDKEY *promo = (PROMOTEDKEY *)malloc(1, sizeof(PROMOTEDKEY));
+    PROMOTEDKEY *promo = (PROMOTEDKEY *)malloc(1*sizeof(PROMOTEDKEY));
     promo->key = key;
     promo->recordRRN = recordRRN;
     promo->childs[0] = childs[0];
@@ -109,7 +115,7 @@ BTPAGE *getOrCreateRoot(FILE *file) {
 /*Retrives page from file pointer*/
 BTPAGE *readPageFromFile(FILE *file) {
     // Aloca espaço para carregar página
-    BTPAGE *page = (BTPAGE *)malloc(1, PAGESIZE);
+    BTPAGE *page = (BTPAGE *)malloc(1*PAGESIZE);
     // Lê dados da página do arquivo
     fread(page, PAGESIZE, 1, file);
 
@@ -125,7 +131,7 @@ BTPAGE *getPage(long RRN, FILE *file) {
     if (currentPage == NULL)
         return currentPage;
 
-    if (currentPage->item->recordRRN == RNN)
+    if (currentPage->item->recordRRN == RRN)
         return currentPage;
 
     // Procura e carrega seus dados
@@ -133,7 +139,7 @@ BTPAGE *getPage(long RRN, FILE *file) {
 
     fseek(file, offSet, SEEK_SET);
 
-    return getPage(RNN, file);
+    return getPage(RRN, file);
 }
 
 /*Writes page into file in certain rrn position*/
@@ -155,14 +161,14 @@ boolean writePageIntoFile(long rrn, BTPAGE *page, FILE *file) {
         fseek(file,page->childs[1]); // Direita ??
     else if (page->item->recordRRN == rrn)
         printf("Já existe");
-        return false
+        return FALSE;
     else if (/*Encontrou => == NULL*/){
         // Escreve dados
         fwrite(page, PAGESIZE, file);
 
         // Atualiza valor de espaço livre na página
         page->freeSpace = FREE_SPACE_ON_PAGE;
-        return true
+        return TRUE; 
     }
     writePageIntoFile(rrn,page,file);
     // Dica: você pode criar uma função que só lida com a escrita dos dados e chamar aqui

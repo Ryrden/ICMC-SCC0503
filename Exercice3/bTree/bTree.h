@@ -3,7 +3,6 @@
 
 #include "../Util/util.h"
 #include "../uspDatabase/uspDatabase.h"
-#include <btree.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,6 +16,7 @@
 typedef struct record_st RECORD;
 typedef struct page_st BTPAGE;
 typedef struct promotedKey_st PROMOTEDKEY;
+typedef struct primaryIndex PrimaryIndex;
 
 static long getKey(BTPAGE *page);
 

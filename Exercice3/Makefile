@@ -1,4 +1,4 @@
-UTIL=
+UTIL= bTree/bTree.c uspDatabase/uspDatabase.c pageHandler/pageHandler.c Util/util.c
 MAIN=main.c
 BINARY=main
 
@@ -7,6 +7,9 @@ all:
 
 run:
 	./$(BINARY)
+
+test: # usar o comando da forma:$ make test case=<nº do caso que quiser>
+	./$(BINARY) < ./Casos\ de\ Teste/$(case).in
 
 debug:
 	gcc -DDEBUG -Wall $(MAIN) $(UTIL) -o $(BINARY)

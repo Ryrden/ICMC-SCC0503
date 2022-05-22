@@ -56,10 +56,10 @@ static boolean isBigger(void *item, void *page) {
     return getKey(item) > getKey(page->item);
 }
 
-static boolean isSmaller(void *item, NODE *page) {
+static boolean isSmaller(void *item, void *page) {
     return getKey(item) < getKey(page->item);
 }
 
-static boolean isEqual(void *item, NODE *page) {
+static boolean isEqual(void *item, void *page) {
     return getKey(item) == getKey(page->item);
 }
