@@ -46,7 +46,7 @@ static long getTreeHeader(FILE *file) {
 /*Writes root RRN in header*/
 static void writeTreeHeader(FILE *file, long rootRRN) {
     // Calcula espaço livre e escreve no cabeçalho da árvore, junto com o RRN do nó raíz
-    fwrite(rootRRN, sizeof(long), 1, file);
+    fwrite(&rootRRN, sizeof(long), 1, file);
 }
 
 BTPAGE *createTree(FILE *file) {
@@ -142,7 +142,11 @@ BTPAGE *getPage(long RRN, FILE *file) {
     return getPage(RRN, file);
 }
 
-/*Writes page into file in certain rrn position*/
+
+
+/*Not fully implemented
+	*
+//Writes page into file in certain rrn position
 boolean writePageIntoFile(long rrn, BTPAGE *page, FILE *file) {
     // Verifica se está tudo ok com os dados
     if (!file) {
@@ -162,7 +166,7 @@ boolean writePageIntoFile(long rrn, BTPAGE *page, FILE *file) {
     else if (page->item->recordRRN == rrn)
         printf("Já existe");
         return FALSE;
-    else if (/*Encontrou => == NULL*/){
+    else if (Encontrou => == NULL){
         // Escreve dados
         fwrite(page, PAGESIZE, file);
 
@@ -173,22 +177,31 @@ boolean writePageIntoFile(long rrn, BTPAGE *page, FILE *file) {
     writePageIntoFile(rrn,page,file);
     // Dica: você pode criar uma função que só lida com a escrita dos dados e chamar aqui
 }
+*/
 
+
+
+
+
+/* Not yet implemented
+	*
+	*
+	*
 PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, FILE *file) {
     // Procura local pra inserir nova chave na página
     // Se não couber, splitta ele
     // Escreve dados na página
 }
 
-/*Insert some key on page*/
+//Insert some key on page
 BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *newKey) {
     // Encontra a posição para inserir a chave
     // Se não existir espaço, precisa criar uma nova página (usem uma função para criar)
     // Salvar dados da nova chave na página
 }
-/*
-    If page size is odd the return is biggest slice
-*/
+
+//If page size is odd the return is biggest slice
+
 BTPAGE *splitAndCreateNewNode(BTPAGE **page) {
     // Encontra a posição do meio das chaves
     // Cria espaço pra nova página
@@ -198,21 +211,21 @@ BTPAGE *splitAndCreateNewNode(BTPAGE **page) {
     // Atualiza o número de chaves de ambas
 }
 
-/*Extract a promoted key from page*/
+//Extract a promoted key from page
 PROMOTEDKEY *extractpromotedKey(BTPAGE *page) {
     // Aloca espaço pra chave
     // Tira ela da página
     // Atualiza dados da página (filho, número de chaves, etc)
 }
 
-/*Split node and writes into file*/
+//Split node and writes into file
 PROMOTEDKEY *_split(BTPAGE *page, FILE *file, PROMOTEDKEY *newKey) {
     // Divide a página, cria o novo nó (faça numa função auxiliar pois é complexo)
     // Extrai a chave promovida e atualiza os filhos da chave
     // Escreve a página nova e a que foi dividida (com suas atualizações) no arquivo
 }
 
-/*Used if promotions reaches root*/
+//Used if promotions reaches root
 BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *promoKey) {
     // Se promoção cria estrutura para nova raiz,
     // Aloca espaço para ela
@@ -226,7 +239,7 @@ boolean setNodeAsRoot(BTPAGE *page, FILE *file) {
     // Deveria ser chamada junto com criação de novo nó quando promoção cria uma nova raiz
 }
 
-/*Recursive insertion*/
+//Recursive insertion
 PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *file) {
     // Se nó a ser inserido a chave é folha, tenta inserir
     // Caso a inserção crie uma promoção, precisa retornar a chave promovida para a recursão
@@ -246,10 +259,11 @@ boolean bTreeInsert(PrimaryIndex *newRecord, BTPAGE *root, FILE *file) {
     // Chama as funções pra criar nova raiz e atualizar o cabeçalho
 }
 
-/*Returns rrn if key exist else return -1*/
+//Returns rrn if key exist else return -1
 long bTreeSelect(BTPAGE *node, int key, FILE *file) {
     // Procura no nó atual se a chave existe
     // Se não existir, tenta procurar no filho adequado, recursivamente
     // Se encontrar a chave, retorna RRN dela
     // Se não encontrar (chegar num nó folha e não estiver lá), retorna -1
 }
+*/

@@ -52,6 +52,8 @@ void verifyNullPointerExceptionToFile(FILE *file){
         }
 }
 
+/*    deixar comentado por enquanto, não esta sendo usada
+
 static boolean isBigger(void *item, void *page) {
     return getKey(item) > getKey(page->item);
 }
@@ -63,3 +65,4 @@ static boolean isSmaller(void *item, void *page) {
 static boolean isEqual(void *item, void *page) {
     return getKey(item) == getKey(page->item);
 }
+*/
