@@ -24,6 +24,11 @@ struct promotedKey_st {
     long childs[2];
 };
 
+struct header_st { // store metadata about bTree
+				unsigned int numberOfPages;
+				unsigned long registrySize;
+};
+
 /*
 struct primaryIndex {
 				unsigned int key; // probably nUSP of the student

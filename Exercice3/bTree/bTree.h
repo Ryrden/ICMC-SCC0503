@@ -16,6 +16,7 @@
 typedef struct record_st RECORD;
 typedef struct page_st BTPAGE;
 typedef struct promotedKey_st PROMOTEDKEY;
+typedef struct header_st HEADER;
 //typedef struct primaryIndex PrimaryIndex;
 
 static long getKey(BTPAGE *page);
