@@ -22,6 +22,7 @@ int main() {
     FILE *dataFile = fopen("datafile.bin", "wb+");
     verifyNullPointerExceptionToFile(dataFile);
 
+				// TO DO: mudar para getOrCreateRoot (se existir um aquivo de arvore devemos usar ele)
     BTPAGE *bTree = createTree(dataFile);
 
     int RRN = 0;
@@ -56,7 +57,11 @@ int main() {
             STUDENT *student = create_student(nusp, name, lastName, course, grade);
 
 												// add registry to bTree
-												// add registry to registryFile
+												RECORD *record = createRecord(nusp, RRN);
+												RRN++;
+
+												continue;
+												// add registry to registryFile/dataFile
 
         } else if (select_command(command) == search_) {
             token = strtok(NULL, ",");

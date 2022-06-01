@@ -16,7 +16,7 @@
 typedef struct record_st RECORD;
 typedef struct page_st BTPAGE;
 typedef struct promotedKey_st PROMOTEDKEY;
-typedef struct primaryIndex PrimaryIndex;
+//typedef struct primaryIndex PrimaryIndex;
 
 static long getKey(BTPAGE *page);
 
@@ -43,7 +43,7 @@ BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *);
 boolean setNodeAsRoot(BTPAGE *, FILE *);
 
 PROMOTEDKEY *_bTreeInsert(BTPAGE *, PROMOTEDKEY *, FILE *);
-boolean bTreeInsert(PrimaryIndex *, BTPAGE *, FILE *);
+boolean bTreeInsert(RECORD *, BTPAGE *, FILE *);
 
 long bTreeSelect(BTPAGE *, int, FILE *);
 

@@ -24,11 +24,13 @@ struct promotedKey_st {
     long childs[2];
 };
 
+/*
 struct primaryIndex {
 				unsigned int key; // probably nUSP of the student
 				unsigned int offSet; // adress of the registry on the datafile 
 
 };
+*/
 
 static long getKey(BTPAGE *page){
     return page->item->key;
@@ -251,7 +253,7 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *file) {
     // Retornar chave promovida ou um valor NULL se não houve promoção
 }
 
-boolean bTreeInsert(PrimaryIndex *newRecord, BTPAGE *root, FILE *file) {
+boolean bTreeInsert(RECORD *newRecord, BTPAGE *root, FILE *file) {
     // Função mais abstrata de inserção
     // Prepara os dados da nova chave
     // Tenta inserir recursivamente
