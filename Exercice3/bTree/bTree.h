@@ -21,10 +21,11 @@ typedef struct header_st HEADER;
 
 static long getKey(BTPAGE *page);
 
-BTPAGE *createTree(FILE *);
+BTPAGE *createTree(FILE *, HEADER *);
 BTPAGE *createPage(RECORD *, long *, boolean, int);
 PROMOTEDKEY *createPromotedKey(int, long, long *);
 RECORD *createRecord(int, long);
+HEADER *createHeader();
 
 BTPAGE *getPage(long, FILE *);
 BTPAGE *readPageFromFile(FILE *);

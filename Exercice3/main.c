@@ -23,7 +23,13 @@ int main() {
     verifyNullPointerExceptionToFile(dataFile);
 
 				// TO DO: mudar para getOrCreateRoot (se existir um aquivo de arvore devemos usar ele)
-    BTPAGE *bTree = createTree(dataFile);
+				// criar getOrCreateHeader para 
+				// criar writeheader (header deve ser escrito por ultimo, durante o encerramento do programa)
+    FILE *bTreeFile = fopen("datafile.bin", "wb+");
+    verifyNullPointerExceptionToFile(dataFile);
+
+				HEADER *header = createHeader();
+    BTPAGE *bTree = createTree(bTreeFile, header);
 
     int RRN = 0;
     long studentSize = get_student_data_size();
