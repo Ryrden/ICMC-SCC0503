@@ -1,5 +1,4 @@
 #include "./bTree/bTree.h"
-#include "./pageHandler/pageHandler.h"
 #include "./uspDatabase/uspDatabase.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -73,7 +72,7 @@ int main() {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
 
-        } else if (select_command(command) == delete_) {
+        } else if (select_command(command) == update_) {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
 

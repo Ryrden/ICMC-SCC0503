@@ -16,8 +16,8 @@ operation select_command(char *command){
         return insert_;
     else if (!strcmp(command, "search"))
         return search_;
-    else if (!strcmp(command, "delete"))
-        return delete_;
+    else if (!strcmp(command, "update"))
+        return update_;
     else if (!strcmp(command, "exit\n"))
         return exit_;
 

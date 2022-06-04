@@ -17,7 +17,7 @@ typedef struct student_st STUDENT;
 typedef enum {
     insert_ = 1,
     search_,
-    delete_,
+    update_,
     exit_,
     ERROR = -1
 } operation;

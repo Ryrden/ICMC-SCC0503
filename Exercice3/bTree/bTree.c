@@ -1,4 +1,5 @@
 #include "bTree.h"
+#include <stdio.h>
 /*
 Adaptado do código de:
 Henrique Gomes Zanin NUSP: 10441321
@@ -105,12 +106,14 @@ BTPAGE *createPage(RECORD *record, long *childs, boolean isLeaf, int numberOfKey
 }
 */
 
-PROMOTEDKEY *createPromotedKey(int key, long recordRRN, long *childs) {
+PROMOTEDKEY *createPromotedKey(RECORD *record, long *childs) {
     PROMOTEDKEY *promo = (PROMOTEDKEY *)malloc(1*sizeof(PROMOTEDKEY));
-    promo->key = key;
-    promo->recordRRN = recordRRN;
-    promo->childs[0] = childs[0];
-    promo->childs[1] = childs[1];
+    promo->key = record->key;
+    promo->recordRRN = record->recordRRN;
+				if(!childs){
+								promo->childs[0] = childs[0];
+								promo->childs[1] = childs[1];
+				}
     return promo;
 }
 
@@ -149,7 +152,6 @@ BTPAGE *getPage(long RRN, FILE *file) {
 
     return getPage(RRN, file);
 }
-
 
 
 /*Not fully implemented
@@ -208,13 +210,62 @@ BTPAGE *getOrCreateRoot(FILE *file) {
 */
 
 
+boolean bTreeInsert(RECORD *newRecord, BTPAGE *root, FILE *file) {
+    if (!root)
+								return FALSE;
+				// Função mais abstrata de inserção
+
+    // Prepara os dados da nova chave
+				PROMOTEDKEY *keyToInsert = createPromotedKey(newRecord, NULL);
+
+    // Tenta inserir recursivamente
+				PROMOTEDKEY *promotedKey = NULL;
+				promotedKey = _bTreeInsert(root,keyToInsert ,file);
+				
+    // Se tiver chave promovida no final da recursão, é que existe nova raiz
+				if (promotedKey){
+								//faz os esquema de dividir
+								// Chama as funções pra criar nova raiz e atualizar o cabeçalho
+				}
+				
+				return TRUE;
+}
+
+//Recursive insertion
+PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *file) {
+    // Se nó a ser inserido a chave é folha, tenta inserir
+				if(node->isLeaf){
+						// manipular o vetor records para fazer inserção		
+						// verificar se lotou a pagina
 
 
+				}
+    // Caso a inserção crie uma promoção, precisa retornar a chave promovida para a recursão
+    // Se não for nó folha, procura qual sub-árvore seguir para inserir numa folha
+				long child;
+				PROMOTEDKEY *promotedKey = NULL;
+				for(int i = 0; i<node->numberOfKeys ;i++){
+								if (node->items[i].key > key->key){
+												if (node->childs[i]){
+																//acessa o filho e continua descendo
+																fseek(file,node->childs[i],SEEK_SET);
+																break;
+												}
+												//Insere na posição i 
+												//manipula records e verifica se super lotou a pagina
+												return promotedKey;
+								}
+				}
+				node = readPageFromFile(file);
+				return _bTreeInsert(node,key,file);
+				
+    // Encontrar a posição correta e descer para filho à esquerda se a chave for menor
+    // E descer à direita se for maior
+    // Chamar a inserção recursiva pro filho escolhido
+    // Se a inserção recursiva retornar uma chave promovida, precisa tentar inserir essa chave promovida no nó atual
+    // Retornar chave promovida ou um valor NULL se não houve promoção
+}
 
-/* Not yet implemented
-	*
-	*
-	*
 PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, FILE *file) {
     // Procura local pra inserir nova chave na página
     // Se não couber, splitta ele
@@ -227,6 +278,16 @@ BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *newKey) {
     // Se não existir espaço, precisa criar uma nova página (usem uma função para criar)
     // Salvar dados da nova chave na página
 }
+
+//Returns rrn if key exist else return -1
+long bTreeSelect(BTPAGE *node, int key, FILE *file) {
+    // Procura no nó atual se a chave existe
+    // Se não existir, tenta procurar no filho adequado, recursivamente
+    // Se encontrar a chave, retorna RRN dela
+    // Se não encontrar (chegar num nó folha e não estiver lá), retorna -1
+}
+
+
 
 //If page size is odd the return is biggest slice
 
@@ -267,31 +328,4 @@ boolean setNodeAsRoot(BTPAGE *page, FILE *file) {
     // Deveria ser chamada junto com criação de novo nó quando promoção cria uma nova raiz
 }
 
-//Recursive insertion
-PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *file) {
-    // Se nó a ser inserido a chave é folha, tenta inserir
-    // Caso a inserção crie uma promoção, precisa retornar a chave promovida para a recursão
-    // Se não for nó folha, procura qual sub-árvore seguir para inserir numa folha
-    // Encontrar a posição correta e descer para filho à esquerda se a chave for menor
-    // E descer à direita se for maior
-    // Chamar a inserção recursiva pro filho escolhido
-    // Se a inserção recursiva retornar uma chave promovida, precisa tentar inserir essa chave promovida no nó atual
-    // Retornar chave promovida ou um valor NULL se não houve promoção
-}
 
-boolean bTreeInsert(RECORD *newRecord, BTPAGE *root, FILE *file) {
-    // Função mais abstrata de inserção
-    // Prepara os dados da nova chave
-    // Tenta inserir recursivamente
-    // Se tiver chave promovida no final da recursão, é que existe nova raiz
-    // Chama as funções pra criar nova raiz e atualizar o cabeçalho
-}
-
-//Returns rrn if key exist else return -1
-long bTreeSelect(BTPAGE *node, int key, FILE *file) {
-    // Procura no nó atual se a chave existe
-    // Se não existir, tenta procurar no filho adequado, recursivamente
-    // Se encontrar a chave, retorna RRN dela
-    // Se não encontrar (chegar num nó folha e não estiver lá), retorna -1
-}
-*/

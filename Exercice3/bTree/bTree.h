@@ -23,7 +23,7 @@ static long getKey(BTPAGE *page);
 
 BTPAGE *createTree(FILE *, HEADER *);
 BTPAGE *createPage(RECORD *, long *, boolean, int);
-PROMOTEDKEY *createPromotedKey(int, long, long *);
+PROMOTEDKEY *createPromotedKey(RECORD *, long *);
 RECORD *createRecord(int, long);
 HEADER *createHeader();
 
