@@ -28,7 +28,7 @@ RECORD *createRecord(int, long);
 HEADER *createHeader();
 
 BTPAGE *getPage(long, FILE *);
-BTPAGE *readPageFromFile(FILE *);
+BTPAGE *readPageFromFile(FILE *, long);
 boolean writePageIntoFile(long, BTPAGE *, FILE *);
 
 static long getTreeHeader(FILE *);

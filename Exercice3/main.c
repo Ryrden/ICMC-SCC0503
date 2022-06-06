@@ -25,7 +25,7 @@ int main() {
 				// criar getOrCreateHeader para 
 				// criar writeheader (header deve ser escrito por ultimo, durante o encerramento do programa)
     FILE *bTreeFile = fopen("datafile.bin", "wb+");
-    verifyNullPointerExceptionToFile(dataFile);
+    verifyNullPointerExceptionToFile(bTreeFile);
 
 				HEADER *header = createHeader();
     BTPAGE *bTree = createTree(bTreeFile, header);
@@ -63,6 +63,7 @@ int main() {
 
 												// add registry to bTree
 												RECORD *record = createRecord(nusp, RRN);
+												bTreeInsert(record, bTree, bTreeFile);
 												RRN++;
 
 												continue;

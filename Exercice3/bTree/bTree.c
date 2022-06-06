@@ -50,7 +50,6 @@ static long getTreeHeader(FILE *file) {
     fread(&rrnHeader, sizeof(long), 1, file);
     return rrnHeader;
 }
-
 /*Writes root RRN in header*/
 static void writeTreeHeader(FILE *file, long rootRRN) {
     // Calcula espaço livre e escreve no cabeçalho da árvore, junto com o RRN do nó raíz
@@ -124,20 +123,12 @@ HEADER *createHeader(){
 				return header;
 }
 
-/*Retrives page from file pointer*/
-BTPAGE *readPageFromFile(FILE *file) {
-    // Aloca espaço para carregar página
-    BTPAGE *page = (BTPAGE *)malloc(1*PAGESIZE);
-    // Lê dados da página do arquivo
-    fread(page, PAGESIZE, 1, file);
 
-    return page;
-}
 
 /*Get page by rrn*/
 BTPAGE *getPage(long RRN, FILE *file) {
     // Recupera uma página baseado no RRN
-    BTPAGE *currentPage = readPageFromFile(file);
+    BTPAGE *currentPage = readPageFromFile(file, RRN);
 
     if (currentPage == NULL)
         return currentPage;
@@ -152,62 +143,6 @@ BTPAGE *getPage(long RRN, FILE *file) {
 
     return getPage(RRN, file);
 }
-
-
-/*Not fully implemented
-	*
-//Writes page into file in certain rrn position
-boolean writePageIntoFile(long rrn, BTPAGE *page, FILE *file) {
-    // Verifica se está tudo ok com os dados
-    if (!file) {
-        perror("File doesn't exists");
-        exit(EXIT_FAILURE);
-    }
-
-    // Encontra local para escrita baseado no RRN
-    long offSet = currentPage->items->recordRRN * PAGESIZE;
-    fseek(file, offSet, SEEK_SET);
-    BTPAGE *page = readPageFromFile(file);
-
-    if (page->items->recordRRN > rrn)
-        fseek(file,page->childs[0]); // Esquerda ??
-    else if (page->items->recordRRN < rrn)
-        fseek(file,page->childs[1]); // Direita ??
-    else if (page->items->recordRRN == rrn)
-        printf("Já existe");
-        return FALSE;
-    else if (Encontrou => == NULL){
-        // Escreve dados
-        fwrite(page, PAGESIZE, file);
-
-        // Atualiza valor de espaço livre na página
-        page->freeSpace = FREE_SPACE_ON_PAGE;
-        return TRUE; 
-    }
-    writePageIntoFile(rrn,page,file);
-    // Dica: você pode criar uma função que só lida com a escrita dos dados e chamar aqui
-}
-
-
-BTPAGE *getOrCreateRoot(FILE *file) {
-    // Verifica se a árvore já existe ou precisa criar uma nova
-    long rrnTreeHeader = getTreeHeader(file);
-    // Se a roote não existir, cria ela
-    if (rrnTreeHeader == NULL) {
-        perror("bTree doesn't exists");
-        return createTree(file);
-    }
-
-    // Se existir, só pega o RRN da raiz no cabeçalho e carrega sua página
-    BTPAGE *root;
-    fread(root, PAGESIZE, 1, file);
-
-    return root;
-    // Pode ser adaptada pra inserção e busca sem precisar de 2 funções
-}
-
-
-*/
 
 
 boolean bTreeInsert(RECORD *newRecord, BTPAGE *root, FILE *file) {
@@ -233,11 +168,11 @@ boolean bTreeInsert(RECORD *newRecord, BTPAGE *root, FILE *file) {
 
 //Recursive insertion
 PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *file) {
-    // Se nó a ser inserido a chave é folha, tenta inserir
-				if(node->isLeaf){
+    // Se nó a ser inserido a chave é folha, tenta inserir | Caso base
+				if(node->isLeaf && node->numberOfKeys < MAXKEYS){ 
 						// manipular o vetor records para fazer inserção		
 						// verificar se lotou a pagina
-
+						RECORD *records = node->items;
 
 				}
     // Caso a inserção crie uma promoção, precisa retornar a chave promovida para a recursão
@@ -249,6 +184,7 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *file) {
 												if (node->childs[i]){
 																//acessa o filho e continua descendo
 																fseek(file,node->childs[i],SEEK_SET);
+																child = node->childs[i];
 																break;
 												}
 												//Insere na posição i 
@@ -256,7 +192,7 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *file) {
 												return promotedKey;
 								}
 				}
-				node = readPageFromFile(file);
+				node = readPageFromFile(file, child);
 				return _bTreeInsert(node,key,file);
 				
     // Encontrar a posição correta e descer para filho à esquerda se a chave for menor
@@ -266,7 +202,38 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *file) {
     // Retornar chave promovida ou um valor NULL se não houve promoção
 }
 
-PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, FILE *file) {
+/*Retrives page from file pointer*/
+BTPAGE *readPageFromFile(FILE *file, long RRN) {
+				// Coloca o ponteiro do arquivo no local correto
+				fseek(file, RRN*PAGESIZE, SEEK_SET);
+    // Aloca espaço para carregar página
+    BTPAGE *page = (BTPAGE *)malloc(1*sizeof(BTPAGE));
+    // Lê dados da página do arquivo
+    fread(page, sizeof(BTPAGE), 1, file);
+
+    return page;
+}
+
+//Writes page into file in certain rrn position
+boolean writePageIntoFile(long RRN, BTPAGE *page, FILE *file) {
+				// Verifica se está tudo ok com os dados
+				if (!file) {
+								perror("File doesn't exists");
+								exit(EXIT_FAILURE);
+				}
+
+				// Encontra local para escrita baseado no RRN
+				fseek(file, RRN * PAGESIZE, SEEK_SET);
+
+				// Escreve dados
+				fwrite(page, PAGESIZE, 1, file);
+				return TRUE;
+// Dica: você pode criar uma função que só lida com a escrita dos dados e chamar aqui
+}
+
+
+/* implementing 
+	PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, FILE *file) {
     // Procura local pra inserir nova chave na página
     // Se não couber, splitta ele
     // Escreve dados na página
@@ -278,6 +245,34 @@ BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *newKey) {
     // Se não existir espaço, precisa criar uma nova página (usem uma função para criar)
     // Salvar dados da nova chave na página
 }
+*/
+
+
+/*Not fully implemented
+	*
+
+
+
+BTPAGE *getOrCreateRoot(FILE *file) {
+// Verifica se a árvore já existe ou precisa criar uma nova
+long rrnTreeHeader = getTreeHeader(file);
+// Se a roote não existir, cria ela
+if (rrnTreeHeader == NULL) {
+perror("bTree doesn't exists");
+return createTree(file);
+}
+
+// Se existir, só pega o RRN da raiz no cabeçalho e carrega sua página
+BTPAGE *root;
+fread(root, PAGESIZE, 1, file);
+
+return root;
+// Pode ser adaptada pra inserção e busca sem precisar de 2 funções
+}
+*/
+
+/* not implemented
+
 
 //Returns rrn if key exist else return -1
 long bTreeSelect(BTPAGE *node, int key, FILE *file) {
@@ -328,4 +323,5 @@ boolean setNodeAsRoot(BTPAGE *page, FILE *file) {
     // Deveria ser chamada junto com criação de novo nó quando promoção cria uma nova raiz
 }
 
+*/
 

@@ -1,4 +1,4 @@
-UTIL= bTree/bTree.c uspDatabase/uspDatabase.c pageHandler/pageHandler.c Util/util.c
+UTIL= bTree/bTree.c uspDatabase/uspDatabase.c Util/util.c
 MAIN=main.c
 BINARY=main
 
