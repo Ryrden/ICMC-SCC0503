@@ -61,6 +61,28 @@ boolean writeTreeHeader(FILE *file, unsigned int rootRRN, unsigned int numberOfP
     return TRUE;
 }
 
+PROMOTEDKEY *createPromotedKey(RECORD *record, long *childs) {
+    PROMOTEDKEY *promo = (PROMOTEDKEY *)malloc(1 * sizeof(PROMOTEDKEY));
+    promo->key = record->key;
+    promo->recordRRN = record->recordRRN;
+
+    if (childs != NULL) {
+        promo->childs[0] = childs[0];
+        promo->childs[1] = childs[1];
+    } else {
+        promo->childs[0] = -1;
+        promo->childs[1] = -1;
+    }
+    return promo;
+}
+
+HEADER *createHeader() {
+    HEADER *header = (HEADER *)calloc(1, sizeof(HEADER));
+    header->numberOfPages = 0;
+    header->rootRRN = 0;
+    return header;
+}
+
 BTPAGE *createTree(FILE *file, HEADER *header) {
     // Aloca espaço pra raiz
     BTPAGE *page = (BTPAGE *)malloc(1 * PAGESIZE);
@@ -109,28 +131,6 @@ BTPAGE *createPage(RECORD *record, long *childs, boolean isLeaf, int numberOfKey
     return page;
 }
 */
-
-PROMOTEDKEY *createPromotedKey(RECORD *record, long *childs) {
-    PROMOTEDKEY *promo = (PROMOTEDKEY *)malloc(1 * sizeof(PROMOTEDKEY));
-    promo->key = record->key;
-    promo->recordRRN = record->recordRRN;
-
-    if (childs != NULL) {
-        promo->childs[0] = childs[0];
-        promo->childs[1] = childs[1];
-    } else {
-        promo->childs[0] = -1;
-        promo->childs[1] = -1;
-    }
-    return promo;
-}
-
-HEADER *createHeader() {
-    HEADER *header = (HEADER *)calloc(1, sizeof(HEADER));
-    header->numberOfPages = 0;
-    header->rootRRN = 0;
-    return header;
-}
 
 /*Get page by rrn*/
 BTPAGE *getPage(long RRN, FILE *file) {
@@ -248,10 +248,23 @@ PROMOTEDKEY *_split(BTPAGE *page, FILE *file) {
 BTPAGE *readPageFromFile(FILE *file, long RRN) {
     // Coloca o ponteiro do arquivo no local correto
     fseek(file, RRN * PAGESIZE, SEEK_SET);
+
     // Aloca espaço para carregar página
-    BTPAGE *page = (BTPAGE *)malloc(1 * sizeof(BTPAGE));
+    BTPAGE *page = (BTPAGE *)malloc(PAGESIZE * 1);
+
     // Lê dados da página do arquivo
-    fread(page, sizeof(BTPAGE), 1, file);
+    page->items = (RECORD *)malloc(sizeof(RECORD) * MAXKEYS);
+    page->childs = (long *)malloc(sizeof(long) * (MAXKEYS + 1));
+
+    for (int i = 0; i < MAXKEYS; i++)
+        fread(&page->items[i].key, sizeof(int), 1, file);
+
+    for (int i = 0; i < MAXKEYS; i++)
+        fread(&page->items[i].recordRRN, sizeof(int), 1, file);
+
+    fread(&page->childs, sizeof(long), MAXKEYS + 1, file);
+    fread(&page->numberOfKeys, sizeof(short), 1, file);
+    fread(&page->isLeaf, sizeof(boolean), 1, file);
 
     return page;
 }
