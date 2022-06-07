@@ -40,12 +40,12 @@ PROMOTEDKEY *insertIntoNode(BTPAGE *, PROMOTEDKEY *, FILE *);
 BTPAGE *searchPositionOnPageAndInsert(BTPAGE *, PROMOTEDKEY *);
 BTPAGE *splitAndCreateNewNode(BTPAGE **);
 PROMOTEDKEY *extractpromotedKey(BTPAGE *);
-PROMOTEDKEY *_split(BTPAGE *, FILE *, PROMOTEDKEY *);
+PROMOTEDKEY *_split(BTPAGE *, FILE *);
 BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *);
 boolean setNodeAsRoot(BTPAGE *, FILE *);
 
 PROMOTEDKEY *_bTreeInsert(BTPAGE *, PROMOTEDKEY *, FILE *);
-boolean bTreeInsert(RECORD *, BTPAGE *, FILE *);
+boolean bTreeInsert(RECORD *, BTPAGE *, HEADER *, FILE *);
 
 long bTreeSelect(BTPAGE *, int, FILE *);
 

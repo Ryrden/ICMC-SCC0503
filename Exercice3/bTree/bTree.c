@@ -109,9 +109,15 @@ PROMOTEDKEY *createPromotedKey(RECORD *record, long *childs) {
     PROMOTEDKEY *promo = (PROMOTEDKEY *)malloc(1*sizeof(PROMOTEDKEY));
     promo->key = record->key;
     promo->recordRRN = record->recordRRN;
-				if(!childs){
+
+				if(childs != NULL){
 								promo->childs[0] = childs[0];
 								promo->childs[1] = childs[1];
+				}
+				else {
+								promo->childs[0] = -1;
+								promo->childs[1] = -1;
+
 				}
     return promo;
 }
@@ -145,20 +151,24 @@ BTPAGE *getPage(long RRN, FILE *file) {
 }
 
 
-boolean bTreeInsert(RECORD *newRecord, BTPAGE *root, FILE *file) {
+boolean bTreeInsert(RECORD *newRecord, BTPAGE *root, HEADER *header, FILE *file) {
     if (!root)
 								return FALSE;
 				// Função mais abstrata de inserção
 
     // Prepara os dados da nova chave
-				PROMOTEDKEY *keyToInsert = createPromotedKey(newRecord, NULL);
+				PROMOTEDKEY *promotedKey = createPromotedKey(newRecord, NULL);
 
     // Tenta inserir recursivamente
-				PROMOTEDKEY *promotedKey = NULL;
-				promotedKey = _bTreeInsert(root,keyToInsert ,file);
-				
+				promotedKey = _bTreeInsert(root, promotedKey, file);
     // Se tiver chave promovida no final da recursão, é que existe nova raiz
 				if (promotedKey){
+								// TO DO: implementar essas funções
+								// createNodeWithPromotedKey(promotedKey);
+
+								// setNodeAsRoot()
+
+
 								//faz os esquema de dividir
 								// Chama as funções pra criar nova raiz e atualizar o cabeçalho
 				}
@@ -168,38 +178,72 @@ boolean bTreeInsert(RECORD *newRecord, BTPAGE *root, FILE *file) {
 
 //Recursive insertion
 PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, FILE *file) {
-    // Se nó a ser inserido a chave é folha, tenta inserir | Caso base
-				if(node->isLeaf && node->numberOfKeys < MAXKEYS){ 
-						// manipular o vetor records para fazer inserção		
-						// verificar se lotou a pagina
-						RECORD *records = node->items;
+    // Caso 1: nó é folha tenta inserir retorna PROMOTEDKEY != NULL caso houver split
+				if(node->isLeaf){ 
+								key = insertIntoNode(node, key, file);
+								return key;
 
 				}
-    // Caso a inserção crie uma promoção, precisa retornar a chave promovida para a recursão
-    // Se não for nó folha, procura qual sub-árvore seguir para inserir numa folha
+
+    // Caso 2: nó não folha, procura proximo nó filho 
 				long child;
-				PROMOTEDKEY *promotedKey = NULL;
-				for(int i = 0; i<node->numberOfKeys ;i++){
+				for(int i = 0; i < node->numberOfKeys;i++){
 								if (node->items[i].key > key->key){
-												if (node->childs[i]){
-																//acessa o filho e continua descendo
-																fseek(file,node->childs[i],SEEK_SET);
-																child = node->childs[i];
-																break;
-												}
-												//Insere na posição i 
-												//manipula records e verifica se super lotou a pagina
-												return promotedKey;
+												child = i;
+												break;
 								}
+								child = i+1;
 				}
-				node = readPageFromFile(file, child);
-				return _bTreeInsert(node,key,file);
+				BTPAGE *nextNode = readPageFromFile(file, child);
+				key =  _bTreeInsert(nextNode,key,file);
+
+				// Caso 3: key != NULL, foi promovida e precisa ser inserida
+				if(key){
+								key = insertIntoNode(node, key, file);
+								return key;
+				}
 				
-    // Encontrar a posição correta e descer para filho à esquerda se a chave for menor
-    // E descer à direita se for maior
-    // Chamar a inserção recursiva pro filho escolhido
-    // Se a inserção recursiva retornar uma chave promovida, precisa tentar inserir essa chave promovida no nó atual
-    // Retornar chave promovida ou um valor NULL se não houve promoção
+				return key;
+}
+
+PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, FILE *file) {
+				// Procura local pra inserir nova chave na página
+				page = searchPositionOnPageAndInsert(page, newKey);
+
+				// Se lotar splita a pagina e retorna o promted key 
+				if(page->numberOfKeys == MAXKEYS){
+							return	_split(page, file);
+				}
+
+				// Se não lotar escreve a pagina e retorna NULL
+				writePageIntoFile(page->pageRRN, page, file);
+				return NULL;
+}
+
+//Insert some key on page
+BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *newKey) {
+				// Encontra a posição para inserir a chave
+				long position;
+				for(int i = 0; i < page->numberOfKeys;i++){
+								if (page->items[i].key > newKey->key){
+												position = i;
+												break;
+								}
+								position = i+1;
+				}
+
+				// TO DO: terminar essa função e o split + testar e testar muito
+
+				// Se não existir espaço, precisa criar uma nova página (usem uma função para criar)
+				// Salvar dados da nova chave na página
+				return page;
+}
+
+//Split node and writes into file
+PROMOTEDKEY *_split(BTPAGE *page, FILE *file) {
+    // Divide a página, cria o novo nó (faça numa função auxiliar pois é complexo)
+    // Extrai a chave promovida e atualiza os filhos da chave
+    // Escreve a página nova e a que foi dividida (com suas atualizações) no arquivo
 }
 
 /*Retrives page from file pointer*/
@@ -230,22 +274,6 @@ boolean writePageIntoFile(long RRN, BTPAGE *page, FILE *file) {
 				return TRUE;
 // Dica: você pode criar uma função que só lida com a escrita dos dados e chamar aqui
 }
-
-
-/* implementing 
-	PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, FILE *file) {
-    // Procura local pra inserir nova chave na página
-    // Se não couber, splitta ele
-    // Escreve dados na página
-}
-
-//Insert some key on page
-BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *newKey) {
-    // Encontra a posição para inserir a chave
-    // Se não existir espaço, precisa criar uma nova página (usem uma função para criar)
-    // Salvar dados da nova chave na página
-}
-*/
 
 
 /*Not fully implemented
@@ -302,12 +330,7 @@ PROMOTEDKEY *extractpromotedKey(BTPAGE *page) {
     // Atualiza dados da página (filho, número de chaves, etc)
 }
 
-//Split node and writes into file
-PROMOTEDKEY *_split(BTPAGE *page, FILE *file, PROMOTEDKEY *newKey) {
-    // Divide a página, cria o novo nó (faça numa função auxiliar pois é complexo)
-    // Extrai a chave promovida e atualiza os filhos da chave
-    // Escreve a página nova e a que foi dividida (com suas atualizações) no arquivo
-}
+
 
 //Used if promotions reaches root
 BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *promoKey) {
