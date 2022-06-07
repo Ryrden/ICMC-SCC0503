@@ -18,17 +18,25 @@
 */
 
 int main() {
-    FILE *dataFile = fopen("datafile.bin", "wb+");
-    verifyNullPointerExceptionToFile(dataFile);
+    FILE *dataFile;
+    HEADER *header;
+    BTPAGE *bTree;
+    FILE *bTreeFile;
 
-				// TO DO: mudar para getOrCreateRoot (se existir um aquivo de arvore devemos usar ele)
-				// criar getOrCreateHeader para 
-				// criar writeheader (header deve ser escrito por ultimo, durante o encerramento do programa)
-    FILE *bTreeFile = fopen("datafile.bin", "wb+");
-    verifyNullPointerExceptionToFile(bTreeFile);
-
-				HEADER *header = createHeader();
-    BTPAGE *bTree = createTree(bTreeFile, header);
+    // TO DO: mudar para getOrCreateRoot (se existir um aquivo de arvore devemos usar ele)
+    // criar getOrCreateHeader para
+    // criar writeheader (header deve ser escrito por ultimo, durante o encerramento do programa)
+    if (fopen("datafile.bin", "rb") != NULL) {
+        bTreeFile = fopen("datafile.bin", "rb+");
+        verifyNullPointerExceptionToFile(bTreeFile);
+        header = getTreeHeader(dataFile);
+        bTree = getOrCreateRoot(dataFile);
+    } else {
+        bTreeFile = fopen("datafile.bin", "wb+");
+        verifyNullPointerExceptionToFile(bTreeFile);
+        // HEADER *header = createHeader(); //Somente no final do arquivo retornar aqui dps
+        BTPAGE *bTree = createTree(bTreeFile, header);
+    }
 
     int RRN = 0;
     long studentSize = get_student_data_size();
@@ -61,13 +69,13 @@ int main() {
 
             STUDENT *student = create_student(nusp, name, lastName, course, grade);
 
-												// add registry to bTree
-												RECORD *record = createRecord(nusp, RRN);
-												bTreeInsert(record, bTree, bTreeFile);
-												RRN++;
+            // add registry to bTree
+            RECORD *record = createRecord(nusp, RRN);
+            bTreeInsert(record, bTree, header, bTreeFile);
+            RRN++;
 
-												continue;
-												// add registry to registryFile/dataFile
+            continue;
+            // add registry to registryFile/dataFile
 
         } else if (select_command(command) == search_) {
             token = strtok(NULL, ",");

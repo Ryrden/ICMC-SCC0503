@@ -17,7 +17,7 @@ typedef struct record_st RECORD;
 typedef struct page_st BTPAGE;
 typedef struct promotedKey_st PROMOTEDKEY;
 typedef struct header_st HEADER;
-//typedef struct primaryIndex PrimaryIndex;
+// typedef struct primaryIndex PrimaryIndex;
 
 static long getKey(BTPAGE *page);
 
@@ -26,13 +26,12 @@ BTPAGE *createPage(RECORD *, long *, boolean, int);
 PROMOTEDKEY *createPromotedKey(RECORD *, long *);
 RECORD *createRecord(int, long);
 HEADER *createHeader();
+HEADER *getTreeHeader(FILE *file);
+boolean writeTreeHeader(FILE *, long);
 
 BTPAGE *getPage(long, FILE *);
 BTPAGE *readPageFromFile(FILE *, long);
 boolean writePageIntoFile(long, BTPAGE *, FILE *);
-
-static long getTreeHeader(FILE *);
-static void writeTreeHeader(FILE *, long);
 
 BTPAGE *getOrCreateRoot(FILE *);
 
