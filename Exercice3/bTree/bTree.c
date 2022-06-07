@@ -42,6 +42,8 @@ HEADER *getTreeHeader(FILE *file) {
     unsigned int numberOfPages;
     fread(&rootRRN, sizeof(long), 1, file);
     fread(&numberOfPages, sizeof(long), 1, file);
+    if (!rootRRN || !numberOfPages)
+        return NULL;
 
     if (header != NULL) {
         header->numberOfPages = numberOfPages;
@@ -118,37 +120,88 @@ RECORD *createRecord(int key, long recordRRN) {
     return item;
 }
 
-/* função redundante, da pra usar apenas createTree
-BTPAGE *createPage(RECORD *record, long *childs, boolean isLeaf, int numberOfKeys) {
-    BTPAGE *page = (BTPAGE *) malloc(1*PAGESIZE);
-    page->item = record;
-    page->childs = childs;
-    page->isLeaf = isLeaf;
-    page->numberOfKeys = numberOfKeys;
+BTPAGE *getOrCreateRoot(FILE *file) {
+    // Verifica se a árvore já existe ou precisa criar uma nova
+    HEADER *treeHeader = getTreeHeader(file);
+    // Se a roote não existir, cria ela
 
-    page->freeSpace = PAGESIZE;
-
-    return page;
+    if (!treeHeader) {
+        perror("bTree doesn't exists"); // apagar dps
+        treeHeader = createHeader();
+        return createTree(file, treeHeader);
+    }
+    // Se existir, só pega o RRN da raiz no cabeçalho e carrega sua página
+    unsigned int rootRRN = treeHeader->rootRRN;
+    return getPage(rootRRN, file);
+    // Pode ser adaptada pra inserção e busca sem precisar de 2 funções
 }
-*/
 
 /*Get page by rrn*/
 BTPAGE *getPage(long RRN, FILE *file) {
+    if (!file)
+        return NULL;
     // Recupera uma página baseado no RRN
-    BTPAGE *currentPage = readPageFromFile(file, RRN);
+    fseek(file, RRN * PAGESIZE, SEEK_SET);
+    BTPAGE *page = readPageFromFile(file, RRN);
+    page->pageRRN = RRN;
 
-    if (currentPage == NULL)
-        return currentPage;
+    return page;
+}
 
-    if (currentPage->items->recordRRN == RRN)
-        return currentPage;
+/*Retrives page from file pointer*/
+BTPAGE *readPageFromFile(FILE *file, long RRN) {
+    // Coloca o ponteiro do arquivo no local correto
+    fseek(file, RRN * PAGESIZE, SEEK_SET);
 
-    // Procura e carrega seus dados
-    long offSet = currentPage->items->recordRRN * PAGESIZE;
+    // Aloca espaço para carregar página
+    BTPAGE *page = (BTPAGE *)malloc(PAGESIZE * 1);
 
-    fseek(file, offSet, SEEK_SET);
+    // Lê dados da página do arquivo
+    page->items = (RECORD *)malloc(sizeof(RECORD) * MAXKEYS);
+    page->childs = (long *)malloc(sizeof(long) * (MAXKEYS + 1));
 
-    return getPage(RRN, file);
+    for (int i = 0; i < MAXKEYS; i++)
+        fread(&page->items[i].key, sizeof(int), 1, file);
+
+    for (int i = 0; i < MAXKEYS; i++)
+        fread(&page->items[i].recordRRN, sizeof(int), 1, file);
+
+    fread(&page->childs, sizeof(long), MAXKEYS + 1, file);
+    fread(&page->numberOfKeys, sizeof(short), 1, file);
+    fread(&page->isLeaf, sizeof(boolean), 1, file);
+
+    return page;
+}
+
+// Writes page into file in certain rrn position
+boolean writePageIntoFile(long RRN, BTPAGE *page, FILE *file) {
+    // Verifica se está tudo ok com os dados
+    if (!file) {
+        perror("File doesn't exists");
+        return FALSE;
+    }
+    if (!page) {
+        perror("Page doesn't exists");
+        return FALSE;
+    }
+    // Encontra local para escrita baseado no RRN
+    fseek(file, RRN * PAGESIZE, SEEK_SET);
+    // Escreve dados
+    for (int i = 0; i < MAXKEYS; i++) {
+        fwrite(&page->items[i].key, sizeof(int), 1, file);
+    }
+    for (int i = 0; i < MAXKEYS; i++) {
+        fwrite(&page->items[i].recordRRN, sizeof(long), 1, file);
+    }
+    fwrite(&page->childs, sizeof(long), MAXKEYS + 1, file);
+    fwrite(&page->numberOfKeys, sizeof(short), 1, file);
+    fwrite(&page->isLeaf, sizeof(boolean), 1, file);
+
+    // TO-DO: Escrever espaço Livre
+
+    fflush(file);
+    return TRUE;
+    // Dica: você pode criar uma função que só lida com a escrita dos dados e chamar aqui
 }
 
 boolean bTreeInsert(RECORD *newRecord, BTPAGE *root, HEADER *header, FILE *file) {
@@ -244,87 +297,7 @@ PROMOTEDKEY *_split(BTPAGE *page, FILE *file) {
     // Escreve a página nova e a que foi dividida (com suas atualizações) no arquivo
 }
 
-/*Retrives page from file pointer*/
-BTPAGE *readPageFromFile(FILE *file, long RRN) {
-    // Coloca o ponteiro do arquivo no local correto
-    fseek(file, RRN * PAGESIZE, SEEK_SET);
-
-    // Aloca espaço para carregar página
-    BTPAGE *page = (BTPAGE *)malloc(PAGESIZE * 1);
-
-    // Lê dados da página do arquivo
-    page->items = (RECORD *)malloc(sizeof(RECORD) * MAXKEYS);
-    page->childs = (long *)malloc(sizeof(long) * (MAXKEYS + 1));
-
-    for (int i = 0; i < MAXKEYS; i++)
-        fread(&page->items[i].key, sizeof(int), 1, file);
-
-    for (int i = 0; i < MAXKEYS; i++)
-        fread(&page->items[i].recordRRN, sizeof(int), 1, file);
-
-    fread(&page->childs, sizeof(long), MAXKEYS + 1, file);
-    fread(&page->numberOfKeys, sizeof(short), 1, file);
-    fread(&page->isLeaf, sizeof(boolean), 1, file);
-
-    return page;
-}
-
-// Writes page into file in certain rrn position
-boolean writePageIntoFile(long RRN, BTPAGE *page, FILE *file) {
-    // Verifica se está tudo ok com os dados
-    if (!file) {
-        perror("File doesn't exists");
-        return FALSE;
-    }
-    if (!page) {
-        perror("Page doesn't exists");
-        return FALSE;
-    }
-    // Encontra local para escrita baseado no RRN
-    fseek(file, RRN * PAGESIZE, SEEK_SET);
-    // Escreve dados
-    for (int i = 0; i < MAXKEYS; i++) {
-        fwrite(&page->items[i].key, sizeof(int), 1, file);
-    }
-    for (int i = 0; i < MAXKEYS; i++) {
-        fwrite(&page->items[i].recordRRN, sizeof(long), 1, file);
-    }
-    fwrite(&page->childs, sizeof(long), MAXKEYS + 1, file);
-    fwrite(&page->numberOfKeys, sizeof(short), 1, file);
-    fwrite(&page->isLeaf, sizeof(boolean), 1, file);
-
-    // TO-DO: Escrever espaço Livre
-
-    fflush(file);
-    return TRUE;
-    // Dica: você pode criar uma função que só lida com a escrita dos dados e chamar aqui
-}
-
-/*Not fully implemented
-    *
-
-
-
-BTPAGE *getOrCreateRoot(FILE *file) {
-// Verifica se a árvore já existe ou precisa criar uma nova
-long rrnTreeHeader = getTreeHeader(file);
-// Se a roote não existir, cria ela
-if (rrnTreeHeader == NULL) {
-perror("bTree doesn't exists");
-return createTree(file);
-}
-
-// Se existir, só pega o RRN da raiz no cabeçalho e carrega sua página
-BTPAGE *root;
-fread(root, PAGESIZE, 1, file);
-
-return root;
-// Pode ser adaptada pra inserção e busca sem precisar de 2 funções
-}
-*/
-
 /* not implemented
-
 
 //Returns rrn if key exist else return -1
 long bTreeSelect(BTPAGE *node, int key, FILE *file) {
@@ -333,8 +306,6 @@ long bTreeSelect(BTPAGE *node, int key, FILE *file) {
     // Se encontrar a chave, retorna RRN dela
     // Se não encontrar (chegar num nó folha e não estiver lá), retorna -1
 }
-
-
 
 //If page size is odd the return is biggest slice
 
