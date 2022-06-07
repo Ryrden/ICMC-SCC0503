@@ -15,7 +15,8 @@ struct page_st {
     long *childs;
     short numberOfKeys;
     boolean isLeaf;
-    long pageRRN;
+    long pageRRN; // É necessário? (como vamos ter acesso ao rrn se precisamos ler primeiro?)
+    // Como funciona o sistema de Espaço Livre??
 };
 
 struct promotedKey_st {
@@ -260,14 +261,28 @@ boolean writePageIntoFile(long RRN, BTPAGE *page, FILE *file) {
     // Verifica se está tudo ok com os dados
     if (!file) {
         perror("File doesn't exists");
-        exit(EXIT_FAILURE);
+        return FALSE;
     }
-
+    if (!page) {
+        perror("Page doesn't exists");
+        return FALSE;
+    }
     // Encontra local para escrita baseado no RRN
     fseek(file, RRN * PAGESIZE, SEEK_SET);
-
     // Escreve dados
-    fwrite(page, PAGESIZE, 1, file);
+    for (int i = 0; i < MAXKEYS; i++) {
+        fwrite(&page->items[i].key, sizeof(int), 1, file);
+    }
+    for (int i = 0; i < MAXKEYS; i++) {
+        fwrite(&page->items[i].recordRRN, sizeof(long), 1, file);
+    }
+    fwrite(&page->childs, sizeof(long), MAXKEYS + 1, file);
+    fwrite(&page->numberOfKeys, sizeof(short), 1, file);
+    fwrite(&page->isLeaf, sizeof(boolean), 1, file);
+
+    // TO-DO: Escrever espaço Livre
+
+    fflush(file);
     return TRUE;
     // Dica: você pode criar uma função que só lida com a escrita dos dados e chamar aqui
 }
