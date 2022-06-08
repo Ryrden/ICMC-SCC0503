@@ -48,4 +48,5 @@ boolean bTreeInsert(RECORD *, BTPAGE *, HEADER *, FILE *);
 
 long bTreeSelect(BTPAGE *, int, FILE *);
 
+void debugPrintPage(BTPAGE *, boolean);
 #endif // BTREE_H

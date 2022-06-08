@@ -26,17 +26,24 @@ int main() {
     // TO DO: mudar para getOrCreateRoot (se existir um aquivo de arvore devemos usar ele)
     // criar getOrCreateHeader para
     // criar writeheader (header deve ser escrito por ultimo, durante o encerramento do programa)
-    if (fopen("datafile.bin", "rb") != NULL) {
-        bTreeFile = fopen("datafile.bin", "rb+");
+    if (fopen("treeFile.bin", "rb") != NULL) {
+        bTreeFile = fopen("treeFile.bin", "rb+");
         verifyNullPointerExceptionToFile(bTreeFile);
         header = getTreeHeader(dataFile);
         bTree = getOrCreateRoot(dataFile);
     } else {
-        bTreeFile = fopen("datafile.bin", "wb+");
+        bTreeFile = fopen("treeFile.bin", "wb+");
         verifyNullPointerExceptionToFile(bTreeFile);
-        // HEADER *header = createHeader(); //Somente no final do arquivo retornar aqui dps
-        BTPAGE *bTree = createTree(bTreeFile, header);
+        header = createHeader(); //Somente no final do arquivo retornar aqui dps
+        bTree = createTree(bTreeFile, header);
     }
+
+				for (int i=0; i<250; i++ ){
+								RECORD *rec = createRecord(i, i+1);
+								PROMOTEDKEY *promo = createPromotedKey(rec, NULL);
+								searchPositionOnPageAndInsert(bTree, promo);
+				}
+				debugPrintPage(bTree, FALSE);
 
     int RRN = 0;
     long studentSize = get_student_data_size();

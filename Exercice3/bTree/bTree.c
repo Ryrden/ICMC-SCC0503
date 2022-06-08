@@ -263,7 +263,7 @@ PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, FILE *file) {
 
     // Se lotar splita a pagina e retorna o promted key
     if (page->numberOfKeys == MAXKEYS) {
-        return _split(page, file);
+        //return _split(page, file);
     }
 
     // Se não lotar escreve a pagina e retorna NULL
@@ -274,7 +274,7 @@ PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, FILE *file) {
 // Insert some key on page
 BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *key) {
     // Encontra a posição para inserir a chave
-    long position;
+    long position = 0;
     for (int i = 0; i < page->numberOfKeys; i++) {
         if (page->items[i].key > key->key) {
             position = i;
@@ -284,43 +284,31 @@ BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *key) {
     }
 
 				// insere a nova chave e atualiza as outras
-				RECORD oldKey = page->items[position];
-				RECORD *newKey = createRecord(key->key, key->recordRRN);
-				page->items[position] = *newKey;
-    for (int i = position + 1; i < MAXKEYS; i++) {
-								page->items[i] = oldKey;
-								oldKey = page->items[i];
-    }
+				memcpy(&page->items[position + 1], &page->items[position], (page->numberOfKeys - position)*sizeof(RECORD));
+				page->items[position].key = key->key;
+				page->items[position].recordRRN = key->recordRRN;
 				
-				// insere os novos childs e atualiza as outras
-				long oldChild1 = page->childs[position];
-				long oldChild2 = page->childs[position+1];
-				long newChild1 = key->childs[0];
-				long newChild2 = key->childs[1];
-				page->childs[position] = newChild1;
-				page->childs[position+1] = newChild2;
-				for (int i = position + 2; i < MAXKEYS; i+=2) {
-								page->childs[i] = oldChild1;
-								page->childs[i+1] = oldChild2;
-								oldChild1 = page->childs[i];
-								if (i+1 < MAXKEYS){
-												oldChild1 = page->childs[i+1];
-								}
-				}
-
+				// insere os novos childs e atualiza os outros
+				memcpy(&page->childs[position + 2], &page->childs[position], (page->numberOfKeys - position + 1)*sizeof(long));
+				page->childs[position] = key->childs[0];
+				page->childs[position + 1] = key->childs[1];
 
     // Se não existir espaço, precisa criar uma nova página (usem uma função para criar)
     // Salvar dados da nova chave na página
 				// inserção de nova chave bem sucedida, incrementa numero de keys
+
+				page->numberOfKeys++;
     return page;
 }
 
+/*
 // Split node and writes into file
 PROMOTEDKEY *_split(BTPAGE *page, FILE *file) {
     // Divide a página, cria o novo nó (faça numa função auxiliar pois é complexo)
     // Extrai a chave promovida e atualiza os filhos da chave
     // Escreve a página nova e a que foi dividida (com suas atualizações) no arquivo
 }
+*/
 
 /* not implemented
 
@@ -367,3 +355,28 @@ boolean setNodeAsRoot(BTPAGE *page, FILE *file) {
 }
 
 */
+
+
+void debugPrintPage(BTPAGE *page, boolean printChilds){
+				for (int i=0; i<MAXKEYS; i++){
+							long key = page->items[i].key;	
+							if (key != -1) {
+											printf("|%li", key);
+							}
+							else{
+												printf("| ");
+								}
+				}
+				if(printChilds){
+								for (int i=0; i<MAXKEYS+1; i++){
+											long child = page->childs[i];	
+											if (child != -1) {
+															printf("|%li", child);
+											}
+											else{
+																printf("| ");
+												}
+								}
+				}
+				printf("\n");
+}
