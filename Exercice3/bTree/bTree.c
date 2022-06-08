@@ -47,7 +47,7 @@ HEADER *getTreeHeader(FILE *file) {
 
     if (header != NULL) {
         header->numberOfPages = numberOfPages;
-        header->rootRRN;
+        header->rootRRN = rootRRN;
     }
     return header;
 }
@@ -272,21 +272,46 @@ PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, FILE *file) {
 }
 
 // Insert some key on page
-BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *newKey) {
+BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *key) {
     // Encontra a posição para inserir a chave
     long position;
     for (int i = 0; i < page->numberOfKeys; i++) {
-        if (page->items[i].key > newKey->key) {
+        if (page->items[i].key > key->key) {
             position = i;
             break;
         }
         position = i + 1;
     }
 
-    // TO DO: terminar essa função e o split + testar e testar muito
+				// insere a nova chave e atualiza as outras
+				RECORD oldKey = page->items[position];
+				RECORD *newKey = createRecord(key->key, key->recordRRN);
+				page->items[position] = *newKey;
+    for (int i = position + 1; i < MAXKEYS; i++) {
+								page->items[i] = oldKey;
+								oldKey = page->items[i];
+    }
+				
+				// insere os novos childs e atualiza as outras
+				long oldChild1 = page->childs[position];
+				long oldChild2 = page->childs[position+1];
+				long newChild1 = key->childs[0];
+				long newChild2 = key->childs[1];
+				page->childs[position] = newChild1;
+				page->childs[position+1] = newChild2;
+				for (int i = position + 2; i < MAXKEYS; i+=2) {
+								page->childs[i] = oldChild1;
+								page->childs[i+1] = oldChild2;
+								oldChild1 = page->childs[i];
+								if (i+1 < MAXKEYS){
+												oldChild1 = page->childs[i+1];
+								}
+				}
+
 
     // Se não existir espaço, precisa criar uma nova página (usem uma função para criar)
     // Salvar dados da nova chave na página
+				// inserção de nova chave bem sucedida, incrementa numero de keys
     return page;
 }
 

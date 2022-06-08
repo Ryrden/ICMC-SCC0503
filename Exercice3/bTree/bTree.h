@@ -27,7 +27,7 @@ PROMOTEDKEY *createPromotedKey(RECORD *, long *);
 RECORD *createRecord(int, long);
 HEADER *createHeader();
 HEADER *getTreeHeader(FILE *file);
-boolean writeTreeHeader(FILE *, long);
+boolean writeTreeHeader(FILE *file, unsigned int rootRRN, unsigned int numberOfPages);
 
 BTPAGE *getPage(long, FILE *);
 BTPAGE *readPageFromFile(FILE *, long);
