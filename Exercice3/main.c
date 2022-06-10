@@ -38,12 +38,21 @@ int main() {
         bTree = createTree(bTreeFile, header);
     }
 
-				for (int i=0; i<250; i++ ){
+
+				PROMOTEDKEY *promoOut;
+				for (int i=0; i<300; i++ ){
 								RECORD *rec = createRecord(i, i+1);
 								PROMOTEDKEY *promo = createPromotedKey(rec, NULL);
-								searchPositionOnPageAndInsert(bTree, promo);
+								promoOut =  insertIntoNode(bTree, promo, header, bTreeFile);
+								if(promoOut){
+												break;
+								}
 				}
-				debugPrintPage(bTree, FALSE);
+
+
+				promoOut =  insertIntoNode(bTree, promoOut, header, bTreeFile);
+
+				debugPrintPage(bTree, TRUE);
 
     int RRN = 0;
     long studentSize = get_student_data_size();

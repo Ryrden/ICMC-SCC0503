@@ -35,15 +35,15 @@ boolean writePageIntoFile(long, BTPAGE *, FILE *);
 
 BTPAGE *getOrCreateRoot(FILE *);
 
-PROMOTEDKEY *insertIntoNode(BTPAGE *, PROMOTEDKEY *, FILE *);
+PROMOTEDKEY *insertIntoNode(BTPAGE *, PROMOTEDKEY *, HEADER *, FILE *);
 BTPAGE *searchPositionOnPageAndInsert(BTPAGE *, PROMOTEDKEY *);
 BTPAGE *splitAndCreateNewNode(BTPAGE **);
 PROMOTEDKEY *extractpromotedKey(BTPAGE *);
-PROMOTEDKEY *_split(BTPAGE *, FILE *);
+PROMOTEDKEY *_split(BTPAGE *, HEADER *, FILE *);
 BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *);
 boolean setNodeAsRoot(BTPAGE *, FILE *);
 
-PROMOTEDKEY *_bTreeInsert(BTPAGE *, PROMOTEDKEY *, FILE *);
+PROMOTEDKEY *_bTreeInsert(BTPAGE *, PROMOTEDKEY *, HEADER *, FILE *);
 boolean bTreeInsert(RECORD *, BTPAGE *, HEADER *, FILE *);
 
 long bTreeSelect(BTPAGE *, int, FILE *);
