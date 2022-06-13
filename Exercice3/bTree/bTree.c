@@ -64,7 +64,8 @@ boolean writeTreeHeader(FILE *file, unsigned int rootRRN, unsigned int numberOfP
 }
 
 PROMOTEDKEY *createPromotedKey(RECORD *record, long *childs) {
-    PROMOTEDKEY *promo = (PROMOTEDKEY *)malloc(1 * sizeof(PROMOTEDKEY));
+				printf(" key: %i, RRN: %li\n", record->key, record->recordRRN);
+    PROMOTEDKEY *promo =(PROMOTEDKEY *) malloc(2 * sizeof(PROMOTEDKEY));
     promo->key = record->key;
     promo->recordRRN = record->recordRRN;
 
@@ -90,6 +91,9 @@ BTPAGE *createTree(FILE *file, HEADER *header) {
     BTPAGE *page = (BTPAGE *)malloc(1 * PAGESIZE);
     page->items = (RECORD *)calloc(MAXKEYS, sizeof(RECORD));
 
+				// TO DO: refatorar usando memset
+				// mais clean e legivel
+
     // Inicializa items com valor nulo
     for (int i = 0; i < MAXKEYS; i++) {
         page->items[i].key = -1;
@@ -111,6 +115,17 @@ BTPAGE *createTree(FILE *file, HEADER *header) {
 
     fwrite(page, PAGESIZE, 1, file);
     return page;
+}
+
+BTPAGE *changeRootIfNeeded(BTPAGE *root, HEADER *header, FILE *file){
+				if(root->pageRRN == header->rootRRN){
+								return root;
+				}
+
+				BTPAGE *oldRoot = root;
+
+				root = readPageFromFile(file, header->rootRRN);
+				return root;
 }
 
 RECORD *createRecord(int key, long recordRRN) {
@@ -154,21 +169,10 @@ BTPAGE *readPageFromFile(FILE *file, long RRN) {
     fseek(file, RRN * PAGESIZE, SEEK_SET);
 
     // Aloca espaço para carregar página
-    BTPAGE *page = (BTPAGE *)malloc(PAGESIZE * 1);
+    BTPAGE *page = (BTPAGE *)malloc(1 * sizeof(BTPAGE));
 
     // Lê dados da página do arquivo
-    page->items = (RECORD *)malloc(sizeof(RECORD) * MAXKEYS);
-    page->childs = (long *)malloc(sizeof(long) * (MAXKEYS + 1));
-
-    for (int i = 0; i < MAXKEYS; i++)
-        fread(&page->items[i].key, sizeof(int), 1, file);
-
-    for (int i = 0; i < MAXKEYS; i++)
-        fread(&page->items[i].recordRRN, sizeof(int), 1, file);
-
-    fread(&page->childs, sizeof(long), MAXKEYS + 1, file);
-    fread(&page->numberOfKeys, sizeof(short), 1, file);
-    fread(&page->isLeaf, sizeof(boolean), 1, file);
+				fread(page, sizeof(BTPAGE), 1, file);
 
     return page;
 }
@@ -187,45 +191,67 @@ boolean writePageIntoFile(long RRN, BTPAGE *page, FILE *file) {
     // Encontra local para escrita baseado no RRN
     fseek(file, RRN * PAGESIZE, SEEK_SET);
     // Escreve dados
-    for (int i = 0; i < MAXKEYS; i++) {
-        fwrite(&page->items[i].key, sizeof(int), 1, file);
-    }
-    for (int i = 0; i < MAXKEYS; i++) {
-        fwrite(&page->items[i].recordRRN, sizeof(long), 1, file);
-    }
-    fwrite(&page->childs, sizeof(long), MAXKEYS + 1, file);
-    fwrite(&page->numberOfKeys, sizeof(short), 1, file);
-    fwrite(&page->isLeaf, sizeof(boolean), 1, file);
-
-    // TO-DO: Escrever espaço Livre
+				fwrite(page, PAGESIZE, 1, file);
+   
+				// TO-DO: Escrever espaço Livre
 
     fflush(file);
     return TRUE;
     // Dica: você pode criar uma função que só lida com a escrita dos dados e chamar aqui
 }
 
+// Função mais abstrata de inserção
 boolean bTreeInsert(RECORD *newRecord, BTPAGE *root, HEADER *header, FILE *file) {
     if (!root)
         return FALSE;
-    // Função mais abstrata de inserção
 
     // Prepara os dados da nova chave
     PROMOTEDKEY *promotedKey = createPromotedKey(newRecord, NULL);
 
     // Tenta inserir recursivamente
     promotedKey = _bTreeInsert(root, promotedKey, header, file);
-    // Se tiver chave promovida no final da recursão, é que existe nova raiz
+
+    // Se tiver chave promovida no final da recursão, devemos criar nova raiz 
     if (promotedKey) {
-        // TO DO: implementar essas funções
-        // createNodeWithPromotedKey(promotedKey);
+        BTPAGE *newRoot = createNodeWithPromotedKey(promotedKey, header);
+								
+								writePageIntoFile(newRoot->pageRRN, newRoot, file);
 
-        // setNodeAsRoot()
-
-        // faz os esquema de dividir
-        //  Chama as funções pra criar nova raiz e atualizar o cabeçalho
+        // atualiza o cabeçalho
+								header->rootRRN = newRoot->pageRRN;
     }
 
+				free(promotedKey);
+
     return TRUE;
+}
+
+BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *promoKey, HEADER *header) {
+    // Se promoção cria estrutura para nova raiz,
+    // Aloca espaço para ela
+				BTPAGE *newRoot = (BTPAGE *)malloc(1 * PAGESIZE);
+
+				// aloca espaço e atualiza registros e childs
+    newRoot->items = (RECORD *)calloc(MAXKEYS, sizeof(RECORD));
+				memset(&newRoot->items[0], -1, MAXKEYS*sizeof(RECORD));
+
+    newRoot->childs = (long *)calloc(MAXKEYS + 1, sizeof(long));
+				memset(&newRoot->childs[0], -1, (MAXKEYS + 1)*sizeof(RECORD));
+
+    // Salva dados da chave promovida na nova raiz
+				searchPositionOnPageAndInsert(newRoot, promoKey);
+
+				//atualiza meta dados
+				newRoot->numberOfKeys = 1;
+    newRoot->isLeaf = FALSE;
+    newRoot->pageRRN = header->numberOfPages;
+
+    header->numberOfPages++;
+
+    return newRoot;
+
+    // atualiza os filhos deste novo nó/página
+    // Pode reusar função que cria página nova e adicionar somente especificidades
 }
 
 // Recursive insertion
@@ -245,8 +271,10 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, HEADER *header, FILE *
         }
         child = i + 1;
     }
+
     BTPAGE *nextNode = readPageFromFile(file, child);
     key = _bTreeInsert(nextNode, key, header, file);
+
 
     // Caso 3: key != NULL, foi promovida e precisa ser inserida
     if (key) {
@@ -254,6 +282,7 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, HEADER *header, FILE *
         return key;
     }
 
+				freePage(nextNode);
     return key;
 }
 
@@ -263,6 +292,7 @@ PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, HEADER *header, F
 
     // Se lotar splita a pagina e retorna o promted key
     if (page->numberOfKeys == MAXKEYS) {
+								free(newKey);
         return _split(page, header, file);
     }
 
@@ -282,7 +312,6 @@ BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *key) {
         }
         position = i + 1;
     }
-
 				if(position > MAXKEYS){ // não deve chegar nesse ponto
 								exit(EXIT_FAILURE);
 				}
@@ -307,11 +336,11 @@ BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *key) {
 PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
     //cria o novo nó
 				long middle = MAXKEYS/2;
-				printf("%li\n", middle);
 				BTPAGE *newPage = createTree(file, header);
 
     // Extrai a chave promovida e atualiza os filhos da chave
-				PROMOTEDKEY *promoKey = calloc(1, sizeof(PROMOTEDKEY)); 
+				long childs[] = {originalPage->pageRRN, newPage->pageRRN};
+				PROMOTEDKEY *promoKey = createPromotedKey(&originalPage->items[middle], childs); 
 				promoKey->key = originalPage->items[middle].key;
 				promoKey->recordRRN = originalPage->items[middle].recordRRN;
 				promoKey->childs[0] = originalPage->pageRRN;
@@ -326,13 +355,21 @@ PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
 				// Atualiza meta-dados das paginas 
 				originalPage->numberOfKeys = middle;
 				originalPage->isLeaf = TRUE;
-				newPage->numberOfKeys = (MAXKEYS - middle+1);
+				newPage->numberOfKeys = (MAXKEYS - (middle+1));
 				newPage->isLeaf = TRUE;
 
     // Escreve a página nova e a que foi dividida (com suas atualizações) no arquivo
 				writePageIntoFile(newPage->pageRRN, newPage, file);
+				writePageIntoFile(originalPage->pageRRN, originalPage, file);
+
+				freePage(originalPage);
+				freePage(newPage);
 
 				return promoKey;
+}
+
+void freePage(BTPAGE *page){
+    free(page);
 }
 
 
@@ -367,24 +404,33 @@ PROMOTEDKEY *extractpromotedKey(BTPAGE *page) {
 
 
 //Used if promotions reaches root
-BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *promoKey) {
-    // Se promoção cria estrutura para nova raiz,
-    // Aloca espaço para ela
-    // Salva dados da chave promovida na nova raiz
-    // atualiza os filhos deste novo nó/página
-    // Pode reusar função que cria página nova e adicionar somente especificidades
+boolean setNodeAsRoot(BTPAGE *page, FILE *file, HEADER *header) {
+				header->rootRRN = page->pageRRN;
+				return TRUE;
 }
 
-boolean setNodeAsRoot(BTPAGE *page, FILE *file) {
-    // Escreve página nova e atualiza o cabeçalho para conter ela como raiz
-    // Deveria ser chamada junto com criação de novo nó quando promoção cria uma nova raiz
-}
+
+
 
 */
 
+void debugPrintAllPages(BTPAGE *page, FILE *file){
+				printf("but WHYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY\n");
+				debugPrintPage(page, FALSE);
+
+				for(int i=0; i< MAXKEYS +1; i++){
+								if (page->childs[i] != -1){
+												BTPAGE *nextPage = readPageFromFile(file, page->childs[i]);
+												debugPrintPage(nextPage, FALSE);
+								}
+
+				}
+}
 
 void debugPrintPage(BTPAGE *page, boolean printChilds){
-				printf("page:%li\n keys:", page->pageRRN);
+				
+				printf("page:%ld\n keys:", page->pageRRN);
+
 				for (int i=0; i<MAXKEYS; i++){
 							long key = page->items[i].key;	
 							if (key != -1) {
@@ -394,7 +440,7 @@ void debugPrintPage(BTPAGE *page, boolean printChilds){
 												printf("| ");
 								}
 				}
-				printf("\nchilds: ");
+				printf("\nchilds:\n ");
 				if(printChilds){
 								for (int i=0; i<MAXKEYS+1; i++){
 											if (page->childs[i] != -1) {

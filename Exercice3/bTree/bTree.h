@@ -32,6 +32,7 @@ boolean writeTreeHeader(FILE *file, unsigned int rootRRN, unsigned int numberOfP
 BTPAGE *getPage(long, FILE *);
 BTPAGE *readPageFromFile(FILE *, long);
 boolean writePageIntoFile(long, BTPAGE *, FILE *);
+void freePage(BTPAGE *);
 
 BTPAGE *getOrCreateRoot(FILE *);
 
@@ -40,8 +41,9 @@ BTPAGE *searchPositionOnPageAndInsert(BTPAGE *, PROMOTEDKEY *);
 BTPAGE *splitAndCreateNewNode(BTPAGE **);
 PROMOTEDKEY *extractpromotedKey(BTPAGE *);
 PROMOTEDKEY *_split(BTPAGE *, HEADER *, FILE *);
-BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *);
-boolean setNodeAsRoot(BTPAGE *, FILE *);
+BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *, HEADER *);
+boolean setNodeAsRoot(BTPAGE *, FILE *, HEADER *);
+BTPAGE *changeRootIfNeeded(BTPAGE *, HEADER *, FILE *);
 
 PROMOTEDKEY *_bTreeInsert(BTPAGE *, PROMOTEDKEY *, HEADER *, FILE *);
 boolean bTreeInsert(RECORD *, BTPAGE *, HEADER *, FILE *);
@@ -49,4 +51,5 @@ boolean bTreeInsert(RECORD *, BTPAGE *, HEADER *, FILE *);
 long bTreeSelect(BTPAGE *, int, FILE *);
 
 void debugPrintPage(BTPAGE *, boolean);
+void debugPrintAllPages(BTPAGE *, FILE *);
 #endif // BTREE_H

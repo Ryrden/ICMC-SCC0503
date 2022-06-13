@@ -23,37 +23,41 @@ int main() {
     BTPAGE *bTree;
     FILE *bTreeFile;
 
+				// TO DO filtrar registros iguais, não devemos aceita-los
     // TO DO: mudar para getOrCreateRoot (se existir um aquivo de arvore devemos usar ele)
     // criar getOrCreateHeader para
     // criar writeheader (header deve ser escrito por ultimo, durante o encerramento do programa)
+
+
+				/*
     if (fopen("treeFile.bin", "rb") != NULL) {
         bTreeFile = fopen("treeFile.bin", "rb+");
         verifyNullPointerExceptionToFile(bTreeFile);
         header = getTreeHeader(dataFile);
         bTree = getOrCreateRoot(dataFile);
-    } else {
+    } else {*/
         bTreeFile = fopen("treeFile.bin", "wb+");
         verifyNullPointerExceptionToFile(bTreeFile);
         header = createHeader(); //Somente no final do arquivo retornar aqui dps
         bTree = createTree(bTreeFile, header);
-    }
+    //}
 
 
-				PROMOTEDKEY *promoOut;
 				for (int i=0; i<300; i++ ){
-								RECORD *rec = createRecord(i, i+1);
-								PROMOTEDKEY *promo = createPromotedKey(rec, NULL);
-								promoOut =  insertIntoNode(bTree, promo, header, bTreeFile);
-								if(promoOut){
-												break;
-								}
+								printf("%i\n", i);
+								RECORD *rec = createRecord(i, i+5);
+
+								bTreeInsert(rec, bTree, header, bTreeFile);
+								// TO DO 
+								bTree = changeRootIfNeeded(bTree, header, bTreeFile);
+								// função get new root if needed
+								free(rec);
 				}
 
 
-				promoOut =  insertIntoNode(bTree, promoOut, header, bTreeFile);
 
-				debugPrintPage(bTree, TRUE);
-
+				fflush(stdin);
+				fflush(stdout);
     int RRN = 0;
     long studentSize = get_student_data_size();
     char *line = (char *)malloc(sizeof(char) * STRING_SIZE);
@@ -88,16 +92,19 @@ int main() {
             // add registry to bTree
             RECORD *record = createRecord(nusp, RRN);
             bTreeInsert(record, bTree, header, bTreeFile);
+												bTree = changeRootIfNeeded(bTree, header, bTreeFile);
             RRN++;
 
             continue;
             // add registry to registryFile/dataFile
 
         } else if (select_command(command) == search_) {
+												continue; // não implementado
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
 
         } else if (select_command(command) == update_) {
+												continue; // não implementado
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
 
