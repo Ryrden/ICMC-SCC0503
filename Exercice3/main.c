@@ -54,7 +54,7 @@ int main() {
 								rec = NULL;
 				}
 
-				for (int i=307; i<2000; i++ ){
+				for (int i=307; i<30000; i++ ){
 								RECORD *rec = createRecord(i, i+5);
 
 								bTreeInsert(rec, bTree, header, bTreeFile);
@@ -69,9 +69,6 @@ int main() {
 
 				return 0;
 
-
-				fflush(stdin);
-				fflush(stdout);
     int RRN = 0;
     long studentSize = get_student_data_size();
     char *line = (char *)malloc(sizeof(char) * STRING_SIZE);
@@ -102,11 +99,15 @@ int main() {
             grade = atof(token);
 
             STUDENT *student = create_student(nusp, name, lastName, course, grade);
+												erase_student(&student);
 
             // add registry to bTree
             RECORD *record = createRecord(nusp, RRN);
             bTreeInsert(record, bTree, header, bTreeFile);
 												bTree = changeRootIfNeeded(bTree, header, bTreeFile);
+
+												free(record);
+												record = NULL;
             RRN++;
 
             continue;
@@ -123,11 +124,12 @@ int main() {
             unsigned int key = atoi(token);
 
         } else if (select_command(command) == exit_) {
+												debugPrintAllPages(bTree, bTreeFile);
             break;
         }
     }
     free(line);
-    fclose(dataFile);
+    fclose(bTreeFile);
     // fclose(indexFile); has to be created yet
     return EXIT_SUCCESS;
 }
