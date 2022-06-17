@@ -315,7 +315,6 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, HEADER *header, FILE *
     // Caso 3: key != NULL, foi promovida e precisa ser inserida
     if (key) {
         key = insertIntoNode(node, key, header, file);
-								writePageIntoFile(node->pageRRN, node, file);
         return key;
     }
 
@@ -325,11 +324,11 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, HEADER *header, FILE *
 PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, HEADER *header, FILE *file) {
     // Procura local pra inserir nova chave na página
     page = searchPositionOnPageAndInsert(page, newKey);
+				free(newKey);
+				newKey = NULL;
 
     // Se lotar depois de inserir splita a pagina e retorna o promted key
     if (page->numberOfKeys == MAXKEYS) {
-								free(newKey);
-								newKey = NULL;
         return _split(page, header, file);
     }
 
@@ -359,7 +358,7 @@ BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *key) {
 				page->items[position].recordRRN = key->recordRRN;
 				
 				// insere os novos childs e atualiza os outros
-				memcpy(&page->childs[position + 1], &page->childs[position], (page->numberOfKeys - position + 1) * sizeof(long));
+				memcpy(&page->childs[position + 1], &page->childs[position], ((page->numberOfKeys - position) + 1) * sizeof(long));
 				page->childs[position] = key->childs[0];
 				page->childs[position + 1] = key->childs[1];
 
@@ -392,8 +391,8 @@ PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
 				memcpy(newPage->items, &originalPage->items[middle + 1], (originalPage->numberOfKeys - (middle+1)) * sizeof(RECORD));
 				memset(&originalPage->items[middle], -1, (originalPage->numberOfKeys - middle)*sizeof(RECORD));
 
-				memcpy(newPage->childs, &originalPage->childs[middle + 1], (originalPage->numberOfKeys - (middle+2)) * sizeof(long));
-				memset(&originalPage->childs[middle], -1, (originalPage->numberOfKeys - middle+1)*sizeof(long));
+				memcpy(&newPage->childs[0], &originalPage->childs[middle + 2], (MAXKEYS - middle -1) * sizeof(long));
+				memset(&originalPage->childs[middle + 2], -1, (MAXKEYS - middle - 1)*sizeof(long));
 
 
 				// Atualiza meta-dados das paginas 
@@ -466,7 +465,7 @@ void debugPrintAllPages(BTPAGE *page, FILE *file){
 				for(int i=0; i< MAXKEYS +1; i++){
 								if (page->childs[i] != -1){
 												BTPAGE *nextPage = readPageFromFile(file, page->childs[i]);
-												debugPrintPage(nextPage, TRUE);
+												debugPrintAllPages(nextPage, file);
 												freeNode(nextPage);
 								}
 
@@ -487,7 +486,7 @@ void debugPrintPage(BTPAGE *page, boolean printChilds){
 								}
 				}
 				if(printChilds){
-								printf("\nchilds:\n ");
+								printf("\nchilds: ");
 								for (int i=0; i<MAXKEYS+1; i++){
 											if (page->childs[i] != -1) {
 															printf("|%li", page->childs[i]);
