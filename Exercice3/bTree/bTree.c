@@ -306,13 +306,6 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, HEADER *header, FILE *
         child = i + 1;
     }
 				
-				// TO DO: refatorar, não deveria ser necessario esse loop
-				if(node->childs[child] == -1){
-        key = insertIntoNode(node, key, header, file);
-        return key;
-
-				}
-
     BTPAGE *nextNode = readPageFromFile(file, node->childs[child]);
     key = _bTreeInsert(nextNode, key, header, file);
 				freeNode(nextNode);
@@ -397,8 +390,8 @@ PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
 				memcpy(newPage->items, &originalPage->items[middle + 1], (originalPage->numberOfKeys - (middle+1)) * sizeof(RECORD));
 				memset(&originalPage->items[middle], -1, (originalPage->numberOfKeys - middle)*sizeof(RECORD));
 
-				memcpy(&newPage->childs[0], &originalPage->childs[middle + 2], (MAXKEYS - middle -1) * sizeof(long));
-				memset(&originalPage->childs[middle + 2], -1, (MAXKEYS - middle - 1)*sizeof(long));
+				memcpy(&newPage->childs[0], &originalPage->childs[middle + 1], (MAXKEYS - middle) * sizeof(long));
+				memset(&originalPage->childs[middle + 1], -1, (MAXKEYS - middle)*sizeof(long));
 
 
 				// Atualiza meta-dados das paginas 
