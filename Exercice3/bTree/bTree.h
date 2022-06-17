@@ -11,7 +11,11 @@
 #define TREE_HEADER PAGESIZE
 #define MAXKEYS 204
 #define AUX_FIELDS_SIZE_ON_PAGE (2 + 1) //∗ number o f k e y s and ” i s l e a f ” b o o l ∗/
-#define FREE_SPACE_ON_PAGE (PAGESIZE - ((MAXKEYS * 4) + (MAXKEYS * 8) + ((MAXKEYS + 1) * 8) + 3))
+#define FREE_SPACE_ON_PAGE (PAGESIZE - ((MAXKEYS*4)+(MAXKEYS*8)+((MAXKEYS+1)*8)+3))
+#define FREE_SPACE (PAGESIZE - ((MAXKEYS*4)+(MAXKEYS*8)+((MAXKEYS+1)*8)+6))
+// tamanho da pagina - tamanho ocupado 
+// FREE_SPACE serve para ocupar o arquivo (mesmo que com dados inuteis) para n atingir EOF durante a leitura
+
 
 typedef struct record_st RECORD;
 typedef struct page_st BTPAGE;
@@ -32,7 +36,7 @@ boolean writeTreeHeader(FILE *file, unsigned int rootRRN, unsigned int numberOfP
 BTPAGE *getPage(long, FILE *);
 BTPAGE *readPageFromFile(FILE *, long);
 boolean writePageIntoFile(long, BTPAGE *, FILE *);
-void freePage(BTPAGE *);
+void freeNode(BTPAGE *);
 
 BTPAGE *getOrCreateRoot(FILE *);
 
@@ -44,6 +48,7 @@ PROMOTEDKEY *_split(BTPAGE *, HEADER *, FILE *);
 BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *, HEADER *);
 boolean setNodeAsRoot(BTPAGE *, FILE *, HEADER *);
 BTPAGE *changeRootIfNeeded(BTPAGE *, HEADER *, FILE *);
+BTPAGE *alocateNode();
 
 PROMOTEDKEY *_bTreeInsert(BTPAGE *, PROMOTEDKEY *, HEADER *, FILE *);
 boolean bTreeInsert(RECORD *, BTPAGE *, HEADER *, FILE *);

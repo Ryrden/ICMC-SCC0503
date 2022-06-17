@@ -64,8 +64,7 @@ boolean writeTreeHeader(FILE *file, unsigned int rootRRN, unsigned int numberOfP
 }
 
 PROMOTEDKEY *createPromotedKey(RECORD *record, long *childs) {
-				printf(" key: %i, RRN: %li\n", record->key, record->recordRRN);
-    PROMOTEDKEY *promo =(PROMOTEDKEY *) malloc(2 * sizeof(PROMOTEDKEY));
+    PROMOTEDKEY *promo =(PROMOTEDKEY *) malloc(1 * sizeof(PROMOTEDKEY));
     promo->key = record->key;
     promo->recordRRN = record->recordRRN;
 
@@ -86,13 +85,14 @@ HEADER *createHeader() {
     return header;
 }
 
-BTPAGE *createTree(FILE *file, HEADER *header) {
-    // Aloca espaço pra raiz
-    BTPAGE *page = (BTPAGE *)malloc(1 * PAGESIZE);
-    page->items = (RECORD *)calloc(MAXKEYS, sizeof(RECORD));
-
+// Padroniza a alocação e inicialização do Node
+BTPAGE *alocateNode(){
 				// TO DO: refatorar usando memset
 				// mais clean e legivel
+
+    BTPAGE *page = (BTPAGE *)malloc(1 * PAGESIZE);
+    page->items = (RECORD *)calloc(MAXKEYS, sizeof(RECORD));
+    page->childs = (long *)calloc(MAXKEYS + 1, sizeof(long));
 
     // Inicializa items com valor nulo
     for (int i = 0; i < MAXKEYS; i++) {
@@ -100,7 +100,6 @@ BTPAGE *createTree(FILE *file, HEADER *header) {
         page->items[i].recordRRN = -1;
     }
 
-    page->childs = (long *)calloc(MAXKEYS + 1, sizeof(long));
 
     // Inicializa childs com valor nulo
     for (int i = 0; i < MAXKEYS + 1; i++) {
@@ -108,6 +107,16 @@ BTPAGE *createTree(FILE *file, HEADER *header) {
     }
 
     page->numberOfKeys = 0;
+				return page;
+
+
+}
+
+BTPAGE *createTree(FILE *file, HEADER *header) {
+    // Aloca espaço pra raiz
+				
+				BTPAGE *page = alocateNode();
+
     page->isLeaf = TRUE;
     page->pageRRN = header->numberOfPages;
 
@@ -118,14 +127,12 @@ BTPAGE *createTree(FILE *file, HEADER *header) {
 }
 
 BTPAGE *changeRootIfNeeded(BTPAGE *root, HEADER *header, FILE *file){
-				if(root->pageRRN == header->rootRRN){
+				if(header->rootRRN == root->pageRRN){
 								return root;
 				}
 
-				BTPAGE *oldRoot = root;
-
-				root = readPageFromFile(file, header->rootRRN);
-				return root;
+				freeNode(root);
+				return readPageFromFile(file, header->rootRRN);
 }
 
 RECORD *createRecord(int key, long recordRRN) {
@@ -165,14 +172,24 @@ BTPAGE *getPage(long RRN, FILE *file) {
 
 /*Retrives page from file pointer*/
 BTPAGE *readPageFromFile(FILE *file, long RRN) {
+    // Aloca espaço para carregar página
+    BTPAGE *page = alocateNode();
+
     // Coloca o ponteiro do arquivo no local correto
     fseek(file, RRN * PAGESIZE, SEEK_SET);
 
-    // Aloca espaço para carregar página
-    BTPAGE *page = (BTPAGE *)malloc(1 * sizeof(BTPAGE));
-
     // Lê dados da página do arquivo
-				fread(page, sizeof(BTPAGE), 1, file);
+				for(int i=0; i<MAXKEYS; i++){
+								fread(&page->items[i].key, sizeof(int),1, file);
+				}
+				for(int i=0; i<MAXKEYS; i++){
+								fread(&page->items[i].recordRRN, sizeof(long),1, file);
+				}
+				fread(page->childs, sizeof(long), MAXKEYS + 1, file);
+				fread(&page->isLeaf, sizeof(int),1, file);
+				fread(&page->numberOfKeys, sizeof(short),1, file);
+
+				page->pageRRN = RRN;
 
     return page;
 }
@@ -190,12 +207,34 @@ boolean writePageIntoFile(long RRN, BTPAGE *page, FILE *file) {
     }
     // Encontra local para escrita baseado no RRN
     fseek(file, RRN * PAGESIZE, SEEK_SET);
-    // Escreve dados
-				fwrite(page, PAGESIZE, 1, file);
-   
-				// TO-DO: Escrever espaço Livre
 
-    fflush(file);
+    // Escreve dados
+				for(int i=0; i<MAXKEYS; i++){
+								fwrite(&page->items[i].key, sizeof(int), 1, file);
+				}
+				for(int i=0; i<MAXKEYS; i++){
+								fwrite(&page->items[i].recordRRN, sizeof(long), 1, file);
+				}
+				fwrite(page->childs, sizeof(long), MAXKEYS + 1, file);
+				fwrite(&page->isLeaf, sizeof(int), 1, file);
+				fwrite(&page->numberOfKeys, sizeof(short), 1, file);
+
+				// Aloca e Escreve o espaço livre
+				char *freeSpace = (char *)malloc(FREE_SPACE*sizeof(char));
+				fwrite(freeSpace, sizeof(char), FREE_SPACE, file);
+
+				free(freeSpace);
+				
+
+				/*
+				printf("\n\n|||| debuging |||| \n\n");
+				BTPAGE *testPage = readPageFromFile(file, RRN);
+				debugPrintPage(testPage, TRUE);
+				freeNode(testPage);
+				printf("\n\n|||| end debuging |||| \n\n");
+*/
+
+				fflush(file);
     return TRUE;
     // Dica: você pode criar uma função que só lida com a escrita dos dados e chamar aqui
 }
@@ -219,9 +258,11 @@ boolean bTreeInsert(RECORD *newRecord, BTPAGE *root, HEADER *header, FILE *file)
 
         // atualiza o cabeçalho
 								header->rootRRN = newRoot->pageRRN;
+
+								free(promotedKey);
+								promotedKey = NULL;
     }
 
-				free(promotedKey);
 
     return TRUE;
 }
@@ -229,23 +270,16 @@ boolean bTreeInsert(RECORD *newRecord, BTPAGE *root, HEADER *header, FILE *file)
 BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *promoKey, HEADER *header) {
     // Se promoção cria estrutura para nova raiz,
     // Aloca espaço para ela
-				BTPAGE *newRoot = (BTPAGE *)malloc(1 * PAGESIZE);
+				BTPAGE *newRoot = alocateNode();
 
-				// aloca espaço e atualiza registros e childs
-    newRoot->items = (RECORD *)calloc(MAXKEYS, sizeof(RECORD));
-				memset(&newRoot->items[0], -1, MAXKEYS*sizeof(RECORD));
-
-    newRoot->childs = (long *)calloc(MAXKEYS + 1, sizeof(long));
-				memset(&newRoot->childs[0], -1, (MAXKEYS + 1)*sizeof(RECORD));
-
-    // Salva dados da chave promovida na nova raiz
+				// Salva dados da chave promovida na nova raiz
 				searchPositionOnPageAndInsert(newRoot, promoKey);
 
 				//atualiza meta dados
 				newRoot->numberOfKeys = 1;
     newRoot->isLeaf = FALSE;
-    newRoot->pageRRN = header->numberOfPages;
 
+    newRoot->pageRRN = header->numberOfPages;
     header->numberOfPages++;
 
     return newRoot;
@@ -272,17 +306,19 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, HEADER *header, FILE *
         child = i + 1;
     }
 
-    BTPAGE *nextNode = readPageFromFile(file, child);
+    BTPAGE *nextNode = readPageFromFile(file, node->childs[child]);
     key = _bTreeInsert(nextNode, key, header, file);
+				freeNode(nextNode);
+				nextNode = NULL;
 
 
     // Caso 3: key != NULL, foi promovida e precisa ser inserida
     if (key) {
         key = insertIntoNode(node, key, header, file);
+								writePageIntoFile(node->pageRRN, node, file);
         return key;
     }
 
-				freePage(nextNode);
     return key;
 }
 
@@ -290,9 +326,10 @@ PROMOTEDKEY *insertIntoNode(BTPAGE *page, PROMOTEDKEY *newKey, HEADER *header, F
     // Procura local pra inserir nova chave na página
     page = searchPositionOnPageAndInsert(page, newKey);
 
-    // Se lotar splita a pagina e retorna o promted key
+    // Se lotar depois de inserir splita a pagina e retorna o promted key
     if (page->numberOfKeys == MAXKEYS) {
 								free(newKey);
+								newKey = NULL;
         return _split(page, header, file);
     }
 
@@ -312,8 +349,8 @@ BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *key) {
         }
         position = i + 1;
     }
-				if(position > MAXKEYS){ // não deve chegar nesse ponto
-								exit(EXIT_FAILURE);
+				if(position > MAXKEYS | page->numberOfKeys >= MAXKEYS){ // não deve chegar nesse ponto
+								perror("posição invalida ou pagina cheia\n");
 				}
 
 				// insere a nova chave e atualiza as outras
@@ -336,7 +373,10 @@ BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *key) {
 PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
     //cria o novo nó
 				long middle = MAXKEYS/2;
-				BTPAGE *newPage = createTree(file, header);
+				BTPAGE *newPage = alocateNode();
+				newPage->pageRRN = header->numberOfPages;
+				header->numberOfPages++;
+
 
     // Extrai a chave promovida e atualiza os filhos da chave
 				long childs[] = {originalPage->pageRRN, newPage->pageRRN};
@@ -349,8 +389,12 @@ PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
 
 
 				// Atualiza os valores das paginas
-				memcpy(&newPage->items[0], &originalPage->items[middle + 1], (MAXKEYS - middle+1) * sizeof(RECORD));
-				memset(&originalPage->items[middle], -1, (MAXKEYS - middle)*sizeof(RECORD));
+				memcpy(newPage->items, &originalPage->items[middle + 1], (originalPage->numberOfKeys - (middle+1)) * sizeof(RECORD));
+				memset(&originalPage->items[middle], -1, (originalPage->numberOfKeys - middle)*sizeof(RECORD));
+
+				memcpy(newPage->childs, &originalPage->childs[middle + 1], (originalPage->numberOfKeys - (middle+2)) * sizeof(long));
+				memset(&originalPage->childs[middle], -1, (originalPage->numberOfKeys - middle+1)*sizeof(long));
+
 
 				// Atualiza meta-dados das paginas 
 				originalPage->numberOfKeys = middle;
@@ -362,13 +406,15 @@ PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
 				writePageIntoFile(newPage->pageRRN, newPage, file);
 				writePageIntoFile(originalPage->pageRRN, originalPage, file);
 
-				freePage(originalPage);
-				freePage(newPage);
+				freeNode(newPage);
+				newPage = NULL;
 
 				return promoKey;
 }
 
-void freePage(BTPAGE *page){
+void freeNode(BTPAGE *page){
+				free(page->items);
+				free(page->childs);
     free(page);
 }
 
@@ -415,13 +461,13 @@ boolean setNodeAsRoot(BTPAGE *page, FILE *file, HEADER *header) {
 */
 
 void debugPrintAllPages(BTPAGE *page, FILE *file){
-				printf("but WHYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY\n");
-				debugPrintPage(page, FALSE);
+				debugPrintPage(page, TRUE);
 
 				for(int i=0; i< MAXKEYS +1; i++){
 								if (page->childs[i] != -1){
 												BTPAGE *nextPage = readPageFromFile(file, page->childs[i]);
-												debugPrintPage(nextPage, FALSE);
+												debugPrintPage(nextPage, TRUE);
+												freeNode(nextPage);
 								}
 
 				}
@@ -429,7 +475,7 @@ void debugPrintAllPages(BTPAGE *page, FILE *file){
 
 void debugPrintPage(BTPAGE *page, boolean printChilds){
 				
-				printf("page:%ld\n keys:", page->pageRRN);
+				printf("page:%li\n keys:", page->pageRRN);
 
 				for (int i=0; i<MAXKEYS; i++){
 							long key = page->items[i].key;	
@@ -440,8 +486,8 @@ void debugPrintPage(BTPAGE *page, boolean printChilds){
 												printf("| ");
 								}
 				}
-				printf("\nchilds:\n ");
 				if(printChilds){
+								printf("\nchilds:\n ");
 								for (int i=0; i<MAXKEYS+1; i++){
 											if (page->childs[i] != -1) {
 															printf("|%li", page->childs[i]);

@@ -43,8 +43,7 @@ int main() {
     //}
 
 
-				for (int i=0; i<300; i++ ){
-								printf("%i\n", i);
+				for (int i=0; i<307; i++ ){
 								RECORD *rec = createRecord(i, i+5);
 
 								bTreeInsert(rec, bTree, header, bTreeFile);
@@ -52,8 +51,23 @@ int main() {
 								bTree = changeRootIfNeeded(bTree, header, bTreeFile);
 								// função get new root if needed
 								free(rec);
+								rec = NULL;
 				}
 
+				for (int i=307; i<2000; i++ ){
+								RECORD *rec = createRecord(i, i+5);
+
+								bTreeInsert(rec, bTree, header, bTreeFile);
+								// TO DO 
+								bTree = changeRootIfNeeded(bTree, header, bTreeFile);
+								// função get new root if needed
+								free(rec);
+								rec = NULL;
+				}
+
+				debugPrintAllPages(bTree, bTreeFile);
+
+				return 0;
 
 
 				fflush(stdin);
