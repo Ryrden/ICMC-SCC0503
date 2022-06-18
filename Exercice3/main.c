@@ -63,13 +63,16 @@ int main() {
             nusp = atoi(token);
 
             token = strtok(NULL, ",");
-            strcpy(name, token);
+            strcpy(name, &token[1]);
+												name[strlen(name)-1] = '\0';
 
             token = strtok(NULL, ",");
-            strcpy(lastName, token);
+            strcpy(lastName, &token[1]);
+												lastName[strlen(lastName)-1] = '\0';
 
             token = strtok(NULL, ",");
-            strcpy(course, token);
+            strcpy(course, &token[1]);
+												course[strlen(course)-1] = '\0';
 
             token = strtok(NULL, ",");
             grade = atof(token);
@@ -114,13 +117,16 @@ int main() {
             nusp = atoi(token);
 
             token = strtok(NULL, ",");
-            strcpy(name, token);
+            strcpy(name, &token[1]);
+												name[strlen(name)-1] = '\0';
 
             token = strtok(NULL, ",");
-            strcpy(lastName, token);
+            strcpy(lastName, &token[1]);
+												lastName[strlen(lastName)-1] = '\0';
 
             token = strtok(NULL, ",");
-            strcpy(course, token);
+            strcpy(course, &token[1]);
+												course[strlen(course)-1] = '\0';
 
             token = strtok(NULL, ",");
             grade = atof(token);
