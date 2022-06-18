@@ -1,5 +1,6 @@
 #include "./bTree/bTree.h"
 #include "./uspDatabase/uspDatabase.h"
+#include "./dataHandler/dataHandler.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,6 +39,8 @@ int main() {
     } else {*/
         bTreeFile = fopen("treeFile.bin", "wb+");
         verifyNullPointerExceptionToFile(bTreeFile);
+        dataFile = fopen("dataFile.bin", "wb+");
+        verifyNullPointerExceptionToFile(dataFile);
         header = createHeader(); //Somente no final do arquivo retornar aqui dps
         bTree = createTree(bTreeFile, header);
     //}
@@ -71,7 +74,9 @@ int main() {
             token = strtok(NULL, ",");
             grade = atof(token);
 
+												// write student on dataFile
             STUDENT *student = create_student(nusp, name, lastName, course, grade);
+												writeStudentDataInFile(student, RRN, dataFile);
 												erase_student(&student);
 
             // add registry to bTree
@@ -84,8 +89,6 @@ int main() {
             RRN++;
 
             continue;
-            // add registry to registryFile/dataFile
-
         } else if (select_command(command) == search_) {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
@@ -94,12 +97,11 @@ int main() {
 																printf("Registro nao encontrado!\n");
 												}
 												else {
-																// TO DO: colocar aqui o acesso ao arquivo e pritar o estudante
-																// readStudentFromFile();
-																// print_item()
-																printf("%li\n", itemRRN);
+																STUDENT *std = readStudentDataInFile(dataFile, itemRRN);
+																print_item(std);
+																erase_student(&std);
 												}
-												continue; // não implementado
+												continue;
 
         } else if (select_command(command) == update_) {
 												NUSP nusp;
@@ -124,14 +126,11 @@ int main() {
             grade = atof(token);
 
             STUDENT *student = create_student(nusp, name, lastName, course, grade);
-												print_item(student);
-
 												long itemRRN = bTreeSelect(bTree, nusp, bTreeFile);
-
-												// TO DO: atualiza o registro do estudante com o novo
+												writeStudentDataInFile(student, itemRRN, dataFile);
 
 												erase_student(&student);
-												continue; // não implementado
+												continue;
 
         } else if (select_command(command) == exit_) {
             break;

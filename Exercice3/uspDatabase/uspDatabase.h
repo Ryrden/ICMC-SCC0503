@@ -5,6 +5,7 @@
 #define NAME_SIZE 48
 #define LASTNAME_SIZE 50
 #define COURSE_SIZE 50
+#define STUDENT_SIZE (NAME_SIZE + LASTNAME_SIZE + COURSE_SIZE + 8) 
 
 typedef unsigned int NUSP;
 typedef char NAME[NAME_SIZE];
