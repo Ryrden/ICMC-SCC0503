@@ -410,15 +410,40 @@ PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
 				return promoKey;
 }
 
-/*
 //Returns rrn if key exist else return -1
 long bTreeSelect(BTPAGE *node, int key, FILE *file) {
     // Procura no nó atual se a chave existe
-    // Se não existir, tenta procurar no filho adequado, recursivamente
+				for (int i=0; i< node->numberOfKeys; i++){
+								if(node->items[i].key == key){
+												return node->items[i].recordRRN;
+								}
+				}
+
+				// Se não existir, tenta procurar no filho adequado, recursivamente
+				long child;
+    for (int i = 0; i < node->numberOfKeys; i++) {
+								if (node->items[i].key > key) {
+            child = i;
+            break;
+        }
+        child = i + 1;
+    }
+
+				if(node->childs[child] != -1){
+								BTPAGE *nextNode = readPageFromFile(file, node->childs[child]);
+								long RRN = bTreeSelect(nextNode, key, file);
+								freeNode(nextNode);
+								nextNode = NULL;
+								return RRN;
+				}
+
+
+
     // Se encontrar a chave, retorna RRN dela
     // Se não encontrar (chegar num nó folha e não estiver lá), retorna -1
+				return -1;
 }
-*/
+
 void freeNode(BTPAGE *page){
 				free(page->items);
 				free(page->childs);

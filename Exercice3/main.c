@@ -87,17 +87,53 @@ int main() {
             // add registry to registryFile/dataFile
 
         } else if (select_command(command) == search_) {
-												continue; // não implementado
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
+												long itemRRN = bTreeSelect(bTree, key, bTreeFile);
+												if (itemRRN == -1){
+																printf("Registro nao encontrado!\n");
+												}
+												else {
+																// TO DO: colocar aqui o acesso ao arquivo e pritar o estudante
+																// readStudentFromFile();
+																// print_item()
+																printf("%li\n", itemRRN);
+												}
+												continue; // não implementado
 
         } else if (select_command(command) == update_) {
-												continue; // não implementado
+												NUSP nusp;
+            NAME name;
+            LASTNAME lastName;
+            COURSE course;
+            GRADE grade;
+
             token = strtok(NULL, ",");
-            unsigned int key = atoi(token);
+            nusp = atoi(token);
+
+            token = strtok(NULL, ",");
+            strcpy(name, token);
+
+            token = strtok(NULL, ",");
+            strcpy(lastName, token);
+
+            token = strtok(NULL, ",");
+            strcpy(course, token);
+
+            token = strtok(NULL, ",");
+            grade = atof(token);
+
+            STUDENT *student = create_student(nusp, name, lastName, course, grade);
+												print_item(student);
+
+												long itemRRN = bTreeSelect(bTree, nusp, bTreeFile);
+
+												// TO DO: atualiza o registro do estudante com o novo
+
+												erase_student(&student);
+												continue; // não implementado
 
         } else if (select_command(command) == exit_) {
-												debugPrintAllPages(bTree, bTreeFile);
             break;
         }
     }
