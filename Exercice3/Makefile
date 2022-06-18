@@ -1,6 +1,6 @@
 UTIL= bTree/bTree.c uspDatabase/uspDatabase.c Util/util.c dataHandler/dataHandler.c
 MAIN=main.c
-BINARY=main
+BINARY=main.out
 
 all:
 	gcc $(UTIL) $(MAIN) -o $(BINARY)

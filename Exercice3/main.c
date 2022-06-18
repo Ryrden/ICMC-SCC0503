@@ -1,6 +1,6 @@
 #include "./bTree/bTree.h"
-#include "./uspDatabase/uspDatabase.h"
 #include "./dataHandler/dataHandler.h"
+#include "./uspDatabase/uspDatabase.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,25 +24,24 @@ int main() {
     BTPAGE *bTree;
     FILE *bTreeFile;
 
-				// TO DO filtrar registros iguais, não devemos aceita-los
+    // TO DO filtrar registros iguais, não devemos aceita-los
     // TO DO: mudar para getOrCreateRoot (se existir um aquivo de arvore devemos usar ele)
     // criar getOrCreateHeader para
     // criar writeheader (header deve ser escrito por ultimo, durante o encerramento do programa)
 
-
-				/*
-    if (fopen("treeFile.bin", "rb") != NULL) {
-        bTreeFile = fopen("treeFile.bin", "rb+");
-        verifyNullPointerExceptionToFile(bTreeFile);
-        header = getTreeHeader(dataFile);
-        bTree = getOrCreateRoot(dataFile);
-    } else {*/
-        bTreeFile = fopen("treeFile.bin", "wb+");
-        verifyNullPointerExceptionToFile(bTreeFile);
-        dataFile = fopen("dataFile.bin", "wb+");
-        verifyNullPointerExceptionToFile(dataFile);
-        header = createHeader(); //Somente no final do arquivo retornar aqui dps
-        bTree = createTree(bTreeFile, header);
+    /*
+if (fopen("treeFile.bin", "rb") != NULL) {
+bTreeFile = fopen("treeFile.bin", "rb+");
+verifyNullPointerExceptionToFile(bTreeFile);
+header = getTreeHeader(dataFile);
+bTree = getOrCreateRoot(dataFile);
+} else {*/
+    bTreeFile = fopen("treeFile.bin", "wb+");
+    verifyNullPointerExceptionToFile(bTreeFile);
+    dataFile = fopen("dataFile.bin", "wb+");
+    verifyNullPointerExceptionToFile(dataFile);
+    header = createHeader(); // Somente no final do arquivo retornar aqui dps
+    bTree = createTree(bTreeFile, header);
     //}
 
     int RRN = 0;
@@ -64,50 +63,49 @@ int main() {
 
             token = strtok(NULL, ",");
             strcpy(name, &token[1]);
-												name[strlen(name)-1] = '\0';
+            name[strlen(name) - 1] = '\0';
 
             token = strtok(NULL, ",");
             strcpy(lastName, &token[1]);
-												lastName[strlen(lastName)-1] = '\0';
+            lastName[strlen(lastName) - 1] = '\0';
 
             token = strtok(NULL, ",");
             strcpy(course, &token[1]);
-												course[strlen(course)-1] = '\0';
+            course[strlen(course) - 1] = '\0';
 
             token = strtok(NULL, ",");
             grade = atof(token);
 
-												// write student on dataFile
+            // write student on dataFile
             STUDENT *student = create_student(nusp, name, lastName, course, grade);
-												writeStudentDataInFile(student, RRN, dataFile);
-												erase_student(&student);
+            writeStudentDataInFile(student, RRN, dataFile);
+            erase_student(&student);
 
             // add registry to bTree
             RECORD *record = createRecord(nusp, RRN);
             bTreeInsert(record, bTree, header, bTreeFile);
-												bTree = changeRootIfNeeded(bTree, header, bTreeFile);
+            bTree = changeRootIfNeeded(bTree, header, bTreeFile);
 
-												free(record);
-												record = NULL;
+            free(record);
+            record = NULL;
             RRN++;
 
             continue;
         } else if (select_command(command) == search_) {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
-												long itemRRN = bTreeSelect(bTree, key, bTreeFile);
-												if (itemRRN == -1){
-																printf("Registro nao encontrado!\n");
-												}
-												else {
-																STUDENT *std = readStudentDataInFile(dataFile, itemRRN);
-																print_item(std);
-																erase_student(&std);
-												}
-												continue;
+            long itemRRN = bTreeSelect(bTree, key, bTreeFile);
+            if (itemRRN == -1) {
+                printf("Registro nao encontrado!\n");
+            } else {
+                STUDENT *std = readStudentDataInFile(dataFile, itemRRN);
+                print_item(std);
+                erase_student(&std);
+            }
+            continue;
 
         } else if (select_command(command) == update_) {
-												NUSP nusp;
+            NUSP nusp;
             NAME name;
             LASTNAME lastName;
             COURSE course;
@@ -118,25 +116,25 @@ int main() {
 
             token = strtok(NULL, ",");
             strcpy(name, &token[1]);
-												name[strlen(name)-1] = '\0';
+            name[strlen(name) - 1] = '\0';
 
             token = strtok(NULL, ",");
             strcpy(lastName, &token[1]);
-												lastName[strlen(lastName)-1] = '\0';
+            lastName[strlen(lastName) - 1] = '\0';
 
             token = strtok(NULL, ",");
             strcpy(course, &token[1]);
-												course[strlen(course)-1] = '\0';
+            course[strlen(course) - 1] = '\0';
 
             token = strtok(NULL, ",");
             grade = atof(token);
 
             STUDENT *student = create_student(nusp, name, lastName, course, grade);
-												long itemRRN = bTreeSelect(bTree, nusp, bTreeFile);
-												writeStudentDataInFile(student, itemRRN, dataFile);
+            long itemRRN = bTreeSelect(bTree, nusp, bTreeFile);
+            writeStudentDataInFile(student, itemRRN, dataFile);
 
-												erase_student(&student);
-												continue;
+            erase_student(&student);
+            continue;
 
         } else if (select_command(command) == exit_) {
             break;
@@ -144,6 +142,8 @@ int main() {
     }
     free(line);
     fclose(bTreeFile);
-    // fclose(indexFile); has to be created yet
+    fclose(dataFile);
+    freePage(bTree);
+    free(header);
     return EXIT_SUCCESS;
 }
