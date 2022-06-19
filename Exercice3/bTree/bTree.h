@@ -40,6 +40,7 @@ BTPAGE *searchPositionOnPageAndInsert(BTPAGE *, PROMOTEDKEY *);
 BTPAGE *splitAndCreateNewPage(BTPAGE **);
 static PROMOTEDKEY *extractPromotedKey(const BTPAGE *, const BTPAGE *, long);
 static void updatePagesValuesAndMetadata(BTPAGE *, BTPAGE *, long);
+static long findNextChild(BTPAGE *, int);
 PROMOTEDKEY *_split(BTPAGE *, HEADER *, FILE *);
 BTPAGE *createPageWithPromotedKey(PROMOTEDKEY *, HEADER *);
 boolean setPageAsRoot(BTPAGE *, FILE *, HEADER *);

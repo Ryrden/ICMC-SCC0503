@@ -161,12 +161,12 @@ boolean writePageIntoFile(long RRN, BTPAGE *page, FILE *file) {
     }
     fseek(file, RRN * PAGESIZE, SEEK_SET);
 
-    for (int i = 0; i < MAXKEYS; i++) {
+    for (int i = 0; i < MAXKEYS; i++)
         fwrite(&page->items[i].key, sizeof(int), 1, file);
-    }
-    for (int i = 0; i < MAXKEYS; i++) {
+
+    for (int i = 0; i < MAXKEYS; i++)
         fwrite(&page->items[i].recordRRN, sizeof(long), 1, file);
-    }
+
     fwrite(page->childs, sizeof(long), MAXKEYS + 1, file);
     fwrite(&page->isLeaf, sizeof(int), 1, file);
     fwrite(&page->numberOfKeys, sizeof(short), 1, file);
@@ -219,6 +219,38 @@ BTPAGE *createPageWithPromotedKey(PROMOTEDKEY *promoKey, HEADER *header) {
     return newRoot;
 }
 
+static long findNextChild(BTPAGE *page, int key) {
+    long child = 0;
+    for (int i = 0; i < page->numberOfKeys; i++) {
+        if (page->items[i].key > key) {
+            child = i;
+            break;
+        }
+        child = i + 1;
+    }
+    return child;
+}
+
+long bTreeSelect(BTPAGE *page, int key, FILE *file) {
+    for (int i = 0; i < page->numberOfKeys; i++) {
+        if (page->items[i].key == key) {
+            return page->items[i].recordRRN;
+        }
+    }
+
+    long child = findNextChild(page, key);
+
+    if (page->childs[child] != -1) {
+        BTPAGE *nextPage = readPageFromFile(file, page->childs[child]);
+        long RRN = bTreeSelect(nextPage, key, file);
+        freePage(nextPage);
+        nextPage = NULL;
+        return RRN;
+    }
+
+    return -1;
+}
+
 PROMOTEDKEY *_bTreeInsert(BTPAGE *page, PROMOTEDKEY *key, HEADER *header, FILE *file) {
     // confere se o registro é repetido
     for (int i = 0; i < page->numberOfKeys; i++) {
@@ -236,14 +268,7 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *page, PROMOTEDKEY *key, HEADER *header, FILE *
     }
 
     // Caso 2: nó não folha, procura proximo nó filho
-    long child;
-    for (int i = 0; i < page->numberOfKeys; i++) {
-        if (page->items[i].key > key->key) {
-            child = i;
-            break;
-        }
-        child = i + 1;
-    }
+    long child = findNextChild(page, key->key);
 
     BTPAGE *nextPage = readPageFromFile(file, page->childs[child]);
     key = _bTreeInsert(nextPage, key, header, file);
@@ -350,33 +375,6 @@ PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
     newPage = NULL;
 
     return promoKey;
-}
-
-long bTreeSelect(BTPAGE *page, int key, FILE *file) {
-    for (int i = 0; i < page->numberOfKeys; i++) {
-        if (page->items[i].key == key) {
-            return page->items[i].recordRRN;
-        }
-    }
-
-    long child;
-    for (int i = 0; i < page->numberOfKeys; i++) {
-        if (page->items[i].key > key) {
-            child = i;
-            break;
-        }
-        child = i + 1;
-    }
-
-    if (page->childs[child] != -1) {
-        BTPAGE *nextPage = readPageFromFile(file, page->childs[child]);
-        long RRN = bTreeSelect(nextPage, key, file);
-        freePage(nextPage);
-        nextPage = NULL;
-        return RRN;
-    }
-
-    return -1;
 }
 
 void freePage(BTPAGE *page) {
