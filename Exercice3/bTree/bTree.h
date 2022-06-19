@@ -19,35 +19,31 @@ typedef struct record_st RECORD;
 typedef struct page_st BTPAGE;
 typedef struct promotedKey_st PROMOTEDKEY;
 typedef struct header_st HEADER;
-// typedef struct primaryIndex PrimaryIndex;
-
-static long getKey(BTPAGE *page);
 
 BTPAGE *createTree(FILE *, HEADER *);
 BTPAGE *createPage(RECORD *, long *, boolean, int);
 PROMOTEDKEY *createPromotedKey(RECORD *, long *);
 RECORD *createRecord(int, long);
 HEADER *createHeader();
-HEADER *getTreeHeader(FILE *file);
-boolean writeTreeHeader(FILE *file, unsigned int rootRRN, unsigned int numberOfPages);
+HEADER *getTreeHeader(FILE *);
+boolean writeTreeHeader(FILE *, unsigned int, unsigned int);
 
 BTPAGE *getPage(long, FILE *);
 BTPAGE *readPageFromFile(FILE *, long);
 boolean writePageIntoFile(long, BTPAGE *, FILE *);
 void freePage(BTPAGE *);
-void freeTree(BTPAGE *tree);
 
 BTPAGE *getOrCreateRoot(FILE *);
 
-PROMOTEDKEY *insertIntoNode(BTPAGE *, PROMOTEDKEY *, HEADER *, FILE *);
+PROMOTEDKEY *insertIntoPage(BTPAGE *, PROMOTEDKEY *, HEADER *, FILE *);
 BTPAGE *searchPositionOnPageAndInsert(BTPAGE *, PROMOTEDKEY *);
-BTPAGE *splitAndCreateNewNode(BTPAGE **);
+BTPAGE *splitAndCreateNewPage(BTPAGE **);
 PROMOTEDKEY *extractpromotedKey(BTPAGE *);
 PROMOTEDKEY *_split(BTPAGE *, HEADER *, FILE *);
-BTPAGE *createNodeWithPromotedKey(PROMOTEDKEY *, HEADER *);
-boolean setNodeAsRoot(BTPAGE *, FILE *, HEADER *);
+BTPAGE *createPageWithPromotedKey(PROMOTEDKEY *, HEADER *);
+boolean setPageAsRoot(BTPAGE *, FILE *, HEADER *);
 BTPAGE *changeRootIfNeeded(BTPAGE *, HEADER *, FILE *);
-BTPAGE *alocateNode();
+BTPAGE *alocatePage();
 
 PROMOTEDKEY *_bTreeInsert(BTPAGE *, PROMOTEDKEY *, HEADER *, FILE *);
 boolean bTreeInsert(RECORD *, BTPAGE *, HEADER *, FILE *);
