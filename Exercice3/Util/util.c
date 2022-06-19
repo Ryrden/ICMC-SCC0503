@@ -45,24 +45,9 @@ long int getDataSize(FILE *file, long structSize) {
     return dataSize;
 }
 
-void verifyNullPointerExceptionToFile(FILE *file){
+void verifyNullPointerExceptionToFile(FILE *file) {
     if (file == NULL) {
-            perror("Error to open Archive");
-            exit(EXIT_FAILURE);
-        }
+        perror("Error to open Archive");
+        exit(EXIT_FAILURE);
+    }
 }
-
-/*    deixar comentado por enquanto, não esta sendo usada
-
-static boolean isBigger(void *item, void *page) {
-    return getKey(item) > getKey(page->item);
-}
-
-static boolean isSmaller(void *item, void *page) {
-    return getKey(item) < getKey(page->item);
-}
-
-static boolean isEqual(void *item, void *page) {
-    return getKey(item) == getKey(page->item);
-}
-*/
