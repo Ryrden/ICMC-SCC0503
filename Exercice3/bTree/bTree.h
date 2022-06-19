@@ -38,7 +38,7 @@ BTPAGE *getRoot(FILE *, HEADER *);
 PROMOTEDKEY *insertIntoPage(BTPAGE *, PROMOTEDKEY *, HEADER *, FILE *);
 BTPAGE *searchPositionOnPageAndInsert(BTPAGE *, PROMOTEDKEY *);
 BTPAGE *splitAndCreateNewPage(BTPAGE **);
-PROMOTEDKEY *extractpromotedKey(BTPAGE *);
+PROMOTEDKEY *extractPromotedKey(const BTPAGE *, const BTPAGE *, long);
 PROMOTEDKEY *_split(BTPAGE *, HEADER *, FILE *);
 BTPAGE *createPageWithPromotedKey(PROMOTEDKEY *, HEADER *);
 boolean setPageAsRoot(BTPAGE *, FILE *, HEADER *);

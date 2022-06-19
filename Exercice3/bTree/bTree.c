@@ -46,8 +46,8 @@ boolean writeTreeHeader(HEADER *header, FILE *file) {
     fwrite(&header->rootRRN, sizeof(unsigned int), 1, file);
     fwrite(&header->numberOfPages, sizeof(unsigned int), 1, file);
 
-    char *freeSpace = (char *) malloc(PAGESIZE - sizeof(HEADER));
-    fwrite(freeSpace, sizeof(char), PAGESIZE-sizeof(HEADER), file);
+    char *freeSpace = (char *)malloc(PAGESIZE - sizeof(HEADER));
+    fwrite(freeSpace, sizeof(char), PAGESIZE - sizeof(HEADER), file);
 
     fflush(file);
     return TRUE;
@@ -216,7 +216,6 @@ BTPAGE *createPageWithPromotedKey(PROMOTEDKEY *promoKey, HEADER *header) {
     header->numberOfPages++;
 
     return newRoot;
-
 }
 
 PROMOTEDKEY *_bTreeInsert(BTPAGE *page, PROMOTEDKEY *key, HEADER *header, FILE *file) {
@@ -304,6 +303,17 @@ BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *key) {
     return page;
 }
 
+PROMOTEDKEY *extractPromotedKey(const BTPAGE *originalPage, const BTPAGE *newPage, long middle) {
+    long childs[] = {originalPage->pageRRN, newPage->pageRRN};
+    PROMOTEDKEY *promoKey = createPromotedKey(&originalPage->items[middle], childs);
+    promoKey->key = originalPage->items[middle].key;
+    promoKey->recordRRN = originalPage->items[middle].recordRRN;
+    promoKey->childs[0] = originalPage->pageRRN;
+    promoKey->childs[1] = newPage->pageRRN;
+
+    return promoKey;
+}
+
 PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
     // cria o novo nó
     long middle = MAXKEYS / 2;
@@ -312,12 +322,7 @@ PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
     header->numberOfPages++;
 
     // Extrai a chave promovida e atualiza os filhos da chave
-    long childs[] = {originalPage->pageRRN, newPage->pageRRN};
-    PROMOTEDKEY *promoKey = createPromotedKey(&originalPage->items[middle], childs);
-    promoKey->key = originalPage->items[middle].key;
-    promoKey->recordRRN = originalPage->items[middle].recordRRN;
-    promoKey->childs[0] = originalPage->pageRRN;
-    promoKey->childs[1] = newPage->pageRRN;
+    PROMOTEDKEY *promoKey = extractPromotedKey(originalPage, newPage, middle);
 
     // Atualiza os valores das paginas
     memcpy(newPage->items, &originalPage->items[middle + 1], (originalPage->numberOfKeys - (middle + 1)) * sizeof(RECORD));
