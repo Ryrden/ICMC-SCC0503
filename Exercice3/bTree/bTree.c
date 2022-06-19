@@ -50,6 +50,7 @@ boolean writeTreeHeader(HEADER *header, FILE *file) {
     fwrite(freeSpace, sizeof(char), PAGESIZE - sizeof(HEADER), file);
 
     fflush(file);
+    free(freeSpace);
     return TRUE;
 }
 
@@ -382,41 +383,4 @@ void freePage(BTPAGE *page) {
     free(page->items);
     free(page->childs);
     free(page);
-}
-
-// Debug functions
-void debugPrintAllPages(BTPAGE *page, FILE *file) {
-    debugPrintPage(page, TRUE);
-
-    for (int i = 0; i < MAXKEYS + 1; i++) {
-        if (page->childs[i] != -1) {
-            BTPAGE *nextPage = readPageFromFile(file, page->childs[i]);
-            debugPrintAllPages(nextPage, file);
-            freePage(nextPage);
-        }
-    }
-}
-
-void debugPrintPage(BTPAGE *page, boolean printChilds) {
-    printf("page:%li\n keys:", page->pageRRN);
-
-    for (int i = 0; i < MAXKEYS; i++) {
-        long key = page->items[i].key;
-        if (key != -1) {
-            printf("|%li", key);
-        } else {
-            printf("| ");
-        }
-    }
-    if (printChilds) {
-        printf("\nchilds: ");
-        for (int i = 0; i < MAXKEYS + 1; i++) {
-            if (page->childs[i] != -1) {
-                printf("|%li", page->childs[i]);
-            } else {
-                printf("| ");
-            }
-        }
-    }
-    printf("\n");
 }
