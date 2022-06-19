@@ -26,14 +26,14 @@ PROMOTEDKEY *createPromotedKey(RECORD *, long *);
 RECORD *createRecord(int, long);
 HEADER *createHeader();
 HEADER *getTreeHeader(FILE *);
-boolean writeTreeHeader(FILE *, unsigned int, unsigned int);
+boolean writeTreeHeader(HEADER *, FILE *);
 
 BTPAGE *getPage(long, FILE *);
 BTPAGE *readPageFromFile(FILE *, long);
 boolean writePageIntoFile(long, BTPAGE *, FILE *);
 void freePage(BTPAGE *);
 
-BTPAGE *getOrCreateRoot(FILE *);
+BTPAGE *getRoot(FILE *, HEADER *);
 
 PROMOTEDKEY *insertIntoPage(BTPAGE *, PROMOTEDKEY *, HEADER *, FILE *);
 BTPAGE *searchPositionOnPageAndInsert(BTPAGE *, PROMOTEDKEY *);

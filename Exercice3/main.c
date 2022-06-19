@@ -23,26 +23,27 @@ int main() {
     HEADER *header;
     BTPAGE *bTree;
     FILE *bTreeFile;
+    
+    if (fopen("treeFile.bin", "rb") != NULL) {
+        bTreeFile = fopen("treeFile.bin", "rb+");
+        verifyNullPointerExceptionToFile(bTreeFile);
 
-    // TO DO filtrar registros iguais, não devemos aceita-los
-    // TO DO: mudar para getOrCreateRoot (se existir um aquivo de arvore devemos usar ele)
-    // criar getOrCreateHeader para
-    // criar writeheader (header deve ser escrito por ultimo, durante o encerramento do programa)
+        dataFile = fopen("dataFile.bin", "rb+");
+        verifyNullPointerExceptionToFile(dataFile);
 
-    /*
-if (fopen("treeFile.bin", "rb") != NULL) {
-bTreeFile = fopen("treeFile.bin", "rb+");
-verifyNullPointerExceptionToFile(bTreeFile);
-header = getTreeHeader(dataFile);
-bTree = getOrCreateRoot(dataFile);
-} else {*/
-    bTreeFile = fopen("treeFile.bin", "wb+");
-    verifyNullPointerExceptionToFile(bTreeFile);
-    dataFile = fopen("dataFile.bin", "wb+");
-    verifyNullPointerExceptionToFile(dataFile);
-    header = createHeader(); // Somente no final do arquivo retornar aqui dps
-    bTree = createTree(bTreeFile, header);
-    //}
+        header = getTreeHeader(bTreeFile);
+        bTree = getRoot(bTreeFile, header);
+    } else {
+        bTreeFile = fopen("treeFile.bin", "wb+");
+        verifyNullPointerExceptionToFile(bTreeFile);
+
+        dataFile = fopen("dataFile.bin", "wb+");
+        verifyNullPointerExceptionToFile(dataFile);
+
+        header = createHeader(); // Somente no final do arquivo retornar aqui dps
+        bTree = createTree(bTreeFile, header);
+    }
+
 
     int RRN = 0;
     long studentSize = get_student_data_size();
@@ -95,6 +96,7 @@ bTree = getOrCreateRoot(dataFile);
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
             long itemRRN = bTreeSelect(bTree, key, bTreeFile);
+
             if (itemRRN == -1) {
                 printf("Registro nao encontrado!\n");
             } else {
@@ -137,6 +139,7 @@ bTree = getOrCreateRoot(dataFile);
             continue;
 
         } else if (select_command(command) == exit_) {
+            writeTreeHeader(header, bTreeFile);
             break;
         }
     }
