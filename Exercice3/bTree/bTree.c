@@ -252,6 +252,7 @@ boolean bTreeInsert(RECORD *newRecord, BTPAGE *root, HEADER *header, FILE *file)
         // atualiza o cabeçalho
         header->rootRRN = newRoot->pageRRN;
 
+        freePage(newRoot);
         free(promotedKey);
         promotedKey = NULL;
     }
@@ -286,6 +287,7 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *node, PROMOTEDKEY *key, HEADER *header, FILE *
     for (int i = 0; i < node->numberOfKeys; i++) {
         if (node->items[i].key == key->key) {
             printf("O Registro ja existe!\n");
+            free(key);
             return NULL;
         }
     }
