@@ -303,7 +303,7 @@ BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *key) {
     return page;
 }
 
-PROMOTEDKEY *extractPromotedKey(const BTPAGE *originalPage, const BTPAGE *newPage, long middle) {
+static PROMOTEDKEY *extractPromotedKey(const BTPAGE *originalPage, const BTPAGE *newPage, long middle) {
     long childs[] = {originalPage->pageRRN, newPage->pageRRN};
     PROMOTEDKEY *promoKey = createPromotedKey(&originalPage->items[middle], childs);
     promoKey->key = originalPage->items[middle].key;
@@ -312,6 +312,19 @@ PROMOTEDKEY *extractPromotedKey(const BTPAGE *originalPage, const BTPAGE *newPag
     promoKey->childs[1] = newPage->pageRRN;
 
     return promoKey;
+}
+
+static void updatePagesValuesAndMetadata(BTPAGE *originalPage, BTPAGE *newPage, long middle) {
+    // Atualiza os valores das paginas
+    memcpy(newPage->items, &originalPage->items[middle + 1], (originalPage->numberOfKeys - (middle + 1)) * sizeof(RECORD));
+    memset(&originalPage->items[middle], -1, (originalPage->numberOfKeys - middle) * sizeof(RECORD));
+    memcpy(&newPage->childs[0], &originalPage->childs[middle + 1], (MAXKEYS - middle) * sizeof(long));
+    memset(&originalPage->childs[middle + 1], -1, (MAXKEYS - middle) * sizeof(long));
+
+    // Atualiza meta-dados das paginas
+    originalPage->numberOfKeys = middle;
+    newPage->numberOfKeys = (MAXKEYS - (middle + 1));
+    newPage->isLeaf = originalPage->isLeaf;
 }
 
 PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
@@ -324,16 +337,8 @@ PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
     // Extrai a chave promovida e atualiza os filhos da chave
     PROMOTEDKEY *promoKey = extractPromotedKey(originalPage, newPage, middle);
 
-    // Atualiza os valores das paginas
-    memcpy(newPage->items, &originalPage->items[middle + 1], (originalPage->numberOfKeys - (middle + 1)) * sizeof(RECORD));
-    memset(&originalPage->items[middle], -1, (originalPage->numberOfKeys - middle) * sizeof(RECORD));
-    memcpy(&newPage->childs[0], &originalPage->childs[middle + 1], (MAXKEYS - middle) * sizeof(long));
-    memset(&originalPage->childs[middle + 1], -1, (MAXKEYS - middle) * sizeof(long));
-
-    // Atualiza meta-dados das paginas
-    originalPage->numberOfKeys = middle;
-    newPage->numberOfKeys = (MAXKEYS - (middle + 1));
-    newPage->isLeaf = originalPage->isLeaf;
+    // Atualiza os valores e meta-dados das paginas
+    updatePagesValuesAndMetadata(originalPage, newPage, middle);
 
     // Escreve a página nova e a que foi dividida (com suas atualizações) no arquivo
     writePageIntoFile(newPage->pageRRN, newPage, file);
