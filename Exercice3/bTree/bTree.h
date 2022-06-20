@@ -12,8 +12,6 @@
 #define MAXKEYS 204
 #define AUX_FIELDS_SIZE_ON_PAGE (2 + 1) //∗ number o f k e y s and ” i s l e a f ” b o o l ∗/
 #define FREE_SPACE (PAGESIZE - ((MAXKEYS * 4) + (MAXKEYS * 8) + ((MAXKEYS + 1) * 8) + 6))
-// tamanho da pagina - tamanho ocupado
-// FREE_SPACE serve para ocupar o arquivo (mesmo que com dados inuteis) para n atingir EOF durante a leitura
 
 typedef struct record_st RECORD;
 typedef struct page_st BTPAGE;
@@ -21,36 +19,35 @@ typedef struct promotedKey_st PROMOTEDKEY;
 typedef struct header_st HEADER;
 
 BTPAGE *createTree(FILE *, HEADER *);
-BTPAGE *createPage(RECORD *, long *, boolean, int);
-PROMOTEDKEY *createPromotedKey(RECORD *, long *);
 RECORD *createRecord(int, long);
 HEADER *createHeader();
 HEADER *getTreeHeader(FILE *);
 boolean writeTreeHeader(HEADER *, FILE *);
+static PROMOTEDKEY *createPromotedKey(RECORD *, long *);
 
-BTPAGE *getPage(long, FILE *);
-BTPAGE *readPageFromFile(FILE *, long);
-boolean writePageIntoFile(long, BTPAGE *, FILE *);
+static BTPAGE *readPageFromFile(FILE *, long);
+static boolean writePageIntoFile(long, BTPAGE *, FILE *);
 void freePage(BTPAGE *);
 
 BTPAGE *getRoot(FILE *, HEADER *);
 
-PROMOTEDKEY *insertIntoPage(BTPAGE *, PROMOTEDKEY *, HEADER *, FILE *);
-BTPAGE *searchPositionOnPageAndInsert(BTPAGE *, PROMOTEDKEY *);
-BTPAGE *splitAndCreateNewPage(BTPAGE **);
+BTPAGE *changeRootIfNeeded(BTPAGE *, HEADER *, FILE *);
+boolean bTreeInsert(RECORD *, BTPAGE *, HEADER *, FILE *);
+
+long bTreeSearch(BTPAGE *, int, FILE *);
+static long bTreeSelect(BTPAGE *, int, FILE *);
+
+static PROMOTEDKEY *insertIntoPage(BTPAGE *, PROMOTEDKEY *, HEADER *, FILE *);
+static BTPAGE *searchPositionOnPageAndInsert(BTPAGE *, PROMOTEDKEY *);
+static BTPAGE *splitAndCreateNewPage(BTPAGE **);
 static PROMOTEDKEY *extractPromotedKey(const BTPAGE *, const BTPAGE *, long);
 static void updatePagesValuesAndMetadata(BTPAGE *, BTPAGE *, long);
 static long findNextChild(BTPAGE *, int);
-PROMOTEDKEY *_split(BTPAGE *, HEADER *, FILE *);
-BTPAGE *createPageWithPromotedKey(PROMOTEDKEY *, HEADER *);
-boolean setPageAsRoot(BTPAGE *, FILE *, HEADER *);
-BTPAGE *changeRootIfNeeded(BTPAGE *, HEADER *, FILE *);
-BTPAGE *alocatePage();
+static PROMOTEDKEY *_split(BTPAGE *, HEADER *, FILE *);
+static BTPAGE *createPageWithPromotedKey(PROMOTEDKEY *, HEADER *);
+static BTPAGE *alocatePage();
 
-PROMOTEDKEY *_bTreeInsert(BTPAGE *, PROMOTEDKEY *, HEADER *, FILE *);
-boolean bTreeInsert(RECORD *, BTPAGE *, HEADER *, FILE *);
-
-long bTreeSelect(BTPAGE *, int, FILE *);
+static PROMOTEDKEY *_bTreeInsert(BTPAGE *, PROMOTEDKEY *, HEADER *, FILE *);
 
 void debugPrintPage(BTPAGE *, boolean);
 void debugPrintAllPages(BTPAGE *, FILE *);

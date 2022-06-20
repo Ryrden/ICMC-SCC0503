@@ -65,7 +65,7 @@ HEADER *getTreeHeader(FILE *file) {
     return header;
 }
 
-PROMOTEDKEY *createPromotedKey(RECORD *record, long *childs) {
+static PROMOTEDKEY *createPromotedKey(RECORD *record, long *childs) {
     PROMOTEDKEY *promo = (PROMOTEDKEY *)malloc(1 * sizeof(PROMOTEDKEY));
     promo->key = record->key;
     promo->recordRRN = record->recordRRN;
@@ -93,7 +93,7 @@ BTPAGE *createTree(FILE *file, HEADER *header) {
     return page;
 }
 
-BTPAGE *alocatePage() {
+static BTPAGE *alocatePage() {
     BTPAGE *page = (BTPAGE *)malloc(1 * PAGESIZE);
     page->items = (RECORD *)calloc(MAXKEYS, sizeof(RECORD));
     page->childs = (long *)calloc(MAXKEYS + 1, sizeof(long));
@@ -129,7 +129,7 @@ BTPAGE *getRoot(FILE *file, HEADER *header) {
     return readPageFromFile(file, header->rootRRN);
 }
 
-BTPAGE *readPageFromFile(FILE *file, long RRN) {
+static BTPAGE *readPageFromFile(FILE *file, long RRN) {
     BTPAGE *page = alocatePage();
 
     fseek(file, RRN * PAGESIZE, SEEK_SET);
@@ -150,7 +150,7 @@ BTPAGE *readPageFromFile(FILE *file, long RRN) {
     return page;
 }
 
-boolean writePageIntoFile(long RRN, BTPAGE *page, FILE *file) {
+static boolean writePageIntoFile(long RRN, BTPAGE *page, FILE *file) {
     if (!file) {
         perror("File doesn't exists");
         return FALSE;
@@ -205,7 +205,7 @@ boolean bTreeInsert(RECORD *newRecord, BTPAGE *root, HEADER *header, FILE *file)
     return TRUE;
 }
 
-BTPAGE *createPageWithPromotedKey(PROMOTEDKEY *promoKey, HEADER *header) {
+static BTPAGE *createPageWithPromotedKey(PROMOTEDKEY *promoKey, HEADER *header) {
     BTPAGE *newRoot = alocatePage();
 
     searchPositionOnPageAndInsert(newRoot, promoKey);
@@ -231,7 +231,14 @@ static long findNextChild(BTPAGE *page, int key) {
     return child;
 }
 
-long bTreeSelect(BTPAGE *page, int key, FILE *file) {
+long bTreeSearch(BTPAGE *page, int key, FILE *file) {
+    if (!file)
+        exit(EXIT_FAILURE);
+
+    return bTreeSelect(page, key, file);
+}
+
+static long bTreeSelect(BTPAGE *page, int key, FILE *file) {
     for (int i = 0; i < page->numberOfKeys; i++) {
         if (page->items[i].key == key) {
             return page->items[i].recordRRN;
@@ -251,7 +258,7 @@ long bTreeSelect(BTPAGE *page, int key, FILE *file) {
     return -1;
 }
 
-PROMOTEDKEY *_bTreeInsert(BTPAGE *page, PROMOTEDKEY *key, HEADER *header, FILE *file) {
+static PROMOTEDKEY *_bTreeInsert(BTPAGE *page, PROMOTEDKEY *key, HEADER *header, FILE *file) {
     // confere se o registro é repetido
     for (int i = 0; i < page->numberOfKeys; i++) {
         if (page->items[i].key == key->key) {
@@ -284,7 +291,7 @@ PROMOTEDKEY *_bTreeInsert(BTPAGE *page, PROMOTEDKEY *key, HEADER *header, FILE *
     return key;
 }
 
-PROMOTEDKEY *insertIntoPage(BTPAGE *page, PROMOTEDKEY *newKey, HEADER *header, FILE *file) {
+static PROMOTEDKEY *insertIntoPage(BTPAGE *page, PROMOTEDKEY *newKey, HEADER *header, FILE *file) {
     page = searchPositionOnPageAndInsert(page, newKey);
     free(newKey);
     newKey = NULL;
@@ -299,7 +306,7 @@ PROMOTEDKEY *insertIntoPage(BTPAGE *page, PROMOTEDKEY *newKey, HEADER *header, F
     return NULL;
 }
 
-BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *key) {
+static BTPAGE *searchPositionOnPageAndInsert(BTPAGE *page, PROMOTEDKEY *key) {
     // Encontra a posição para inserir a chave
     long position = 0;
     for (int i = 0; i < page->numberOfKeys; i++) {
@@ -353,7 +360,7 @@ static void updatePagesValuesAndMetadata(BTPAGE *originalPage, BTPAGE *newPage, 
     newPage->isLeaf = originalPage->isLeaf;
 }
 
-PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
+static PROMOTEDKEY *_split(BTPAGE *originalPage, HEADER *header, FILE *file) {
     // cria o novo nó
     long middle = MAXKEYS / 2;
     BTPAGE *newPage = alocatePage();

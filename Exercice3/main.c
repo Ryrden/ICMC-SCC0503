@@ -23,7 +23,7 @@ int main() {
     HEADER *header;
     BTPAGE *bTree;
     FILE *bTreeFile;
-    
+
     if (fopen("treeFile.bin", "rb") != NULL) {
         bTreeFile = fopen("treeFile.bin", "rb+");
         verifyNullPointerExceptionToFile(bTreeFile);
@@ -43,7 +43,6 @@ int main() {
         header = createHeader(); // Somente no final do arquivo retornar aqui dps
         bTree = createTree(bTreeFile, header);
     }
-
 
     int RRN = 0;
     long studentSize = get_student_data_size();
@@ -95,7 +94,7 @@ int main() {
         } else if (select_command(command) == search_) {
             token = strtok(NULL, ",");
             unsigned int key = atoi(token);
-            long itemRRN = bTreeSelect(bTree, key, bTreeFile);
+            long itemRRN = bTreeSearch(bTree, key, bTreeFile);
 
             if (itemRRN == -1) {
                 printf("Registro nao encontrado!\n");
@@ -132,7 +131,7 @@ int main() {
             grade = atof(token);
 
             STUDENT *student = create_student(nusp, name, lastName, course, grade);
-            long itemRRN = bTreeSelect(bTree, nusp, bTreeFile);
+            long itemRRN = bTreeSearch(bTree, nusp, bTreeFile);
             writeStudentDataInFile(student, itemRRN, dataFile);
 
             erase_student(&student);
