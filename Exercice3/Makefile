@@ -1,4 +1,4 @@
-UTIL= bTree/bTree.c uspDatabase/uspDatabase.c Util/util.c dataHandler/dataHandler.c
+UTIL= IO/io.c bTree/bTree.c uspDatabase/uspDatabase.c Util/util.c dataHandler/dataHandler.c
 MAIN=main.c
 BINARY=main.out
 
@@ -8,14 +8,17 @@ all:
 run:
 	./$(BINARY)
 
-test: # usar o comando da forma:$ make test case=<nº do caso que quiser>
+test: removeBinFiles # usar o comando da forma:$ make test case=<nº do caso que quiser>
 	./$(BINARY) < ./Casos\ de\ Teste/$(case).in
 
-testV: # usar o comando da forma:$ make testV case=<nº do caso que quiser>
+testV: removeBinFiles # usar o comando da forma:$ make testV case=<nº do caso que quiser>
 	valgrind --tool=memcheck --leak-check=full  --track-origins=yes --show-leak-kinds=all --show-reachable=yes ./$(BINARY) < ./Casos\ de\ Teste/$(case).in
 
 debug:
 	gcc -DDEBUG -Wall $(MAIN) $(UTIL) -o $(BINARY)
+
+removeBinFiles:
+	@rm *.bin
 
 valgrind:
 	valgrind --tool=memcheck --leak-check=full  --track-origins=yes --show-leak-kinds=all --show-reachable=yes ./$(BINARY)
