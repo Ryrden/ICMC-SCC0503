@@ -21,8 +21,12 @@ Casos de Teste/
 
 # Netbeans metadata #
 ###########
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# IntelliJ IDEA #
+###########
+.idea/
