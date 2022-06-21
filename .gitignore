@@ -18,3 +18,10 @@ Casos de Teste/
 ############
 *.csv
 *.bin
+
+# Netbeans metadata #
+###########
+build/
+nbproject/private/
+private.xml
+private.properties
