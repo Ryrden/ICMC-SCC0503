@@ -21,7 +21,8 @@ Casos de Teste/
 
 # Netbeans metadata #
 ###########
-build/
-nbproject/private/
-private.xml
-private.properties
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
