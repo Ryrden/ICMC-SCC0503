@@ -1,18 +1,18 @@
 package com.main.answer;
 
 public class Answer {
-    private int ID;
+    private int id;
     private String name;
     private String description;
 
-    public Answer(int ID, String name, String description) {
-        this.ID = ID;
+    public Answer(int id, String name, String description) {
+        this.id = id;
         this.name = name;
         this.description = description;
     }
 
-    public int getID() {
-        return ID;
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -23,8 +23,8 @@ public class Answer {
         return description;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setName(String name) {
@@ -36,7 +36,7 @@ public class Answer {
     }
 
     public String toString() {
-        return "Quest{\n\tID: " + ID + "\n\tName: " + name + "\n\tDescription: " + description + "\n}";
+        return "Quest{\n\tID: " + id + "\n\tName: " + name + "\n\tDescription: " + description + "\n}";
     }
 
 
