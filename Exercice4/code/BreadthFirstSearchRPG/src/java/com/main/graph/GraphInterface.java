@@ -1,4 +1,4 @@
-package graph;
+package com.main.graph;
 
 public interface GraphInterface {
     void addVertex(Vertex vertex);
