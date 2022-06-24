@@ -1,6 +1,8 @@
 package com.main;
 
 import com.main.answer.Answer;
+import com.main.graph.BreadthFirstTraversal;
+import com.main.graph.DigraphList;
 import com.main.graph.Vertex;
 
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         int vertexNumber = scanner.nextInt();
+        scanner.nextLine();
         ArrayList<Vertex> questLog = new ArrayList<>();
         for (int i = 0; i < vertexNumber; i++) {
             String questName = scanner.nextLine();
@@ -19,15 +22,15 @@ public class Main {
             Vertex vertex = new Vertex(questN);
             questLog.add(vertex);
         }
-
+        DigraphList digraphList = new DigraphList(questLog);
         int edgeNumber = scanner.nextInt();
         for (int i = 0; i < edgeNumber; i++) {
             int originId = scanner.nextInt();
             int destinyId = scanner.nextInt();
+            digraphList.addEdge(questLog.get(originId), questLog.get(destinyId));
         }
-
         int originVertex = scanner.nextInt();
-
-        //CHAMA GRAFO
+        BreadthFirstTraversal breadthFirstTraversal = new BreadthFirstTraversal(digraphList);
+        breadthFirstTraversal.traverseGraph(questLog.get(originVertex));
     }
 }

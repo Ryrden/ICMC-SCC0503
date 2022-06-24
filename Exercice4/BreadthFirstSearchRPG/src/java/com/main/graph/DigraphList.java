@@ -20,7 +20,7 @@ public class DigraphList extends AbstractGraph {
 
     List<List<Edge>> adjacencyList;
 
-    protected DigraphList(List<Vertex> vertices) {
+    public DigraphList(List<Vertex> vertices) {
         super(vertices);
         initializeAdjacencyList();
     }
@@ -39,7 +39,7 @@ public class DigraphList extends AbstractGraph {
 
     @Override
     public void removeVertex(Vertex vertex) {
-        if(!getVertices().contains(vertex)) {
+        if (!getVertices().contains(vertex)) {
             throw new IllegalArgumentException("Vertex not found");
         }
         getVertices().remove(vertex);
