@@ -1,9 +1,9 @@
-package com.main;
+package main;
 
-import com.main.answer.Answer;
-import com.main.graph.BreadthFirstTraversal;
-import com.main.graph.DigraphList;
-import com.main.graph.Vertex;
+import main.answer.Answer;
+import main.graph.BreadthFirstTraversal;
+import main.graph.DigraphList;
+import main.graph.Vertex;
 
 import java.util.ArrayList;
 import java.util.Scanner;

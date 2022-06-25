@@ -1,7 +1,7 @@
-package com.main.graph;
+package main.graph;
 
-import com.main.graph.AbstractGraph;
-import com.main.graph.Vertex;
+import main.graph.AbstractGraph;
+import main.graph.Vertex;
 
 import java.io.File;
 import java.io.IOException;

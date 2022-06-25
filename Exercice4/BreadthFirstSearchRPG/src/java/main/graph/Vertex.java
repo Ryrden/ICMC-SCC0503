@@ -1,6 +1,6 @@
-package com.main.graph;
+package main.graph;
 
-import com.main.answer.Answer;
+import main.answer.Answer;
 
 public class Vertex extends Answer {
     protected Answer object;
