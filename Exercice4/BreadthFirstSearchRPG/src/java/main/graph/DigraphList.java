@@ -6,6 +6,7 @@ import main.graph.Vertex;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DigraphList extends AbstractGraph {
@@ -106,6 +107,19 @@ public class DigraphList extends AbstractGraph {
         } else {
             Vertex destinationVertex = getAdjacencyList().get(vertexIndex).get(0).getDestination();
             return getVertices().indexOf(destinationVertex);
+        }
+    }
+
+    public List<Vertex> getAllConnectedVertex(Vertex vertex) {
+        if (getAdjacencyList().get(getVertices().indexOf(vertex)).isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            List<Vertex> connectedVertices = new ArrayList<>();
+            int vertexIndex = getVertices().indexOf(vertex);
+            for (Edge edge : getAdjacencyList().get(vertexIndex)) {
+                connectedVertices.add(edge.getDestination());
+            }
+            return connectedVertices;
         }
     }
 

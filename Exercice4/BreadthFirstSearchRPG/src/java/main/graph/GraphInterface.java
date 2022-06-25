@@ -1,5 +1,7 @@
 package main.graph;
 
+import java.util.List;
+
 public interface GraphInterface {
     void addVertex(Vertex vertex);
 
@@ -26,6 +28,8 @@ public interface GraphInterface {
     float getDistance(Vertex source, Vertex destination);
 
     Vertex getFirstConnectedVertex(Vertex vertex);
+
+    List<Vertex> getAllConnectedVertex(Vertex vertex);
 
     Vertex getNextConnectedVertex(Vertex source, Vertex currentConnection);
 }
