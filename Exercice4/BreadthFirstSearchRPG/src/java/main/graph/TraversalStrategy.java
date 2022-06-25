@@ -76,8 +76,9 @@ public abstract class TraversalStrategy {
     protected void printPath() {
         var visitedPath = new StringBuilder();
         for (Vertex vertex : traversalPath) {
-            visitedPath.append(vertex).append(' ').
-                    append("Distance: ").append(getDistanceToVertex(getGraph().getVertices().indexOf(vertex))).append(' ').append("\n");
+            visitedPath.append(vertex);
+            /*visitedPath.append(' ').
+                    append("Distance: ").append(getDistanceToVertex(getGraph().getVertices().indexOf(vertex))).append(' ').append("\n");*/
         }
         var traversalPathString = visitedPath.toString();
         LOGGER.info(traversalPathString);
