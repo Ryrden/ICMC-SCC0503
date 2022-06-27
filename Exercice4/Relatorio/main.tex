@@ -7,6 +7,7 @@
 \usepackage{graphicx}
 \usepackage{multicol,lipsum}
 \usepackage{hyperref}
+\usepackage{minted}
 
 \begin{document}
 %\maketitle
@@ -57,10 +58,62 @@
 \pagenumbering{arabic}
 % % % % % % % % % % % % % % % % % % % % % % % % % % %
 \section{Introdução}
-
-Descreva brevemente qual a proposta do exercício resolvido, qual o objetivo que foi alcançado com a implementação.
+O exercício consiste na leitura de dados de quests (missões) de um jogo e na construção de um dígrafo com estes dados e a simulação da execução delas através da travessia em profundidade do dígrafo.
 \newpage
 \section{Desenvolvimento}
+
+O desenvolvimento do projeto fez uso das abstrações já adotadas em sala de aula e o modelo de dígrafo selecionado para trabalhar foi o de "lista de adjâcencias", o porque desta escolha deve-se ao fato de que [Justificar o motivo].
+
+Com o objetivo de aplicar as boas práticas de código na atividade, foi criado a classe "Answer" que se tornou classe mãe da Vertex, a qual, possui o método "toString" que imprime na tela cada vertice.
+
+Implementação da classe Answer:
+
+\begin{minted}[mathescape, linenos]{java}
+
+public class Answer {
+    private int id;
+    private String name;
+    private String description;
+    
+    public Answer(int id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+    
+    public int getId() {return id;}
+    public String getName() {return name;}
+    public String getDescription() {return description;}
+    public void setId(int id) {this.id = id;}
+    public void setName(String name) {this.name = name;}
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public String toString() {
+        return "Quest{\n\tID: " + id + "\n\tName: " + name + "\n\tDescription: " + description + "\n}";
+    }
+}
+
+
+\end{minted}
+
+
+Para a implementação do algoritmo de busca em profundidade, por questões didáticas e não de desempenho algorítmico, foi criado o método "getAllConnectedVertex" dentro da classe "DigraphList" e definido seu contrato na interface "GraphInterface", abaixo a implementação:
+\begin{figure}[h!]
+\center 
+\includegraphics[width=.8\textwidth]{getAllConnectedVertexMethod.png}
+\caption{Implementação do método getAllConnectedVertex}
+\end{figure}
+
+A implementação do algoritmo Depth First Search: 
+\begin{figure}[h!]
+\center 
+\includegraphics[width=.8\textwidth]{depthFirstTraversalRecursiveMethod.png}
+\caption{Implementação do algoritmo Depth First Search}
+\end{figure}
+
+Como modelo de busca recursiva para o algoritmo, ele sempre vai estar indo do primeiro vertice adicionado como aresta a partir do vertice de origem.
 
 Descreva os principais pontos do desenvolvimento do projeto. Algoritmos utilizados, decisões de projeto que sejam relevantes, etc.
 Se ajudar no entendimento, coloque pseudo-códigos ou prints de código de áreas importantes.
@@ -79,6 +132,9 @@ Para tabelas, recomendo criar e exportar deste cite aqui (alias, é assim que ad
 
 \newpage
 \section{Resultados}
+Prints do grafo juntamente com sua saída:
+
+
 Aqui, coloque imagens/tabelas/textos com os resultados, discuta brevemente o que foi obtido.
 \newpage
 \bibliographystyle{plain}
