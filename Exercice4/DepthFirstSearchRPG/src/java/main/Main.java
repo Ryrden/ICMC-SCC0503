@@ -32,6 +32,6 @@ public class Main {
         int originVertex = scanner.nextInt();
         DepthFirstTraversal depthFirstTraversal = new DepthFirstTraversal(digraphList);
         depthFirstTraversal.traverseGraph(questLog.get(originVertex));
-        digraphList.printInGraphviz("GraphList");
+        //digraphList.printInGraphviz("GraphList");
     }
 }

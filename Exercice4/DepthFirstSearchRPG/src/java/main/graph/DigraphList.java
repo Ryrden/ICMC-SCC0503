@@ -1,16 +1,15 @@
 package main.graph;
 
-import guru.nidi.graphviz.engine.Graphviz;
-import guru.nidi.graphviz.model.Label;
-import guru.nidi.graphviz.model.MutableGraph;
+//import guru.nidi.graphviz.engine.Graphviz;
+//import guru.nidi.graphviz.model.Label;
+//import guru.nidi.graphviz.model.MutableGraph;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 
-import static guru.nidi.graphviz.model.Factory.*;
+//import static guru.nidi.graphviz.model.Factory.*;
 
 public class DigraphList extends AbstractGraph {
 
@@ -194,7 +193,7 @@ public class DigraphList extends AbstractGraph {
 
     @Override
     public void printInGraphviz(String fileName) {
-        MutableGraph g = mutGraph("example1Digraph").setDirected();
+        /*MutableGraph g = mutGraph("example1Digraph").setDirected();
         for (var i = 0; i < getNumberOfVertices(); i++) {
             for (var j = 0; j < getAdjacencyList().get(i).size(); ++j) {
                 int destinationIndex = getVertices().indexOf(getAdjacencyList().get(i).get(j).getDestination());
@@ -203,6 +202,6 @@ public class DigraphList extends AbstractGraph {
                 g.add(mutNode(vertexDestinationName).addLink(mutNode(vertexOriginName)));
             }
         }
-        Graphviz.fromGraph(g).targetSize(GRAPHVIZ_IMAGE_WIDTH,GRAPHVIZ_IMAGE_HEIGTH).renderToFile(new File(GRAPHVIZ_FOLDER + fileName + GRAPHVIZ_FILE_EXTENSION));
+        Graphviz.fromGraph(g).targetSize(GRAPHVIZ_IMAGE_WIDTH,GRAPHVIZ_IMAGE_HEIGTH).renderToFile(new File(GRAPHVIZ_FOLDER + fileName + GRAPHVIZ_FILE_EXTENSION));*/
     }
 }
