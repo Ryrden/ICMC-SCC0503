@@ -1,6 +1,5 @@
 \documentclass[a4paper, 12pt]{article}
 
-\usepackage[portuges]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{indentfirst}
@@ -58,13 +57,17 @@
 \pagenumbering{arabic}
 % % % % % % % % % % % % % % % % % % % % % % % % % % %
 \section{Introdução}
-O exercício consiste na leitura de dados de quests (missões) de um jogo e na construção de um dígrafo com estes dados e a simulação da execução delas através da travessia em profundidade do dígrafo.
+O exercício consiste na leitura de dados de quests (missões) de um jogo e na construção de um dígrafo capaz de a simular o caminho de execução delas através da travessia em profundidade do dígrafo.\\
+Para realizar tal objetivo foi usada a linguagem de programação java, junto ao paradigma de programação orientada a objetos, pois tal combinação permite a estruturação do código de maneira a torna-ló modular e por conseguinte facilitar a manutenção da codebase e compartilhamento da mesma como um pacote ou reusa-lá em mais projetos.\\
+
 \newpage
 \section{Desenvolvimento}
 
-O desenvolvimento do projeto fez uso das abstrações já adotadas em sala de aula e o modelo de dígrafo selecionado para trabalhar foi o de "lista de adjâcencias", o porque desta escolha deve-se ao fato de que [Justificar o motivo].
-
-Com o objetivo de aplicar as boas práticas de código na atividade, foi criado a classe "Answer" que se tornou classe mãe da Vertex, a qual, possui o método "toString" que imprime na tela cada vertice.
+O desenvolvimento do projeto fez uso das abstrações já adotadas em sala de aula e o modelo de dígrafo selecionado para trabalhar foi o de "lista de adjâcencias".\\
+Tal decisão foi tomada pela comparação entre a complexidade das operações em comparação com a alternativa (matrix de adjacências) e a frequência com que essas operações são feitas.\\
+A principail operação realizada durante o algoritimo é a adição de vertices e arestas, em que a lista é O(1) em ambos, já a matriz é $O(|V|^2)$ e O(1) respectivamente. Com relação as demais ambas as abordagens tem complexidades semelhantes.\\
+Outro fator que corroborou para a escolha foi a complexidade de espaço entre as opções, com a lista sendo $O(|V|+|E|)$ enquanto a matrix de adjacências sendo $O(|V|^2)$.\\
+Com o objetivo de aplicar as boas práticas de código na atividade, foi criado a classe "Answer" que se tornou classe mãe da Vertex, a qual, possui o método "toString" que imprime na tela cada vertice.\\
 
 Implementação da classe Answer:
 
@@ -100,35 +103,48 @@ public class Answer {
 
 
 Para a implementação do algoritmo de busca em profundidade, por questões didáticas e não de desempenho algorítmico, foi criado o método "getAllConnectedVertex" dentro da classe "DigraphList" e definido seu contrato na interface "GraphInterface", abaixo a implementação:
-\begin{figure}[h!]
-\center 
-\includegraphics[width=.8\textwidth]{getAllConnectedVertexMethod.png}
-\caption{Implementação do método getAllConnectedVertex}
-\end{figure}
+
+\begin{minted}[mathescape, linenos]{java}
+    public List<Vertex> getAllConnectedVertex(Vertex vertex) {
+        if (getAdjacencyList().get(getVertices().indexOf(vertex)).isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            List<Vertex> connectedVertices = new ArrayList<>();
+            int vertexIndex = getVertices().indexOf(vertex);
+            for (Edge edge : getAdjacencyList().get(vertexIndex)) {
+                connectedVertices.add(edge.getDestination());
+            }
+            return connectedVertices;
+        }
+    }
+\end{minted}
 
 A implementação do algoritmo Depth First Search: 
-\begin{figure}[h!]
-\center 
-\includegraphics[width=.8\textwidth]{depthFirstTraversalRecursiveMethod.png}
-\caption{Implementação do algoritmo Depth First Search}
-\end{figure}
 
-Como modelo de busca recursiva para o algoritmo, ele sempre vai estar indo do primeiro vertice adicionado como aresta a partir do vertice de origem.
+\begin{minted}[mathescape, linenos]{java}
+public void traverseGraph(Vertex source) {
+        depthFirstTraversalRecursive(source);
+        printPath();
+    }
 
-Descreva os principais pontos do desenvolvimento do projeto. Algoritmos utilizados, decisões de projeto que sejam relevantes, etc.
-Se ajudar no entendimento, coloque pseudo-códigos ou prints de código de áreas importantes.
+    public void depthFirstTraversalRecursive(Vertex source) {
+        int sourceIndex = getGraph().getVertices().indexOf(source);
+        addToPath(source);
+        markVertexAsVisited(sourceIndex);
+        setDistanceToVertex(sourceIndex, 0);
+        setPredecessorVertexIndex(sourceIndex, -1);
 
-Se precisar citar algo, adicione a formatação em bibtex no arquivo \textit{bibliography.bib} e cite com o comando \textit{\textbackslash cite}, assim: \cite{even2011graph}
+        List<Vertex> vertexesToVisit = getGraph().getAllConnectedVertex(source);
 
-Para imagens, pode começar uma \textit{figure} e chamar o comando \textit{\textbackslash includegraphics}, assim:
+        for (Vertex currentVisitedVertex : vertexesToVisit) {
+            if (!hasVertexBeenVisited(getGraph().getVertices().indexOf(currentVisitedVertex))) {
+                depthFirstTraversalRecursive(currentVisitedVertex);
+            }
+        }
+    }
+\end{minted}
 
-\begin{figure}[h!]
-\center 
-\includegraphics[width=.8\textwidth]{logo.png}
-\caption{Logo do ICMC com uma legenda}
-\end{figure}
-
-Para tabelas, recomendo criar e exportar deste cite aqui (alias, é assim que adiciona URL -  \textit{\textbackslash url}): \url{https://www.tablesgenerator.com/}
+Como modelo de busca recursiva para o algoritmo, ele sempre vai estar indo do primeiro vertice adicionado como aresta a partir do vértice de origem.
 
 \newpage
 \section{Resultados}
