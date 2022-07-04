@@ -1,4 +1,4 @@
-package com.main.answer;
+package main.answer;
 
 public class Answer {
     private int id;

@@ -1,9 +1,9 @@
-package com.main;
+package main;
 
-import com.main.answer.Answer;
-import com.main.graph.BreadthFirstTraversal;
-import com.main.graph.DigraphList;
-import com.main.graph.Vertex;
+import main.answer.Answer;
+import main.graph.DepthFirstTraversal;
+import main.graph.DigraphList;
+import main.graph.Vertex;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -30,7 +30,8 @@ public class Main {
             digraphList.addEdge(questLog.get(originId), questLog.get(destinyId));
         }
         int originVertex = scanner.nextInt();
-        BreadthFirstTraversal breadthFirstTraversal = new BreadthFirstTraversal(digraphList);
-        breadthFirstTraversal.traverseGraph(questLog.get(originVertex));
+        DepthFirstTraversal depthFirstTraversal = new DepthFirstTraversal(digraphList);
+        depthFirstTraversal.traverseGraph(questLog.get(originVertex));
+        //digraphList.printInGraphviz("GraphList");
     }
 }

@@ -1,6 +1,6 @@
-package com.main.graph;
+package main.graph;
 
-import com.main.graph.Vertex;
+import main.graph.Vertex;
 
 public class Edge {
     public Vertex getDestination() {
