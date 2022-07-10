@@ -5,6 +5,7 @@ import main.graph.FloydWarshallTraversal;
 import main.graph.Vertex;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -41,20 +42,41 @@ public class Main {
         Vertex originVertex = new Vertex(0, 0);
         FloydWarshallTraversal floydWarshallTraversal = new FloydWarshallTraversal(digraphMatrix);
         floydWarshallTraversal.traverseGraph(originVertex);
+
         float[][] distanceMatrix = floydWarshallTraversal.getDistanceMatrix();
         Vertex centralVertex = getCentralVertex(distanceMatrix, digraphMatrix);
         Vertex peripheralVertex = getPeripheralVertex(distanceMatrix, digraphMatrix);
-        //float farthestVertexFromPeripheral = getFarthestVertexFromPeripheral(distanceMatrix, peripheralVertex);
+        Vertex farthestVertexFromPeripheral = getFarthestVertexFromPeripheral(distanceMatrix,digraphMatrix, peripheralVertex);
 
         System.out.println(centralVertex);
         System.out.println(peripheralVertex);
+        System.out.print(farthestVertexFromPeripheral);
+    }
+
+    private static Vertex getFarthestVertexFromPeripheral(float[][] distanceMatrix,DigraphMatrix digraphMatrix, Vertex peripheralVertex) {
+        int peripheralIndex = digraphMatrix.getVertices().indexOf(peripheralVertex);
+
+        Vertex farthestVertex = null;
+        int farthestVertexIndex = 0;
+        float maxDistance = Float.NEGATIVE_INFINITY;
+        for (int column = 0; column < distanceMatrix.length; column++) {
+            if (column == peripheralIndex) {
+                continue;
+            }
+            if (maxDistance < distanceMatrix[peripheralIndex][column]) {
+                maxDistance = distanceMatrix[peripheralIndex][column];
+                farthestVertexIndex = column;
+            }
+        }
+        farthestVertex = digraphMatrix.getVertices().get(farthestVertexIndex);
+        return farthestVertex;
     }
 
     private static Vertex getPeripheralVertex(float[][] distanceMatrix, DigraphMatrix digraphMatrix) {
         Vertex peripheralVertex = null;
         int peripheralVertexIndex = 0;
         float[] maximumCostVertexes = getMaximumCostVertexes(distanceMatrix);
-        printMaximumCostVertexes(maximumCostVertexes);
+
         float max = Float.NEGATIVE_INFINITY;
         for (int i = 0; i < maximumCostVertexes.length; i++) {
             if (max < maximumCostVertexes[i]) {
@@ -62,7 +84,7 @@ public class Main {
                 peripheralVertexIndex = i;
             }
         }
-        System.out.println(max + " " + peripheralVertexIndex);
+
         peripheralVertex = digraphMatrix.getVertices().get(peripheralVertexIndex);
         return peripheralVertex;
     }
@@ -78,7 +100,7 @@ public class Main {
                 centralVertexIndex = i;
             }
         }
-        System.out.println(min + " " + centralVertexIndex);
+
         centralVertex = digraphMatrix.getVertices().get(centralVertexIndex);
         return centralVertex;
     }
