@@ -43,7 +43,7 @@ public class Main {
 
         Vertex centralVertex = floydWarshallTraversal.getCentralVertex();
         Vertex peripheralVertex = floydWarshallTraversal.getPeripheralVertex();
-        Vertex farthestVertexFromPeripheral = floydWarshallTraversal.getFarthestVertexFromPeripheral();
+        Vertex farthestVertexFromPeripheral = floydWarshallTraversal.getFarthestVertexFrom(peripheralVertex);
 
         System.out.println(centralVertex);
         System.out.println(peripheralVertex);

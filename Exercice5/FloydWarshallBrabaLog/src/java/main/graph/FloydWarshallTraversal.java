@@ -21,8 +21,8 @@ public class FloydWarshallTraversal extends TraversalStrategy {
         distanceMatrix = new float[graph.getNumberOfVertices()][graph.getNumberOfVertices()];
     }
 
-    Vertex centralVertex;
-    Vertex peripheralVertex;
+    Vertex centralVertex = null;
+    Vertex peripheralVertex = null;
 
     @Override
     public void traverseGraph(Vertex source) {
@@ -64,29 +64,29 @@ public class FloydWarshallTraversal extends TraversalStrategy {
         LOGGER.info(distanceMatrixString.toString());
     }
 
-    public Vertex getFarthestVertexFromPeripheral() {
-        int peripheralIndex = getGraph().getVertices().indexOf(peripheralVertex);
+    public Vertex getFarthestVertexFrom(Vertex source) {
+        int sourceIndex = getGraph().getVertices().indexOf(source);
 
-        Vertex farthestVertex = null;
         int farthestVertexIndex = 0;
         float maxDistance = Float.NEGATIVE_INFINITY;
         for (int column = 0; column < distanceMatrix.length; column++) {
-            if (column == peripheralIndex) {
+            if (column == sourceIndex) {
                 continue;
             }
-            if (maxDistance < distanceMatrix[peripheralIndex][column]) {
-                maxDistance = distanceMatrix[peripheralIndex][column];
+            if (maxDistance < distanceMatrix[sourceIndex][column]) {
+                maxDistance = distanceMatrix[sourceIndex][column];
                 farthestVertexIndex = column;
             }
         }
-        farthestVertex = getGraph().getVertices().get(farthestVertexIndex);
-        return farthestVertex;
+        return getGraph().getVertices().get(farthestVertexIndex);
     }
 
     public Vertex getPeripheralVertex() {
-        Vertex peripheralVertex = null;
+        if (peripheralVertex != null)
+            return peripheralVertex;
+
         int peripheralVertexIndex = 0;
-        float[] maximumCostVertexes = getMaximumCostVertexes();
+        float[] maximumCostVertexes = getMaximumCostInColumns();
 
         float max = Float.NEGATIVE_INFINITY;
         for (int i = 0; i < maximumCostVertexes.length; i++) {
@@ -101,9 +101,11 @@ public class FloydWarshallTraversal extends TraversalStrategy {
     }
 
     public Vertex getCentralVertex() {
-        Vertex centralVertex = null;
+        if (centralVertex != null)
+            return centralVertex;
+
         int centralVertexIndex = 0;
-        float[] maximumCostVertexes = getMaximumCostVertexes();
+        float[] maximumCostVertexes = getMaximumCostInColumns();
         float min = Float.POSITIVE_INFINITY;
         for (int i = 0; i < maximumCostVertexes.length; i++) {
             if (min > maximumCostVertexes[i]) {
@@ -116,7 +118,7 @@ public class FloydWarshallTraversal extends TraversalStrategy {
         return centralVertex;
     }
 
-    private float[] getMaximumCostVertexes() {
+    private float[] getMaximumCostInColumns() {
         float[] maximumCostVertexes = new float[distanceMatrix.length];
 
         for (int column = 0; column < distanceMatrix[0].length; column++) {
