@@ -1,6 +1,14 @@
 package main.graph;
 
+import guru.nidi.graphviz.engine.Graphviz;
+import guru.nidi.graphviz.model.Label;
+import guru.nidi.graphviz.model.MutableGraph;
+
+import java.io.File;
 import java.util.List;
+
+import static guru.nidi.graphviz.model.Factory.mutGraph;
+import static guru.nidi.graphviz.model.Factory.mutNode;
 
 public class DigraphMatrix extends AbstractGraph {
     private Edge[][] adjacencyMatrix;
@@ -94,7 +102,17 @@ public class DigraphMatrix extends AbstractGraph {
 
     @Override
     public void printInGraphviz(String fileName) {
-        return;
+        MutableGraph g = mutGraph("example1Digraph").setDirected();
+
+        for (var i = 0; i < getNumberOfVertices(); ++i) {
+            for (var j = 0; j < getNumberOfVertices(); ++j) {
+                if (edgeExists(getVertices().get(i), getVertices().get(j))) {
+                    float weight = adjacencyMatrix[i][j].getWeight();
+                    g.add(mutNode(getVertices().get(i).getName()).addLink((mutNode(getVertices().get(j).getName())).add(Label.of(String.valueOf(weight)))));
+                }
+            }
+        }
+        Graphviz.fromGraph(g).targetSize(GRAPHVIZ_IMAGE_WIDTH, GRAPHVIZ_IMAGE_HEIGTH).renderToFile(new File(GRAPHVIZ_FOLDER + fileName + GRAPHVIZ_FILE_EXTENSION));
     }
 
     @Override

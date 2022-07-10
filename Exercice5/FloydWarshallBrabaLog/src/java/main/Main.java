@@ -48,6 +48,7 @@ public class Main {
         System.out.println(centralVertex);
         System.out.println(peripheralVertex);
         System.out.print(farthestVertexFromPeripheral);
+        //digraphMatrix.printInGraphviz("GraphMatrix");
     }
 
 }
