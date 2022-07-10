@@ -26,57 +26,74 @@ public class Main {
         scanner.nextLine();
         for (int i = 0; i < edgeNumber; i++) {
             String line = scanner.nextLine();
+
             int xOrigin = Integer.parseInt(line.split("[,:]")[0]);
             int yOrigin = Integer.parseInt(line.split("[,:]")[1]);
             int xDestination = Integer.parseInt(line.split("[,:]")[2]);
             int yDestination = Integer.parseInt(line.split("[,:]")[3]);
+
             Vertex pointOrigin = new Vertex(xOrigin, yOrigin);
             Vertex pointDestination = new Vertex(xDestination, yDestination);
-            digraphMatrix.addEdge(pointOrigin, pointDestination);
+            int weight = (int) pointOrigin.euclideanDistance(pointDestination);
+
+            digraphMatrix.addEdge(pointOrigin, pointDestination,weight);
         }
         Vertex originVertex = new Vertex(0, 0);
         FloydWarshallTraversal floydWarshallTraversal = new FloydWarshallTraversal(digraphMatrix);
         floydWarshallTraversal.traverseGraph(originVertex);
         float[][] distanceMatrix = floydWarshallTraversal.getDistanceMatrix();
-        Vertex centralVertex = getCentralVertex(distanceMatrix,digraphMatrix);
-        //float peripheralVertex = getPeripheralVertex(distanceMatrix);
+        Vertex centralVertex = getCentralVertex(distanceMatrix, digraphMatrix);
+        Vertex peripheralVertex = getPeripheralVertex(distanceMatrix, digraphMatrix);
         //float farthestVertexFromPeripheral = getFarthestVertexFromPeripheral(distanceMatrix, peripheralVertex);
+
         System.out.println(centralVertex);
+        System.out.println(peripheralVertex);
     }
 
-    private static Vertex getCentralVertex(float[][] distanceMatrix,DigraphMatrix digraphMatrix) {
-        Vertex centralVertex;
+    private static Vertex getPeripheralVertex(float[][] distanceMatrix, DigraphMatrix digraphMatrix) {
+        Vertex peripheralVertex = null;
+        int peripheralVertexIndex = 0;
+        float[] maximumCostVertexes = getMaximumCostVertexes(distanceMatrix);
+        printMaximumCostVertexes(maximumCostVertexes);
+        float max = Float.NEGATIVE_INFINITY;
+        for (int i = 0; i < maximumCostVertexes.length; i++) {
+            if (max < maximumCostVertexes[i]) {
+                max = maximumCostVertexes[i];
+                peripheralVertexIndex = i;
+            }
+        }
+        System.out.println(max + " " + peripheralVertexIndex);
+        peripheralVertex = digraphMatrix.getVertices().get(peripheralVertexIndex);
+        return peripheralVertex;
+    }
+
+    private static Vertex getCentralVertex(float[][] distanceMatrix, DigraphMatrix digraphMatrix) {
+        Vertex centralVertex = null;
         int centralVertexIndex = 0;
         float[] maximumCostVertexes = getMaximumCostVertexes(distanceMatrix);
         float min = Float.POSITIVE_INFINITY;
-        for (int i = 0; i < maximumCostVertexes.length;i++){
+        for (int i = 0; i < maximumCostVertexes.length; i++) {
             if (min > maximumCostVertexes[i]) {
                 min = maximumCostVertexes[i];
                 centralVertexIndex = i;
             }
         }
+        System.out.println(min + " " + centralVertexIndex);
         centralVertex = digraphMatrix.getVertices().get(centralVertexIndex);
         return centralVertex;
     }
 
     private static float[] getMaximumCostVertexes(float[][] distanceMatrix) {
         float[] maximumCostVertexes = new float[distanceMatrix.length];
-        int indexCount = 0;
 
-        float centralVertexDistance = Float.NEGATIVE_INFINITY;
         for (int column = 0; column < distanceMatrix[0].length; column++) {
-            float maxDistance = 0;
+            float maxDistance = Float.NEGATIVE_INFINITY;
             for (int row = 0; row < distanceMatrix.length; row++) {
                 if (distanceMatrix[row][column] > maxDistance) {
                     maxDistance = distanceMatrix[row][column];
                 }
             }
-            if (maxDistance > centralVertexDistance) {
-                centralVertexDistance = maxDistance;
-                maximumCostVertexes[indexCount] = centralVertexDistance;
-                indexCount += 1;
-            }
-            centralVertexDistance = Float.NEGATIVE_INFINITY;
+            maximumCostVertexes[column] = maxDistance;
         }
         return maximumCostVertexes;
     }
