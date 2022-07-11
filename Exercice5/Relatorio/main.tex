@@ -66,15 +66,15 @@ Já, a cidade mais periferica será o oposto do critério para o CCD.\\
 
 O desenvolvimento do projeto fez uso das abstrações já adotadas em sala de aula e o modelo de dígrafo selecionado para trabalhar foi o de "matriz de adjâcencias".\\
 
-[EDITAR ESSA PARTE]
-**Tal decisão foi tomada pela comparação entre a complexidade das operações em comparação com a alternativa (lista de adjacências) e a frequência com que essas operações são feitas.\\
+Tal decisão foi tomada pela comparação entre a complexidade das operações em comparação com a alternativa (lista de adjacências) e a frequência com que essas operações são feitas.\\
 A principail operação realizada durante o algoritimo é a adição de vertices e arestas, em que a lista é O(1) em ambos, já a matriz é $O(|V|^2)$ e O(1) respectivamente. Com relação as demais ambas as abordagens tem complexidades semelhantes.\\
-Outro fator que corroborou para a escolha foi a complexidade de espaço entre as opções, com a lista sendo $O(|V|+|E|)$ enquanto a matrix de adjacências sendo $O(|V|^2)$.**\\
+Outro fator que corroborou para a escolha foi a complexidade de espaço entre as opções, com a lista sendo $O(|V|+|E|)$ enquanto a matrix de adjacências sendo $O(|V|^2)$.\\
 
 O algoritmo de FloyWarshall já implementado em sala de aula fez uso da distância euclidiana entre os pontos (vertíces).
 
 Para a representação do ponto cartesiano como vertíce do grafo, dentro da classe vertíce foi adotada a keyword "Record" do Java 16, que omite getters, setters e construtores quando estes fazem uso apenas dos atributos
---Citação do conteúdo https://www.guiadojava.com.br/2021/04/java-records.html
+
+\url{https://www.guiadojava.com.br/2021/04/java-records.html}
 
 Com o objetivo de aplicar as boas práticas de código na atividade, os métodos para encontrar o vértice mais central, mais periferico, assim como o mais distante do periferico, foram implementados na classe do próprio "FloyWarshallTraversal", a qual está bem abstraida e implementada com as práticas dos padrões de projeto.\\
 
@@ -241,222 +241,20 @@ public class FloydWarshallTraversal extends TraversalStrategy {
 \newpage
 \section{Resultados}
 \graphicspath{ {./Results/} }
-
-Para o caso de teste 1 temos como saída:
-\begin{minted}{xml}
-    INFO: Quest{
-	ID: 8
-	Name: Elder Care
-	Description: Help the village Elder
-}Quest{
-	ID: 9
-	Name: Second Intentions
-	Description: Make the Elder tell you about the Demon Lord
-}Quest{
-	ID: 5
-	Name: Hell's Door
-	Description: You must find the entrance to the Demon Lord's Castle
-}Quest{
-	ID: 6
-	Name: Cleaning the House
-	Description: Kill all the guardians of the Demon Lord
-}Quest{
-	ID: 7
-	Name: Showdown
-	Description: Face the last fierce battle and kill the Demon Lord
-}
-\end{minted}
-
-Quanto ao grafo gerado:
-
-\includegraphics[width=\textwidth]{Case1.jpeg}
-\\
-\\
-
-\newpage
-Para o caso 2 temos como saída:
+Como resultados obtemos:
 
 \begin{minted}{xml}
-    INFO: Quest{
-	ID: 0
-	Name: Slime Killer
-	Description: You must kill 10 slimes
-}Quest{
-	ID: 11
-	Name: Slime's Revenge
-	Description: The slime Queen wants revenge for her minions
-}Quest{
-	ID: 1
-	Name: The Woodcutter
-	Description: Find and talk to Greyson, the woodcutter
-}Quest{
-	ID: 2
-	Name: A New Axe
-	Description: Search for the legendary axe for Greyson
-}Quest{
-	ID: 3
-	Name: The Blacksmith
-	Description: Find and talk to Clint, the blacksmith
-}Quest{
-	ID: 4
-	Name: Hammer of Doom
-	Description: Search for the legendary hammer for Clint
-}
+    {
+        Vertice mais central: {6,2},
+        Vertice periferico: {0,0},
+        Vertice mais distante do periferico: {9,10},
+
+    }
 \end{minted}
 
-Quanto a seu grafo:\\
+E o grafo obtido foi:
 
-\includegraphics[width=\textwidth]{Case2.jpeg}
-\\
-\\
-
-\newpage
-Para o caso 3 temos como saída:
-
-
-\begin{minted}{xml}
-    INFO: Quest{
-	ID: 10
-	Name: Hello, World!
-	Description: Get to the starter town and talk to the villagers
-}Quest{
-	ID: 0
-	Name: Slime Killer
-	Description: You must kill 10 slimes
-}Quest{
-	ID: 11
-	Name: Slime's Revenge
-	Description: The slime Queen wants revenge for her minions
-}Quest{
-	ID: 1
-	Name: The Woodcutter
-	Description: Find and talk to Greyson, the woodcutter
-}Quest{
-	ID: 2
-	Name: A New Axe
-	Description: Search for the legendary axe for Greyson
-}Quest{
-	ID: 14
-	Name: The Sidequester
-	Description: Face the final challenge and complete the last sidequest
-}Quest{
-	ID: 3
-	Name: The Blacksmith
-	Description: Find and talk to Clint, the blacksmith
-}Quest{
-	ID: 4
-	Name: Hammer of Doom
-	Description: Search for the legendary hammer for Clint
-}Quest{
-	ID: 12
-	Name: Duel Time!
-	Description: Win the card minigame tournament
-}Quest{
-	ID: 13
-	Name: Master of Duel
-	Description: Win the world championship card minigame tournament
-}Quest{
-	ID: 8
-	Name: Elder Care
-	Description: Help the village Elder
-}Quest{
-	ID: 9
-	Name: Second Intentions
-	Description: Make the Elder tell you about the Demon Lord
-}Quest{
-	ID: 5
-	Name: Hell's Door
-	Description: You must find the entrance to the Demon Lord's Castle
-}Quest{
-	ID: 6
-	Name: Cleaning the House
-	Description: Kill all the guardians of the Demon Lord
-}Quest{
-	ID: 7
-	Name: Showdown
-	Description: Face the last fierce battle and kill the Demon Lord
-}
-\end{minted}
-
-
-Para seu grafo Temos:\\
-\includegraphics[width=\textwidth]{Case3.jpeg}
-\\
-\\
-
-
-\newpage
-Por fim para o caso 4 temos como saida:
-\begin{minted}{xml}
-    INFO: Quest{
-	ID: 10
-	Name: Hello, World!
-	Description: Get to the starter town and talk to the villagers
-}Quest{
-	ID: 0
-	Name: Slime Killer
-	Description: You must kill 10 slimes
-}Quest{
-	ID: 11
-	Name: Slime's Revenge
-	Description: The slime Queen wants revenge for her minions
-}Quest{
-	ID: 1
-	Name: The Woodcutter
-	Description: Find and talk to Greyson, the woodcutter
-}Quest{
-	ID: 2
-	Name: A New Axe
-	Description: Search for the legendary axe for Greyson
-}Quest{
-	ID: 3
-	Name: The Blacksmith
-	Description: Find and talk to Clint, the blacksmith
-}Quest{
-	ID: 4
-	Name: Hammer of Doom
-	Description: Search for the legendary hammer for Clint
-}Quest{
-	ID: 12
-	Name: Duel Time!
-	Description: Win the card minigame tournament
-}Quest{
-	ID: 8
-	Name: Elder Care
-	Description: Help the village Elder
-}Quest{
-	ID: 9
-	Name: Second Intentions
-	Description: Make the Elder tell you about the Demon Lord
-}Quest{
-	ID: 5
-	Name: Hell's Door
-	Description: You must find the entrance to the Demon Lord's Castle
-}Quest{
-	ID: 6
-	Name: Cleaning the House
-	Description: Kill all the guardians of the Demon Lord
-}Quest{
-	ID: 7
-	Name: Showdown
-	Description: Face the last fierce battle and kill the Demon Lord
-}
-\end{minted}
-
-Para seu grafo Temos:\\
-\includegraphics[width=\textwidth]{Case4.jpeg}
-\\
-\\
-\end{document}
-
-
-
-
-
-\newpage
-\section{Resultados}
-\graphicspath{ {./Results/} }
-
+\includegraphics[width=\textwidth]{GraphMatrix}
 
 \end{document}
 
