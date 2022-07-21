@@ -1,5 +1,7 @@
 package main.graph;
 
+import main.dungeon.Room;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,5 +50,13 @@ public abstract class AbstractGraph implements GraphInterface
     public void addEdge(Vertex source, Vertex destination)
     {
         addEdge(source, destination, 1);
+    }
+
+    public float calcDistance(Room source, Room destination) {
+        int x1 = (int) source.getRoom().getX();
+        int y1 = (int) source.getRoom().getY();
+        int x2 = (int) destination.getRoom().getX();
+        int y2 = (int) destination.getRoom().getY();
+        return (float) Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     }
 }

@@ -1,8 +1,7 @@
 package main.dungeon;
 
-import main.dungeon.Room;
 import main.graph.AbstractGraph;
-import main.graph.GraphList;
+import main.graph.GraphMatrix;
 import main.graph.RandomSingleton;
 
 import java.awt.*;
@@ -23,7 +22,7 @@ public class DungeonGenerator {
     }
 
     private void createGraphWithRooms(int nRooms) {
-        dungeon = new GraphList();
+        dungeon = new GraphMatrix();
 
         for (int i = 0; i < nRooms; i++) {
             boolean roomIsValid;

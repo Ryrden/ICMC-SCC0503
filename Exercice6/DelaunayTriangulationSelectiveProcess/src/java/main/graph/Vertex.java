@@ -2,8 +2,7 @@ package main.graph;
 
 import java.util.Objects;
 
-public class Vertex
-{
+public class Vertex {
     private String name;
 
     public String getName() {
@@ -11,9 +10,8 @@ public class Vertex
     }
 
     public void setName(String name) {
-        if(Objects.equals(name, ""))
-        {
-            System.out.println("Nome vazio não será adicionado");
+        if (Objects.equals(name, "")) {
+            System.out.println("Name cannot be empty");
         }
         this.name = name;
     }
@@ -23,8 +21,7 @@ public class Vertex
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Vertex{" + "name='" + name + '\'' + '}';
     }
 }
