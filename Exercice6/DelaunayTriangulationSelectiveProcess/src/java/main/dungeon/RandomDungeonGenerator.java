@@ -6,7 +6,7 @@ import main.graph.RandomSingleton;
 
 import java.awt.*;
 
-public class DungeonGenerator {
+public class RandomDungeonGenerator {
 
     private AbstractGraph dungeon;
 
@@ -17,7 +17,7 @@ public class DungeonGenerator {
         return dungeon;
     }
 
-    public DungeonGenerator(int nRooms) {
+    public RandomDungeonGenerator(int nRooms) {
         createGraphWithRooms(nRooms);
     }
 
