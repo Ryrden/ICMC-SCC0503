@@ -1,0 +1,204 @@
+\documentclass[a4paper, 12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\usepackage{multicol,lipsum}
+\usepackage{hyperref}
+\usepackage{minted}
+\usepackage{cancel}
+
+\begin{document}
+%\maketitle
+
+\begin{titlepage}
+	\begin{center}
+	
+	%\begin{figure}[!ht]
+	%\centering
+	%\includegraphics[width=2cm]{c:/ufba.jpg}
+	%\end{figure}
+
+		\Huge{Instituto de Ciências Matemáticas e de Computação}\\
+		\large{Departamento de Ciências de Computação}\\ 
+		\large{SCC0503 - Algoritmos e Estruturas de Dados II}\\ 
+		\vspace{15pt}
+        \vspace{95pt}
+        \textbf{\LARGE{Relatório Exercício 06}}\\
+		%\title{{\large{Título}}}
+		\vspace{3,5cm}
+	\end{center}
+	
+	\begin{flushleft}
+		\begin{tabbing}
+			Alunos: Ryan Souza Sá Teles, Silmar Pereira da Silva Junior \\
+            NUSP's: 12822062, 12623950.
+			Professor: Leonardo Tórtoro Pereira\\
+			%Professor co-orientador: \\
+	\end{tabbing}
+ \end{flushleft}
+	\vspace{1cm}
+	
+	\begin{center}
+		\vspace{\fill}
+			 Julho\\
+		 2022
+			\end{center}
+\end{titlepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+% % % % % % % % % % % % % % % % % % % % % % % % % %
+\newpage
+\tableofcontents
+\thispagestyle{empty}
+
+\newpage
+\pagenumbering{arabic}
+% % % % % % % % % % % % % % % % % % % % % % % % % % %
+\section{Introdução}
+A empresa BugSoft esta contratando quem for capaz de desenvolver um algoritmo que gere níveis no 
+novo jogo deles, Credo dos Frita Sinos, munido de código de qualidade e sem nenhum bug foi 
+desenvolvido um algoritimo para criação de dungeons usando Triangulação de Delaunay.
+
+\newpage
+\section{Desenvolvimento}
+
+O desenvolvimento do projeto fez uso das abstrações já adotadas em sala de aula e o modelo de dígrafo selecionado para trabalhar na construção das dungeons foi o de "matriz de adjâcencias".\\
+
+Tal decisão foi tomada pela comparação entre a complexidade das operações em comparação com a alternativa (lista de adjacências) e a frequência com que essas operações são feitas.\\
+A principail operação realizada durante o algoritimo é a adição de vertices e arestas, em que a lista é O(1) em ambos, já a matriz é $O(|V|^2)$ e O(1) respectivamente. Com relação as demais ambas as abordagens tem complexidades semelhantes.\\
+Outro fator que corroborou para a escolha foi a complexidade de espaço entre as opções, com a lista sendo $O(|V|+|E|)$ enquanto a matrix de adjacências sendo $O(|V|^2)$.\\
+
+O algoritmo de Prim já implementado em sala de aula foi utilizado para "limpar" as arestas das dungeons recem criadas, de modo a garantir somente uma aresta entre uma sala e outra.
+
+Para limpar as arestas, foi necessário utilizar o array de Predecessores gerado pelo algortimo de prim, com ele, foi implementado um metódo dentro de uma nova classe, GraphConverter, nela, foi gerado uma nova dungeon e alem disso, calculada a distancia entre cada sala por meio da distância euclidiana entre os pontos (vertíces).\\
+
+O método para calculo de distância foi implementado na classe abstrata Abstract Graph, essa decisão foi feita devido a complexidade e quantidade de conflitos gerados ao abstrair uma classe chamada Dungeon, onde deveria conter tal método, em diversos pontos do código é chamado DigraphMatrix e GraphMatrix, gerando erros.\\
+
+
+Com o objetivo de aplicar as boas práticas de código na atividade, uma nova package chamada dungeons foi criada para abrigar as classes referentes a criação de dungeon, deste modo, a organização do código se mantém.\\
+
+Para a impressão da distância entre cada sala, foi utilizado o algoritmo Breadth First Search, o qual também foi implementado em sala de aula.
+
+Abaixo, as implementações:\\
+
+Implementação da classe GraphConverter (Classe qual possui o método que converte a lista de predecessores do algoritmo de prim para um grafo):
+
+
+\begin{minted}[mathescape, linenos]{java}
+public class GraphConverter {
+    private GraphConverter() {}
+    public static AbstractGraph predecessorListToGraph(AbstractGraph dungeon, int[] predecessor){
+        AbstractGraph newDungeon = new DigraphMatrix();
+
+        Room newRoom;
+        for (int i = 0; i < dungeon.getNumberOfVertices(); i++) {
+            newRoom = (Room)dungeon.getVertices().get(i);
+            newDungeon.addVertex(newRoom);
+        }
+
+        float distance;
+        Room source;
+        Room destination;
+        for (int i = 1; i < predecessor.length; i++) {
+            source = (Room)dungeon.getVertices().get(predecessor[i]);
+            destination = (Room)dungeon.getVertices().get(i);
+            distance = dungeon.calcEuclidianDistance(source, destination);
+            newDungeon.addEdge(source, destination, distance);
+            newDungeon.addEdge(destination, source, distance);
+        }
+        return newDungeon;
+    }
+}
+\end{minted}
+
+
+\begin{minted}[mathescape, linenos]{java}
+  
+\end{minted}
+
+Implementação do método calcEuclidianDistance:
+
+\begin{minted}[mathescape, linenos]{java}
+public float calcEuclidianDistance(Room source, Room destination) {
+    int x1 = (int) source.getRoom().getX();
+    int y1 = (int) source.getRoom().getY();
+    int x2 = (int) destination.getRoom().getX();
+    int y2 = (int) destination.getRoom().getY();
+    return (float) Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+}
+\end{minted}
+
+Implementação da Main (lógica do programa)
+
+\begin{minted}[mathescape, linenos]{java}
+public static void main(String[] args) {
+    Scanner scanner = new Scanner(System.in);
+    int randomSeed = scanner.nextInt();
+    scanner.nextLine();
+    int numberRooms = scanner.nextInt();
+
+    AbstractGraph newDungeon = generateDungeonLevel(randomSeed, numberRooms);
+
+    printDungeonWithBFS(newDungeon);
+    SwingUtilities.invokeLater(() -> new DungeonGraphic(newDungeon).setVisible(true));
+}
+\end{minted}
+
+Implementação dos submétodos da Main:
+
+\begin{minted}[mathescape, linenos]{java}
+private static void printDungeonWithBFS(AbstractGraph newDungeon) {
+    var breadthFirstTraversal = new BreadthFirstTraversal(newDungeon);
+    breadthFirstTraversal.traverseGraph(newDungeon.getVertices().get(0));
+}
+
+private static AbstractGraph generateDungeonLevel(int randomSeed, int numberRooms) {
+    RandomSingleton.getInstance(randomSeed); //Inicializar gerador de números aleatórios
+    var randomDungeonGenerator = new RandomDungeonGenerator(numberRooms); //Gerar 20 salas
+    var dungeon = randomDungeonGenerator.getDungeon(); //Pegar o grafo com salas
+    DelaunayTriangulation.triangulateGraphVertices(dungeon); //Criar arestas
+
+    int[] predecessorIndexList = cleanEdgesAndGetPredecessorList(dungeon);
+
+    return GraphConverter.predecessorListToGraph(dungeon, predecessorIndexList);
+}
+
+private static int[] cleanEdgesAndGetPredecessorList(AbstractGraph dungeon) {
+    var primTraversal = new PrimMSTTraversal(dungeon);
+    primTraversal.traverseGraph(dungeon.getVertices().get(0));
+    return primTraversal.getPredecessorArray();
+}
+\end{minted}
+
+\newpage
+\section{Resultados}
+\graphicspath{ {./Results/} }
+Como resultados obtemos:
+
+\begin{minted}{xml}
+Room{(X, Y)= (48.0,84.0)} Distance: 0.0 
+Room{(X, Y)= (217.0,127.0)} Distance: 174.38463 
+Room{(X, Y)= (407.0,135.0)} Distance: 364.55298 
+Room{(X, Y)= (352.0,201.0)} Distance: 328.33594 
+Room{(X, Y)= (705.0,118.0)} Distance: 663.0375 
+Room{(X, Y)= (743.0,209.0)} Distance: 761.6529 
+Room{(X, Y)= (798.0,119.0)} Distance: 756.04285 
+Room{(X, Y)= (790.0,301.0)} Distance: 864.96313 
+Room{(X, Y)= (547.0,96.0)} Distance: 1008.0944 
+Room{(X, Y)= (793.0,440.0)} Distance: 1003.9955 
+Room{(X, Y)= (359.0,23.0)} Distance: 1209.7699 
+Room{(X, Y)= (730.0,356.0)} Distance: 1108.9955 
+Room{(X, Y)= (676.0,528.0)} Distance: 1150.3956 
+Room{(X, Y)= (603.0,342.0)} Distance: 1236.7648 
+Room{(X, Y)= (476.0,432.0)} Distance: 1372.2424 
+Room{(X, Y)= (623.0,737.0)} Distance: 1366.011 
+Room{(X, Y)= (382.0,302.0)} Distance: 1532.6669 
+Room{(X, Y)= (360.0,410.0)} Distance: 1490.3102 
+Room{(X, Y)= (509.0,744.0)} Distance: 1480.2257 
+Room{(X, Y)= (313.0,364.0)} Distance: 1556.075 
+\end{minted}
+
+\end{document}
