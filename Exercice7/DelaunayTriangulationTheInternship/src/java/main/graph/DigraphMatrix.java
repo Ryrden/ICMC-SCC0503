@@ -3,6 +3,8 @@ package main.graph;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -157,6 +159,18 @@ public class DigraphMatrix extends AbstractGraph {
             }
         }
         return null;
+    }
+
+    public List<Vertex> getAllConnectedVertex(Vertex vertex) {
+        if (getAdjacencyMatrix().length == 0)
+            return Collections.emptyList();
+        var connectedVertices = new ArrayList<Vertex>();
+        int vertexIndex = getVertices().indexOf(vertex);
+        for(Edge edge : getAdjacencyMatrix()[vertexIndex]) {
+            if (edge != null)
+                connectedVertices.add(edge.getDestination());
+        }
+        return connectedVertices;
     }
 
     @Override
