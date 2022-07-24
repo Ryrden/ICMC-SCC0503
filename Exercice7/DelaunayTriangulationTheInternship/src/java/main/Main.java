@@ -27,14 +27,19 @@ public class Main {
         Room exitRoom = (Room) floydWarshallTraversal.getFarthestVertexFrom(startRoom);
         exitRoom.setExit(true);
 
-
+        printDungeonWithDFS(dungeon);
         printDungeonWithBFS(dungeon);
         SwingUtilities.invokeLater(() -> new DungeonGraphic(dungeon).setVisible(true));
     }
 
-    private static void printDungeonWithBFS(AbstractGraph newDungeon) {
-        var breadthFirstTraversal = new BreadthFirstTraversal(newDungeon);
-        breadthFirstTraversal.traverseGraph(newDungeon.getVertices().get(0));
+    private static void printDungeonWithDFS(AbstractGraph dungeon) {
+        var depthFirstTraversal = new DepthFirstTraversal(dungeon);
+        depthFirstTraversal.traverseGraph(dungeon.getVertices().get(0));
+    }
+
+    private static void printDungeonWithBFS(AbstractGraph dungeon) {
+        var breadthFirstTraversal = new BreadthFirstTraversal(dungeon);
+        breadthFirstTraversal.traverseGraph(dungeon.getVertices().get(0));
     }
 
     private static AbstractGraph generateDungeonLevel(int randomSeed, int numberRooms) {

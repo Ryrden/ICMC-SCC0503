@@ -1,5 +1,7 @@
 package main.graph;
 
+import java.util.List;
+
 public interface GraphInterface
 {
     void addVertex(Vertex vertex);
@@ -27,4 +29,6 @@ public interface GraphInterface
     Vertex getNextConnectedVertex(Vertex source, Vertex currentConnection);
 
     void lockEdge(Vertex source, Vertex destination, int lockID);
+
+    List<Vertex> getAllConnectedVertex(Vertex source);
 }
