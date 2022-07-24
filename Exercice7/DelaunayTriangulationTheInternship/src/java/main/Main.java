@@ -3,6 +3,7 @@ package main;
 import main.dungeon.DungeonGraphic;
 import main.dungeon.GraphConverter;
 import main.dungeon.RandomDungeonGenerator;
+import main.dungeon.Room;
 import main.graph.*;
 
 import javax.swing.*;
@@ -15,10 +16,20 @@ public class Main {
         scanner.nextLine();
         int numberRooms = scanner.nextInt();
 
-        AbstractGraph newDungeon = generateDungeonLevel(randomSeed, numberRooms);
+        AbstractGraph dungeon = generateDungeonLevel(randomSeed, numberRooms);
+        FloydWarshallTraversal floydWarshallTraversal = new FloydWarshallTraversal(dungeon);
+        floydWarshallTraversal.traverseGraph(null);
 
-        printDungeonWithBFS(newDungeon);
-        SwingUtilities.invokeLater(() -> new DungeonGraphic(newDungeon).setVisible(true));
+        Room centralRoom= (Room) floydWarshallTraversal.getCentralVertex();
+        centralRoom.setCheckPoint(true);
+        Room startRoom= (Room) floydWarshallTraversal.getPeripheralVertex();
+        startRoom.setEntrance(true);
+        Room exitRoom = (Room) floydWarshallTraversal.getFarthestVertexFrom(startRoom);
+        exitRoom.setExit(true);
+
+
+        printDungeonWithBFS(dungeon);
+        SwingUtilities.invokeLater(() -> new DungeonGraphic(dungeon).setVisible(true));
     }
 
     private static void printDungeonWithBFS(AbstractGraph newDungeon) {
