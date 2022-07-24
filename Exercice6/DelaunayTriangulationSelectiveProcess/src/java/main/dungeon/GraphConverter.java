@@ -20,7 +20,7 @@ public class GraphConverter {
         for (int i = 1; i < predecessor.length; i++) {
             source = (Room)dungeon.getVertices().get(predecessor[i]);
             destination = (Room)dungeon.getVertices().get(i);
-            distance = dungeon.calcDistance(source, destination);
+            distance = dungeon.calcEuclidianDistance(source, destination);
             newDungeon.addEdge(source, destination, distance);
             newDungeon.addEdge(destination, source, distance);
         }
