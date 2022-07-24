@@ -2,16 +2,13 @@ package main.graph;
 
 import java.util.*;
 
-public class BreadthFirstTraversal extends TraversalStrategy
-{
-    public BreadthFirstTraversal(AbstractGraph graph)
-    {
+public class BreadthFirstTraversal extends TraversalStrategy {
+    public BreadthFirstTraversal(AbstractGraph graph) {
         super(graph);
     }
 
     @Override
-    public void traverseGraph(Vertex source)
-    {
+    public void traverseGraph(Vertex source) {
         int sourceIndex = getGraph().getVertices().indexOf(source);
         addToPath(source);
         markVertexAsVisited(sourceIndex);
@@ -23,18 +20,14 @@ public class BreadthFirstTraversal extends TraversalStrategy
 
         Vertex currentVisitedVertex;
         int currentVisitedVertexIndex;
-        while(!vertexesToVisit.isEmpty())
-        {
+        while (!vertexesToVisit.isEmpty()) {
             currentVisitedVertex = vertexesToVisit.poll();
             currentVisitedVertexIndex = getGraph().getVertices().indexOf(currentVisitedVertex);
-            if (currentVisitedVertex != null)
-            {
+            if (currentVisitedVertex != null) {
                 var adjacentVertex = getGraph().getFirstConnectedVertex(currentVisitedVertex);
-                while(adjacentVertex != null)
-                {
+                while (adjacentVertex != null) {
                     int adjacentVertexIndex = getGraph().getVertices().indexOf(adjacentVertex);
-                    if(!hasVertexBeenVisited(adjacentVertexIndex))
-                    {
+                    if (!hasVertexBeenVisited(adjacentVertexIndex)) {
                         updateTraversalInfoForVertex(adjacentVertexIndex, currentVisitedVertexIndex);
                         vertexesToVisit.add(adjacentVertex);
                     }
@@ -45,15 +38,14 @@ public class BreadthFirstTraversal extends TraversalStrategy
         printPath();
     }
 
-    protected void updateTraversalInfoForVertex(int newVertexIndex, int previousVertexIndex)
-    {
+    protected void updateTraversalInfoForVertex(int newVertexIndex, int previousVertexIndex) {
         var newVertex = getGraph().getVertices().get(newVertexIndex);
         var oldVertex = getGraph().getVertices().get(previousVertexIndex);
         float newDistance = getGraph().getDistance(oldVertex, newVertex);
         float distance = getDistanceToVertex(previousVertexIndex) + newDistance;
         addToPath(newVertex);
         markVertexAsVisited(newVertexIndex);
-        setDistanceToVertex(newVertexIndex,  distance);
+        setDistanceToVertex(newVertexIndex, distance);
         setPredecessorVertexIndex(newVertexIndex, previousVertexIndex);
         setSuccessorVertexIndex(previousVertexIndex, newVertexIndex);
     }

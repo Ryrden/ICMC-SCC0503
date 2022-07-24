@@ -24,8 +24,10 @@ public class Main {
         centralRoom.setCheckPoint(true);
         Room startRoom= (Room) floydWarshallTraversal.getPeripheralVertex();
         startRoom.setEntrance(true);
+        dungeon.setEntrance(startRoom);
         Room exitRoom = (Room) floydWarshallTraversal.getFarthestVertexFrom(startRoom);
         exitRoom.setExit(true);
+        dungeon.setExit(exitRoom);
 
         printDungeonWithDFS(dungeon);
         printDungeonWithBFS(dungeon);
@@ -34,12 +36,12 @@ public class Main {
 
     private static void printDungeonWithDFS(AbstractGraph dungeon) {
         var depthFirstTraversal = new DepthFirstTraversal(dungeon);
-        depthFirstTraversal.traverseGraph(dungeon.getVertices().get(0));
+        depthFirstTraversal.traverseGraph(dungeon.getEntrance());
     }
 
     private static void printDungeonWithBFS(AbstractGraph dungeon) {
         var breadthFirstTraversal = new BreadthFirstTraversal(dungeon);
-        breadthFirstTraversal.traverseGraph(dungeon.getVertices().get(0));
+        breadthFirstTraversal.traverseGraph(dungeon.getEntrance());
     }
 
     private static AbstractGraph generateDungeonLevel(int randomSeed, int numberRooms) {
