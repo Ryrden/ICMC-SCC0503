@@ -1,15 +1,14 @@
 package main;
 
-import main.dungeon.DungeonGraphic;
-import main.dungeon.GraphConverter;
-import main.dungeon.RandomDungeonGenerator;
-import main.dungeon.Room;
+import main.dungeon.*;
 import main.graph.*;
 
 import javax.swing.*;
 import java.util.Scanner;
 
 public class Main {
+    private static final int NUMBER_OF_LOCKS = 2;
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int randomSeed = scanner.nextInt();
@@ -18,11 +17,17 @@ public class Main {
 
         AbstractGraph dungeon = generateDungeonLevel(randomSeed, numberRooms);
         setSpecialRooms(dungeon);
+        setKeylocksRooms(dungeon);
 
         printDungeonWithDFS(dungeon);
         printDungeonWithBFS(dungeon);
         printDungeonWithAStar(dungeon);
         SwingUtilities.invokeLater(() -> new DungeonGraphic(dungeon).setVisible(true));
+    }
+
+    private static void setKeylocksRooms(AbstractGraph dungeon) {
+        var keylockTraverse = new KeyLockGenerator(dungeon,NUMBER_OF_LOCKS);
+        keylockTraverse.traverseGraph(dungeon.getEntrance());
     }
 
     private static void setSpecialRooms(AbstractGraph dungeon) {
