@@ -17,9 +17,17 @@ public class Main {
         int numberRooms = scanner.nextInt();
 
         AbstractGraph dungeon = generateDungeonLevel(randomSeed, numberRooms);
+        setSpecialRooms(dungeon);
+
+        printDungeonWithDFS(dungeon);
+        printDungeonWithBFS(dungeon);
+        printDungeonWithAStar(dungeon);
+        SwingUtilities.invokeLater(() -> new DungeonGraphic(dungeon).setVisible(true));
+    }
+
+    private static void setSpecialRooms(AbstractGraph dungeon) {
         FloydWarshallTraversal floydWarshallTraversal = new FloydWarshallTraversal(dungeon);
         floydWarshallTraversal.traverseGraph(null);
-
         Room centralRoom= (Room) floydWarshallTraversal.getCentralVertex();
         centralRoom.setCheckPoint(true);
         Room startRoom= (Room) floydWarshallTraversal.getPeripheralVertex();
@@ -28,11 +36,6 @@ public class Main {
         Room exitRoom = (Room) floydWarshallTraversal.getFarthestVertexFrom(startRoom);
         exitRoom.setExit(true);
         dungeon.setExit(exitRoom);
-
-        printDungeonWithDFS(dungeon);
-        printDungeonWithBFS(dungeon);
-        printDungeonWithAStar(dungeon);
-        SwingUtilities.invokeLater(() -> new DungeonGraphic(dungeon).setVisible(true));
     }
 
     private static void printDungeonWithAStar(AbstractGraph dungeon) {
