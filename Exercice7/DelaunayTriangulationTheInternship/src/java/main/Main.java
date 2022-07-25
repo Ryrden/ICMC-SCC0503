@@ -31,7 +31,13 @@ public class Main {
 
         printDungeonWithDFS(dungeon);
         printDungeonWithBFS(dungeon);
+        printDungeonWithAStar(dungeon);
         SwingUtilities.invokeLater(() -> new DungeonGraphic(dungeon).setVisible(true));
+    }
+
+    private static void printDungeonWithAStar(AbstractGraph dungeon) {
+        var aStar = new AStarTraversal(dungeon);
+        aStar.traverseGraph(dungeon.getEntrance(),dungeon.getExit());
     }
 
     private static void printDungeonWithDFS(AbstractGraph dungeon) {
